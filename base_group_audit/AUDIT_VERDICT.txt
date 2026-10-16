@@ -1,0 +1,18 @@
+========================================================================
+AUDIT BASE-IMAGE GROUPING SELESAI (STAGE 3-4)
+========================================================================
+Dataset Asli   : https://universe.roboflow.com/cassava-disease/cassava-zpvrj/dataset/7
+Total Citra    : 12,829
+Unique Groups  : 5,733
+Multi-Member   : 4,230 kelompok
+Cross-Split    : 661 kelompok bocor antar-split
+Label Conflict : 845 kelompok memiliki label berbeda
+Cross-Base Cand: 0 pasang
+
+PENTING UNTUK PROSES GROUP-AWARE SPLIT:
+------------------------------------------------------------------------
+1. File 'group_manifest.csv' telah siap digunakan sebagai basis Group-Aware Split.
+2. Setiap 'group_id' mengikat seluruh varian augmentasi dari satu base image
+   agar tidak lagi bocor antar split (mencegah inflasi akurasi/mAP).
+3. Kelompok 'CRITICAL' pada 'review_priority.csv' harus menjadi perhatian utama.
+========================================================================

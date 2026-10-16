@@ -1,0 +1,25 @@
+{
+  "exp_id": "EXP-0",
+  "name": "exp_0_baseline",
+  "title": "Baseline (Re-run)",
+  "sampling": "Uniform (1/N)",
+  "augmentation": "Standard YOLO11n",
+  "epochs": 50,
+  "seed": 42,
+  "duration_minutes": 126.41,
+  "metrics_validation": {
+    "precision": 0.4057,
+    "recall": 0.4378,
+    "mAP50": 0.3666,
+    "mAP50_95": 0.2658,
+    "per_class_mAP50": {
+      "CBB": 0.2357387712003356,
+      "CBSD": 0.3114521243209099,
+      "CGM": 0.27515350533791505,
+      "CMD": 0.21024137816951144,
+      "HEALTHY": 0.2963006395030027
+    }
+  },
+  "best_weight_path": "D:\\UNDIP\\SKRIPSI\\stage_8_ablation\\exp_0_baseline\\weights\\best.pt",
+  "timestamp": "2026-10-08 21:15:29"
+}

@@ -1,0 +1,25 @@
+{
+  "exp_id": "EXP-1",
+  "name": "exp_1_adaptive_sampling",
+  "title": "Mixture Adaptive Sampling",
+  "sampling": "Mixture Adaptive P(k)",
+  "augmentation": "Standard YOLO11n",
+  "epochs": 50,
+  "seed": 42,
+  "duration_minutes": 120.82,
+  "metrics_validation": {
+    "precision": 0.3934,
+    "recall": 0.4034,
+    "mAP50": 0.342,
+    "mAP50_95": 0.2442,
+    "per_class_mAP50": {
+      "CBB": 0.21082061545442093,
+      "CBSD": 0.2854993435316463,
+      "CGM": 0.26203120941462416,
+      "CMD": 0.2022214266279294,
+      "HEALTHY": 0.2604129207399666
+    }
+  },
+  "best_weight_path": "D:\\UNDIP\\SKRIPSI\\stage_8_ablation\\exp_1_adaptive_sampling\\weights\\best.pt",
+  "timestamp": "2026-10-08 23:16:42"
+}

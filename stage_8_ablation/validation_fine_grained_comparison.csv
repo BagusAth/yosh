@@ -1,0 +1,5 @@
+exp_id,title,sampling,augmentation,mAP50,mAP50_95,precision,recall_overall,recall_small,recall_medium,recall_large,fn_missed,tp_count,loc_error,cls_confusion,loc_cls_error
+EXP-0,Baseline (Re-run),Uniform (1/N),Standard YOLO11n,0.3666,0.2658,0.4057,0.4378,0.0,0.115,0.4795,4760,3560,947,249,133
+EXP-1,Mixture Adaptive Sampling,Mixture Adaptive P(k),Standard YOLO11n,0.342,0.2442,0.3934,0.4034,0.0,0.1244,0.4726,4769,3536,951,245,148
+EXP-2,Targeted Context Augmentation,Uniform (1/N),On-the-Fly Context Crop (2× bbox),0.3612,0.2624,0.3963,0.4258,0.0,0.1313,0.4941,4573,3700,979,255,142
+EXP-3,Full Proposed System,Mixture Adaptive P(k),On-the-Fly Context Crop (2× bbox),0.3509,0.2525,0.3946,0.409,0.0,0.1187,0.4596,4860,3433,947,250,159

@@ -1,0 +1,153 @@
+================================================================================
+EMPIRICAL TEST EXECUTION RESULTS
+STAGE 9.2: COMPREHENSIVE CODE AND PIPELINE AUDIT
+Workspace: D:\UNDIP\SKRIPSI
+Date: 2026-10-14
+Auditor: Senior ML Research Engineer & Code Auditor
+================================================================================
+
+--------------------------------------------------------------------------------
+1. LEVEL 1: STATIC ANALYSIS & AST INSPECTION (TEST-01, TEST-11, TEST-12)
+--------------------------------------------------------------------------------
+[TEST-01] AST Parsing on All Scripts:
+- stage_6_group_aware_resplit.py: LOC 389, 3 functions -> PASS (SyntaxWarning: invalid escape '\l')
+- verify_stage_6_compliance.py: LOC 313, 3 functions -> PASS
+- post_split_audit.py: LOC 546, 6 functions -> PASS
+- execute_phase_b_standardization.py: LOC 293, 6 functions -> PASS
+- verify_standardized_dataloader.py: LOC 39 -> PASS
+- stage_7_baseline_and_error_analysis.py: LOC 531, 3 functions -> PASS
+- stage_8_1_group_oof_profiling.py: LOC 709, 7 functions -> PASS
+- run_stage_8_profiling.py: LOC 75, 1 function -> PASS
+- stage_8_2_build_difficulty_manifest.py: LOC 571, 8 functions -> PASS
+- stage_8_3_adaptive_pipeline.py: LOC 444, 2 classes, 9 functions -> PASS
+- stage_8_4_run_ablation_experiments.py: LOC 379, 4 functions -> PASS
+- stage_8_5_model_selection_and_validation.py: LOC 428, 4 functions -> PASS
+- stage_8_6_final_test_benchmark.py: LOC 363, 4 functions -> PASS
+- write_final_markdown_reports.py: LOC 233, 2 functions -> PASS
+- generate_traceability_and_metrics.py: LOC 170, 2 functions -> PASS
+
+[TEST-11] Metric Assignment Traceability (Static Inspection):
+- stage_8_4_run_ablation_experiments.py (lines 230-237):
+    val_metrics.box.maps assigned to per_class_map50.
+    VERDICT: DEFECT CONFIRMED (val_metrics.box.maps is AP@[50:95], not AP@50).
+- stage_8_6_final_test_benchmark.py (lines 139-144):
+    val_res.box.maps assigned to per_class_map50.
+    VERDICT: DEFECT CONFIRMED (val_res.box.maps is AP@[50:95], not AP@50).
+
+[TEST-12] Model Selection Hierarchy Audit (Static Inspection):
+- stage_8_5_model_selection_and_validation.py (lines 337-351):
+    close_competitors = [r for r in results if (top_candidate['mAP50_95'] - r['mAP50_95']) <= 0.005]
+    VERDICT: DISCREPANCY CONFIRMED (Ad-hoc 0.5% margin overrode primary validation metric mAP@50-95).
+
+--------------------------------------------------------------------------------
+2. LEVEL 2: UNIT TESTS WITH SYNTHETIC & HAND-CALCULATED GROUND TRUTHS
+--------------------------------------------------------------------------------
+[TEST-05] Greedy Bipartite One-to-One Matching (stage_8_2_build_difficulty_manifest.py):
+- Test Case 1 (Perfect Match): matches={0: (0, 1.0)}, unassigned=set() -> PASSED
+- Test Case 2 (Two Predictions for One GT): matches={0: (1, 1.0)}, unassigned={0} -> PASSED
+- Test Case 3 (Empty GT): matches={}, unassigned={0, 1} -> PASSED
+- Test Case 4 (Empty Predictions): matches={}, unassigned=set() -> PASSED
+
+[TEST-06] Hand-Calculated Difficulty Score Formulas:
+- Case A (Matched + Correct Class):
+    Formula: 0.40*(1 - 0.90) + 0.40*(1 - 1.00) + 0.20*(0.50) = 0.040 + 0.000 + 0.100 = 0.1400
+    Code Output: 0.1400 -> EXACT MATCH (Diff: 0.000000) -> PASSED
+- Case B (Matched + Wrong Class, Confusion Penalty = 0.35):
+    Formula: min(1.0, 0.40*(1 - 0.80) + 0.40*(1 - 0.80) + 0.20*(1.00) + 0.35)
+             = min(1.0, 0.080 + 0.080 + 0.200 + 0.350) = min(1.0, 0.7100) = 0.7100
+    Code Output: 0.7100 -> EXACT MATCH (Diff: 0.000000) -> PASSED
+- Case C (Unmatched FN Small Lesion):
+    Formula: 0.80 + 0.20*(1.00) = 1.0000
+    Code Output: 1.0000 -> EXACT MATCH (Diff: 0.000000) -> PASSED
+
+[TEST-07] Mixture Sampling Probability & Empirical Simulation (100,000 draws):
+- Total images evaluated: 8,980
+- Total manifest weight sum: 1.0000000000000000 (Exact Normalization)
+- Minimum weight: 3.584171e-05 (Enforces uniform floor >= 3.3407e-05) -> PASSED
+- Maximum weight: 1.913273e-04 (Bounded, ratio max/min = 5.34x) -> PASSED
+- Pearson correlation (Theoretical vs Empirical): 0.736284 -> PASSED
+- Mean Absolute Error (MAE): 2.586555e-05 -> PASSED
+- Max Absolute Error: 1.410133e-04 -> PASSED
+
+[TEST-08] Targeted Context Augmentation Geometry Simulation:
+- Case 1 (Center target 30x30 at [320, 320]):
+    Crop window (2x): [290.0, 290.0, 350.0, 350.0] (w=60, h=60)
+    Scale factor: 640/60 = 10.67x
+    Transformed target box: [160.0, 160.0, 480.0, 480.0] -> PASSED
+- Case 2 (Near-boundary target 30x30 at [10, 10]):
+    Crop window clamped to image bounds: [0.0, 0.0, 60.0, 60.0]
+    Transformed target box: [0.0, 0.0, 266.7, 266.7] -> PASSED
+- Case 3 (Secondary lesion filtering):
+    Secondary A (100% inside crop window): Kept (vis_ratio = 1.00) -> PASSED
+    Secondary B (16.7% overlap with crop window): Discarded (vis_ratio = 0.17 < 0.30) -> PASSED
+
+--------------------------------------------------------------------------------
+3. LEVEL 3: INTEGRATION AUDITS
+--------------------------------------------------------------------------------
+[TEST-02] Image Resolution Audit on cassava-v7-standardized:
+- Train Split: 8,980 images -> All (640, 640) pixels (100%)
+- Valid Split: 2,567 images -> All (640, 640) pixels (100%)
+- Test Split:  1,282 images -> All (640, 640) pixels (100%)
+- Aspect Ratio: Exactly 1.000 across all 12,829 images.
+- Finding: Multiplying normalized coords by 640.0 was numerically exact for this dataset, but hardcoding 640.0 is marked as a Medium portability finding.
+
+[TEST-03] Stage 8.1 4-Fold Group Leakage Audit:
+- Total train images: 8,980
+- Total train groups: 5,546 clean atomic groups
+- Fold 1: 2,246 images, 1,388 groups
+- Fold 2: 2,244 images, 1,387 groups
+- Fold 3: 2,245 images, 1,386 groups
+- Fold 4: 2,245 images, 1,385 groups
+- Fold 1 & Fold 2 Group Overlap: 0 (ZERO)
+- Fold 1 & Fold 3 Group Overlap: 0 (ZERO)
+- Fold 1 & Fold 4 Group Overlap: 0 (ZERO)
+- Fold 2 & Fold 3 Group Overlap: 0 (ZERO)
+- Fold 2 & Fold 4 Group Overlap: 0 (ZERO)
+- Fold 3 & Fold 4 Group Overlap: 0 (ZERO)
+- VERDICT: 100% PASS (Zero group-level or image-level leakage).
+
+[TEST-04] Stage 8.1 Prediction Holdout Isolation:
+- Total raw predictions in oof_predictions_raw.csv: 1,402,872
+- Fold 1 holdout predictions: 2,246 images (0 outside fold 1 holdout)
+- Fold 2 holdout predictions: 2,244 images (0 outside fold 2 holdout)
+- Fold 3 holdout predictions: 2,245 images (0 outside fold 3 holdout)
+- Fold 4 holdout predictions: 2,245 images (0 outside fold 4 holdout)
+- VERDICT: 100% PASS (Every prediction was generated strictly by a model that never saw that image or group).
+
+[TEST-09 & TEST-10] AdaptiveYOLODataset Defect Investigation (CRITICAL):
+- Target Sample: '1000910826_jpg.rf.536afaab28d475899790b9245a1464d0.jpg' (has_target_small = True)
+- Inspected raw_label returned by get_image_and_label:
+    Keys: ['im_file', 'cls', 'img', 'ori_shape', 'resized_shape', 'ratio_pad', 'instances']
+    'bboxes' in raw_label: False (KEY NOT FOUND!)
+    raw_label['instances']: <class 'ultralytics.utils.instance.Instances'>
+    raw_label['instances'].bboxes shape: (2, 4)
+- Execution in apply_context_crop:
+    orig_boxes = label.get("bboxes", np.zeros((0, 4))) -> returns empty array of shape (0, 4)
+    len(orig_boxes) = 0 -> loop never runs!
+    new_bboxes = [] -> len(new_bboxes) = 0!
+    label["_is_context_cropped"] = True -> NEVER SET!
+    label returned UNMODIFIED.
+- Execution in __getitem__:
+    if label.get("_is_context_cropped", False) -> Evaluates to FALSE!
+    Falls through to: return self.transforms(label) (Baseline transforms with Mosaic).
+- VERDICT: DEFECT CONFIRMED (CRITICAL). Targeted Context Augmentation was completely inactive in EXP-2 and EXP-3.
+
+--------------------------------------------------------------------------------
+4. LEVEL 4: SMOKE TEST ON STANDARDIZED DATASET (TEST-13)
+--------------------------------------------------------------------------------
+[TEST-13] Dataloader Verification on cassava-v7-standardized:
+- Train Split: Scanning labels.cache... 8980 images, 66 backgrounds, 0 corrupt: 100%
+- Valid Split: Scanning labels.cache... 2567 images, 18 backgrounds, 0 corrupt: 100%
+- Test Split:  Scanning labels.cache... 1282 images,  9 backgrounds, 0 corrupt: 100%
+- Corrupt files: Exactly 0.
+- Mixed format warnings: Exactly 0.
+- VERDICT: 100% PASS. Dataset is standardized and ready.
+
+================================================================================
+AUDIT SUMMARY:
+Total Tests Executed: 13
+Tests Passed: 9
+Tests Failed with Defect/Discrepancy: 4 (TEST-09, TEST-10, TEST-11, TEST-12)
+Critical Defect Identified: FINDING-CRIT-01 (apply_context_crop no-op in AdaptiveYOLODataset)
+Status Verdict: NEEDS_CODE_FIX
+================================================================================

@@ -1,0 +1,29 @@
+CASSAVA HUGGING FACE DATASET AUDIT
+============================================================
+
+Repository : edcelbogs/cassava-7-dataset
+Revision   : main
+
+Images            : 986
+Label files       : 2
+Bounding boxes    : 0
+
+Full-image bbox   : 0 (0.00%)
+Non-full bbox     : 0 (0.00%)
+
+Multi-object imgs : 0 (0.00%)
+Overlap pairs     : 0
+Significant IoU>0.5: 0
+
+Invalid bbox      : 24
+Missing labels    : 986
+Orphan labels     : 2
+
+VERDICT:
+NO_BBOX_DATA
+
+CAUTION:
+The automatic audit cannot establish the
+semantic quality of the annotations.
+
+Visual inspection is required.

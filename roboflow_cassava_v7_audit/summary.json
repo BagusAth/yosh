@@ -1,0 +1,112 @@
+{
+  "dataset_url": "https://universe.roboflow.com/cassava-disease/cassava-zpvrj/dataset/7",
+  "workspace": "cassava-disease",
+  "project": "cassava-zpvrj",
+  "version": 7,
+  "verdict": "POTENTIALLY_VALID_OBJECT_DETECTION",
+  "verdict_description": "Dataset memiliki karakteristik deteksi objek riil dengan variasi ukuran dan multi-object.",
+  "images": {
+    "total": 12829,
+    "by_split": {
+      "train": 9818,
+      "valid": 1506,
+      "test": 1505
+    },
+    "unique_base_images": 5733
+  },
+  "objects": {
+    "total": 48957,
+    "by_split": {
+      "train": 42739,
+      "valid": 3169,
+      "test": 3049
+    },
+    "full_image_count": 461,
+    "full_image_percentage": 0.94,
+    "invalid_annotations": 0
+  },
+  "multi_object": {
+    "multi_object_images": 8566,
+    "multi_object_percentage": 66.77,
+    "mean_objects_per_image": 3.816
+  },
+  "size_distribution": {
+    "very_small": {
+      "count": 7121,
+      "percentage": 14.55
+    },
+    "small": {
+      "count": 17521,
+      "percentage": 35.79
+    },
+    "medium": {
+      "count": 15871,
+      "percentage": 32.42
+    },
+    "large": {
+      "count": 5235,
+      "percentage": 10.69
+    },
+    "very_large": {
+      "count": 3209,
+      "percentage": 6.55
+    }
+  },
+  "area_statistics": {
+    "mean_relative_area": 0.12615,
+    "min_relative_area": 0.0,
+    "max_relative_area": 1.0
+  },
+  "classes": {
+    "CBB": {
+      "total_objects": 3534,
+      "percentage": 7.22,
+      "by_split": {
+        "train": 0,
+        "valid": 2164,
+        "test": 1370
+      }
+    },
+    "CBSD": {
+      "total_objects": 3327,
+      "percentage": 6.8,
+      "by_split": {
+        "train": 643,
+        "valid": 1005,
+        "test": 1679
+      }
+    },
+    "CGM": {
+      "total_objects": 9747,
+      "percentage": 19.91,
+      "by_split": {
+        "train": 9747,
+        "valid": 0,
+        "test": 0
+      }
+    },
+    "CMD": {
+      "total_objects": 13681,
+      "percentage": 27.94,
+      "by_split": {
+        "train": 13681,
+        "valid": 0,
+        "test": 0
+      }
+    },
+    "HEALTHY": {
+      "total_objects": 18668,
+      "percentage": 38.13,
+      "by_split": {
+        "train": 18668,
+        "valid": 0,
+        "test": 0
+      }
+    }
+  },
+  "overlap_pairs": {
+    "iou_ge_0.10": 11684,
+    "iou_ge_0.30": 2817,
+    "iou_ge_0.50": 676
+  }
+}

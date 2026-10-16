@@ -1,0 +1,16 @@
+names:
+- CBB
+- CBSD
+- CGM
+- CMD
+- HEALTHY
+nc: 5
+roboflow:
+  license: CC BY 4.0
+  project: cassava-zpvrj
+  url: https://universe.roboflow.com/cassava-disease/cassava-zpvrj/dataset/7
+  version: 7
+  workspace: cassava-disease
+test: ../test/images
+train: ../train/images
+val: ../valid/images

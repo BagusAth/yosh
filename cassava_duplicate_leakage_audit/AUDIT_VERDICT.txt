@@ -1,0 +1,44 @@
+========================================================================
+LAPORAN AUDIT DUPLIKASI & DATA LEAKAGE (ROBOFLOW CASSAVA V7)
+========================================================================
+Dataset URL  : https://universe.roboflow.com/cassava-disease/cassava-zpvrj/dataset/7
+Metode Audit : Remote API & Streaming Range Requests (Zero Full Download)
+
+STATUS HASIL : SELESAI
+VERDICT      : SEVERE_CROSS_SPLIT_LEAKAGE (KEBOCORAN DATA TINGKAT BERAT)
+========================================================================
+
+TEMUAN UTAMA:
+------------------------------------------------------------------------
+1. Total Citra Tersedia           : 12,829 citra
+2. Total Citra Dasar (Unik Asli)  : 5,733 citra unik
+3. Total Base Images yang Bocor   : 661 citra (11.53% dari total citra unik)
+4. Total Pasangan Citra Bocor     : 5,595 pasang citra
+
+RINCIAN KEBOCORAN ANTAR-SPLIT (CROSS-SPLIT OVERLAP):
+------------------------------------------------------------------------
+- Train <--> Valid Overlap : 575 base images (51.71% dari seluruh validasi!)
+- Train <--> Test Overlap  : 85 base images (6.28% dari seluruh test set!)
+- Valid <--> Test Overlap  : 149 base images
+- Muncul di Ketiga Split   : 74 base images
+
+KONFLIK LABEL / LABEL NOISE:
+------------------------------------------------------------------------
+- Ditemukan 845 base image yang memiliki anotasi/label kelas bertentangan antar-split!
+
+KESIMPULAN & DAMPAK METODOLOGIS:
+------------------------------------------------------------------------
+Dataset bawaan Roboflow v7 ini membagi split train/valid/test SECARA ACAK
+SETELAH AUGMENTASI DILAKUKAN (bukan Group Split sebelum augmentasi).
+
+Akibatnya:
+Satu foto daun yang sama, variasi rotasinya masuk ke TRAIN, dan variasi
+rotasi lainnya masuk ke VALIDASI dan TEST. 
+
+Lebih dari 51% data validasi adalah 'kembaran' dari data training.
+Jika model dievaluasi pada dataset ini, metrik akurasi / mAP akan
+MENGALAMI INFLASI PALSU (OVERFITTING TERSAMBUNG KE EVALUASI).
+
+REKOMENDASI:
+Wajib melakukan Group-Resplit berbasis base_name sebelum training dimulai.
+========================================================================

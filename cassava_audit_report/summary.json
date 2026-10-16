@@ -1,0 +1,45 @@
+{
+    "dataset_dir": "cassava-dataset",
+    "data_yaml": "cassava-dataset\\data.yaml",
+    "classes": {
+        "0": "CBB",
+        "1": "CBSD",
+        "2": "CGM",
+        "3": "CMD",
+        "4": "HEALTHY"
+    },
+    "total_images": 2822,
+    "total_objects": 2822,
+    "invalid_annotations": 0,
+    "images_without_annotations": 0,
+    "multi_object_images": 0,
+    "overlap_pairs": 0,
+    "significant_overlap_pairs": 0,
+    "exact_duplicate_images": 0,
+    "images_by_split": {
+        "train": 2469,
+        "valid": 235,
+        "test": 118
+    },
+    "objects_per_image": {
+        "mean": 1.0,
+        "median": 1.0,
+        "max": 1
+    },
+    "objects_by_class": {
+        "CGM": 584,
+        "CBB": 582,
+        "HEALTHY": 568,
+        "CMD": 562,
+        "CBSD": 526
+    },
+    "objects_by_size": {
+        "very_large": 2822
+    },
+    "bbox_area_ratio": {
+        "mean": 0.9999932619406411,
+        "median": 1.0,
+        "min": 0.996875,
+        "max": 1.0
+    }
+}

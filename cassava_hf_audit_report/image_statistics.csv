@@ -1,0 +1,3 @@
+split,label_file,image_name,object_count,valid_object_count,invalid_object_count,is_multi_object
+unknown,README.dataset.txt,README.dataset,4,0,4,False
+unknown,README.roboflow.txt,README.roboflow,20,0,20,False

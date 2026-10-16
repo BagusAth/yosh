@@ -1,0 +1,28 @@
+{
+    "dataset_url": "https://universe.roboflow.com/cassava-disease/cassava-zpvrj/dataset/7",
+    "total_images": 12829,
+    "unique_base_images": 5733,
+    "cross_split_leaking_base_images": 661,
+    "cross_split_leaking_pairs": 5595,
+    "leakage_statistics": {
+        "train_val_overlap": 575,
+        "train_val_leakage_pct_of_valid": 51.71,
+        "train_test_overlap": 85,
+        "train_test_leakage_pct_of_test": 6.28,
+        "val_test_overlap": 149,
+        "triple_split_overlap": 74
+    },
+    "label_conflicts_count": 845,
+    "augmentation_multiplicity": {
+        "1": 1503,
+        "2": 3644,
+        "8": 344,
+        "3": 37,
+        "7": 62,
+        "5": 19,
+        "6": 75,
+        "4": 49
+    },
+    "verdict": "SEVERE_CROSS_SPLIT_LEAKAGE",
+    "verdict_explanation": "Ditemukan 661 citra dasar yang bocor antar-split. Sebanyak 575 citra dasar (51.71% dari validasi) merupakan duplikat augmentasi dari data training."
+}

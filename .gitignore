@@ -1,0 +1,74 @@
+# ==============================================================================
+# Python & Environment
+# ==============================================================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+ENV/
+build/
+dist/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ==============================================================================
+# Sensitive & Private Files
+# ==============================================================================
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+FULL_CONVERSATION_HISTORY.md
+roboflow_v7_api_resp.json
+
+# Thesis Drafts & Academic References (Prevent accidental plagiarism flags / Turnitin indexing)
+*.docx
+*.pdf
+
+# ==============================================================================
+# Datasets & Heavy Raw Data (DO NOT UPLOAD TO PUBLIC REPO)
+# ==============================================================================
+cassava-dataset/
+cassava-v7/
+cassava-v7-*/
+*.cache
+*.zip
+*.tar
+*.gz
+*.rar
+*.7z
+
+# Raw / Generated Dataset Images
+# (Prevents thousands of training/validation image files from leaking into Git)
+*.jpg
+*.jpeg
+
+# ==============================================================================
+# Machine Learning Model Weights & Checkpoints (Heavy Binaries)
+# ==============================================================================
+*.pt
+*.pth
+*.onnx
+*.engine
+*.tflite
+*.weights
+weights/
+
+# ==============================================================================
+# Training Runs & Large Output Artifacts (>100MB exceeds GitHub limits)
+# ==============================================================================
+runs/
+stage_8_1_oof/

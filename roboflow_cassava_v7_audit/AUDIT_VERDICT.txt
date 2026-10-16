@@ -1,0 +1,45 @@
+ROBOFLOW CASSAVA V7 REMOTE AUDIT REPORT
+========================================================================
+Project URL : https://universe.roboflow.com/cassava-disease/cassava-zpvrj/dataset/7
+Workspace   : cassava-disease
+Project     : cassava-zpvrj
+Version     : 7
+
+AUDIT STATUS: SELESAI (SUKSES TANPA DOWNLOAD GAMBAR)
+VERDICT     : POTENTIALLY_VALID_OBJECT_DETECTION
+KETERANGAN  : Dataset memiliki karakteristik deteksi objek riil dengan variasi ukuran dan multi-object.
+
+RINGKASAN KUANTITATIF:
+------------------------------------------------------------------------
+Total Gambar       : 12,829
+  - Train          : 9,818
+  - Valid          : 1,506
+  - Test           : 1,505
+  - Citra Unik     : 5,733
+
+Total Bounding Box : 48,957
+  - Full-Image Box : 461 (0.94%)
+  - Non-Full Box   : 48,496 (99.06%)
+  - Rata-rata Luas : 0.1262
+
+Kompleksitas Objek:
+  - Multi-Object Img : 8,566 (66.77%)
+  - Rata-rata Objek/Citra : 3.816
+  - Overlap IoU >= 0.10   : 11,684 pasang
+  - Overlap IoU >= 0.50   : 676 pasang
+
+Distribusi Ukuran Objek:
+  - Very Small (< 1%)   : 7,121 (14.55%)
+  - Small (1% - 5%)     : 17,521 (35.79%)
+  - Medium (5% - 20%)   : 15,871 (32.42%)
+  - Large (20% - 50%)   : 5,235 (10.69%)
+  - Very Large (> 50%)  : 3,209 (6.55%)
+
+Distribusi Kelas:
+  - CBB        :  3,534 objek ( 7.22%)
+  - CBSD       :  3,327 objek ( 6.80%)
+  - CGM        :  9,747 objek (19.91%)
+  - CMD        : 13,681 objek (27.94%)
+  - HEALTHY    : 18,668 objek (38.13%)
+
+========================================================================

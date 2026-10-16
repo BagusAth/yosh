@@ -1,0 +1,16 @@
+split,class_id,class_name,object_count,image_count
+test,0,CBB,20,20
+test,1,CBSD,36,36
+test,2,CGM,18,18
+test,3,CMD,21,21
+test,4,HEALTHY,23,23
+train,0,CBB,513,513
+train,1,CBSD,450,450
+train,2,CGM,525,525
+train,3,CMD,489,489
+train,4,HEALTHY,492,492
+valid,0,CBB,49,49
+valid,1,CBSD,40,40
+valid,2,CGM,41,41
+valid,3,CMD,52,52
+valid,4,HEALTHY,53,53

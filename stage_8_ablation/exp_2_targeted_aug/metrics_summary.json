@@ -1,0 +1,25 @@
+{
+  "exp_id": "EXP-2",
+  "name": "exp_2_targeted_aug",
+  "title": "Targeted Context Augmentation",
+  "sampling": "Uniform (1/N)",
+  "augmentation": "On-the-Fly Context Crop (2\u00d7 bbox)",
+  "epochs": 50,
+  "seed": 42,
+  "duration_minutes": 121.81,
+  "metrics_validation": {
+    "precision": 0.3963,
+    "recall": 0.4258,
+    "mAP50": 0.3612,
+    "mAP50_95": 0.2624,
+    "per_class_mAP50": {
+      "CBB": 0.2491506217336036,
+      "CBSD": 0.29991870096194095,
+      "CGM": 0.264167952464824,
+      "CMD": 0.21069266662107672,
+      "HEALTHY": 0.287886561103504
+    }
+  },
+  "best_weight_path": "D:\\UNDIP\\SKRIPSI\\stage_8_ablation\\exp_2_targeted_aug\\weights\\best.pt",
+  "timestamp": "2026-10-09 01:18:57"
+}

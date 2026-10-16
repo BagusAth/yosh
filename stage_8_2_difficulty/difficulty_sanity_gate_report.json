@@ -1,0 +1,38 @@
+{
+  "gate_status": "PASS",
+  "n_images": 8980,
+  "total_gt_objects": 34219,
+  "taxonomy_breakdown": {
+    "Classification_Confusion": 4251,
+    "Localization_and_Class_Error": 361,
+    "Localization_Error": 1164,
+    "True_Positive": 27588,
+    "False_Negative_Missed": 855
+  },
+  "d_image_stats": {
+    "min": 0.015414,
+    "p10": 0.1882865,
+    "p25": 0.33475875000000005,
+    "median_p50": 0.4809815,
+    "p75": 0.67615625,
+    "p90": 0.7917997,
+    "max": 1.0,
+    "mean": 0.49361170122494435,
+    "dynamic_range_p90_p10": 0.6035132
+  },
+  "sampling_diagnostics": {
+    "effective_sample_size_ess": 8172.831030646539,
+    "ess_ratio": 0.9101148141031781,
+    "diagnostic_target_range": "[0.65, 0.95]"
+  },
+  "clipping_audit": {
+    "wrong_class_total": 4612,
+    "wrong_class_clipped_at_1_0": 374,
+    "clipping_rate": 0.08109280138768431
+  },
+  "hard_image_audit": {
+    "hard_image_count_ge_0_8": 804,
+    "hard_image_ratio": 0.08953229398663697,
+    "criteria": "<=60% PASS, 60-80% REVIEW, >80% FAIL"
+  }
+}

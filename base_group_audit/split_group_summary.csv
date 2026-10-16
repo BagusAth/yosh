@@ -1,0 +1,4 @@
+original_split,file_count,group_count,multi_member_groups,cross_split_groups
+train,9818,4003,4003,586
+valid,1506,1112,650,650
+test,1505,1353,312,160

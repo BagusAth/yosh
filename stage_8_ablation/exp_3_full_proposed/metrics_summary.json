@@ -1,0 +1,25 @@
+{
+  "exp_id": "EXP-3",
+  "name": "exp_3_full_proposed",
+  "title": "Full Proposed (Sampling + Augmentation)",
+  "sampling": "Mixture Adaptive P(k)",
+  "augmentation": "On-the-Fly Context Crop (2\u00d7 bbox)",
+  "epochs": 50,
+  "seed": 42,
+  "duration_minutes": 122.83,
+  "metrics_validation": {
+    "precision": 0.3946,
+    "recall": 0.409,
+    "mAP50": 0.3509,
+    "mAP50_95": 0.2525,
+    "per_class_mAP50": {
+      "CBB": 0.24475915557753938,
+      "CBSD": 0.28893894746651827,
+      "CGM": 0.2525439803309326,
+      "CMD": 0.20410497508242983,
+      "HEALTHY": 0.27190383446586486
+    }
+  },
+  "best_weight_path": "D:\\UNDIP\\SKRIPSI\\stage_8_ablation\\exp_3_full_proposed\\weights\\best.pt",
+  "timestamp": "2026-10-09 03:22:12"
+}

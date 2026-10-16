@@ -1,0 +1,116 @@
+{
+  "status": "PASS",
+  "pipeline_stages": [
+    "Stage 6 Split",
+    "Cross-split base group check",
+    "SHA-256 check",
+    "pHash/dHash check",
+    "Class distribution",
+    "Object-size distribution",
+    "Final leakage verification",
+    "PASS -> Construct cassava-v7-research"
+  ],
+  "image_counts": {
+    "train": 8980,
+    "valid": 2567,
+    "test": 1282,
+    "total": 12829
+  },
+  "leakage_metrics": {
+    "cross_split_base_group_leakage": 0,
+    "cross_split_sha256_leakage": 0,
+    "cross_split_phash_strong_similarity": 0,
+    "cross_split_phash_moderate_similarity": 0,
+    "cross_split_phash_all_candidates": 0,
+    "zero_leakage_guaranteed": true
+  },
+  "class_distribution": [
+    {
+      "class": "CBB",
+      "train_objects": 2534,
+      "train_pct": 71.7,
+      "valid_objects": 661,
+      "valid_pct": 18.7,
+      "test_objects": 339,
+      "test_pct": 9.59,
+      "total_objects": 3534
+    },
+    {
+      "class": "CBSD",
+      "train_objects": 2307,
+      "train_pct": 69.34,
+      "valid_objects": 690,
+      "valid_pct": 20.74,
+      "test_objects": 330,
+      "test_pct": 9.92,
+      "total_objects": 3327
+    },
+    {
+      "class": "CGM",
+      "train_objects": 6747,
+      "train_pct": 69.22,
+      "valid_objects": 2032,
+      "valid_pct": 20.85,
+      "test_objects": 968,
+      "test_pct": 9.93,
+      "total_objects": 9747
+    },
+    {
+      "class": "CMD",
+      "train_objects": 9408,
+      "train_pct": 68.77,
+      "valid_objects": 2826,
+      "valid_pct": 20.66,
+      "test_objects": 1447,
+      "test_pct": 10.58,
+      "total_objects": 13681
+    },
+    {
+      "class": "HEALTHY",
+      "train_objects": 13223,
+      "train_pct": 70.83,
+      "valid_objects": 3440,
+      "valid_pct": 18.43,
+      "test_objects": 2005,
+      "test_pct": 10.74,
+      "total_objects": 18668
+    }
+  ],
+  "object_size_distribution": [
+    {
+      "split": "train",
+      "small_objects": 1149,
+      "small_pct": 3.36,
+      "medium_objects": 9358,
+      "medium_pct": 27.35,
+      "large_objects": 23712,
+      "large_pct": 69.29,
+      "total_objects": 34219
+    },
+    {
+      "split": "valid",
+      "small_objects": 361,
+      "small_pct": 3.74,
+      "medium_objects": 2452,
+      "medium_pct": 25.41,
+      "large_objects": 6836,
+      "large_pct": 70.85,
+      "total_objects": 9649
+    },
+    {
+      "split": "test",
+      "small_objects": 189,
+      "small_pct": 3.71,
+      "medium_objects": 1405,
+      "medium_pct": 27.61,
+      "large_objects": 3495,
+      "large_pct": 68.68,
+      "total_objects": 5089
+    }
+  ],
+  "dataset_directories": {
+    "original_source": "D:\\UNDIP\\SKRIPSI\\cassava-v7",
+    "research_dataset": "D:\\UNDIP\\SKRIPSI\\cassava-v7-research",
+    "audit_artifacts": "D:\\UNDIP\\SKRIPSI\\post_split_audit"
+  }
+}

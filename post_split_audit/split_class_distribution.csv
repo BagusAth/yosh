@@ -1,0 +1,6 @@
+﻿class,train_objects,train_pct,valid_objects,valid_pct,test_objects,test_pct,total_objects
+CBB,2534,71.7,661,18.7,339,9.59,3534
+CBSD,2307,69.34,690,20.74,330,9.92,3327
+CGM,6747,69.22,2032,20.85,968,9.93,9747
+CMD,9408,68.77,2826,20.66,1447,10.58,13681
+HEALTHY,13223,70.83,3440,18.43,2005,10.74,18668

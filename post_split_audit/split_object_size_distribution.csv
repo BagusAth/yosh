@@ -1,0 +1,4 @@
+﻿split,small_objects,small_pct,medium_objects,medium_pct,large_objects,large_pct,total_objects
+train,1149,3.36,9358,27.35,23712,69.29,34219
+valid,361,3.74,2452,25.41,6836,70.85,9649
+test,189,3.71,1405,27.61,3495,68.68,5089

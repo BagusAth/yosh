@@ -1,0 +1,35 @@
+================================================================================
+STAGE 9.3 — REGRESSION TEST SUITE EXECUTION REPORT
+================================================================================
+Date/Time          : 2026-10-16 19:51:05
+Python Version     : 3.13.7
+PyTorch Version    : 2.6.0+cu124
+CUDA Available     : True
+Total Tests Run    : 16
+Failures           : 0
+Errors             : 0
+Execution Duration : 7.37 seconds
+Overall Outcome    : PASS
+================================================================================
+
+DETAILED TEST BREAKDOWN:
+  [TestCritical01ContextCrop] test_case_1_center_target -> PASS
+  [TestCritical01ContextCrop] test_case_2_edges_and_corners -> PASS
+  [TestCritical01ContextCrop] test_case_3_no_target_objects -> PASS
+  [TestCritical01ContextCrop] test_case_4_multiple_objects_and_visibility_threshold -> PASS
+  [TestCritical01ContextCrop] test_case_5_invalid_boxes -> PASS
+  [TestCritical01ContextCrop] test_case_6_empty_labels -> PASS
+  [TestCritical01ContextCrop] test_case_7_manual_calculation_verification -> PASS
+  [TestCritical01ContextCrop] test_case_8_original_label_immutability -> PASS
+  [TestHigh01CanonicalMetrics] test_reconciliation_synthetic_metrics -> PASS
+  [TestHigh02SelectionProtocol] test_higher_map50_95_always_wins -> PASS
+  [TestHigh02SelectionProtocol] test_strict_tie_break_hierarchy -> PASS
+  [TestMed01BipartiteMatching] test_adjacent_gts_single_prediction_no_reuse -> PASS
+  [TestMed02CoordinateParser] test_backward_compat_default_640 -> PASS
+  [TestMed02CoordinateParser] test_dynamic_dimensions -> PASS
+  [TestComponentIntegrationAndSmoke] test_component_toggles_matrix -> PASS
+  [TestComponentIntegrationAndSmoke] test_smoke_dataloader_and_runtime_crop -> PASS
+
+================================================================================
+FINAL DECISION STATUS: READY_FOR_CLEAN_PIPELINE
+================================================================================

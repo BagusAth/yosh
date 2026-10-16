@@ -1,0 +1,13 @@
+{
+  "dataset_source": "https://universe.roboflow.com/cassava-disease/cassava-zpvrj/dataset/7",
+  "total_files": 12829,
+  "unique_base_groups": 5733,
+  "multi_member_groups": 4230,
+  "original_cross_split_groups": 661,
+  "label_conflict_groups": 845,
+  "exact_duplicate_groups": 179,
+  "strong_visual_similarity_groups": 6,
+  "moderate_visual_similarity_groups": 2,
+  "cross_base_visual_candidates": 0,
+  "recommendation": "Gunakan group_id dari group_manifest.csv sebagai unit atomik dalam group-aware split. Jangan pernah memecah file dari base_name yang sama ke split berbeda. Kelompok dengan status CRITICAL dan label conflict wajib diisolasi atau dianalisis sebelum training."
+}

@@ -1,0 +1,1 @@
+split,label_file,image_name,line_number,class_id,class_name,x_center,y_center,width,height,area_ratio,aspect_ratio,size_category,is_full_image_bbox,validation_status,validation_errors

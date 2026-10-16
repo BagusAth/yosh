@@ -1,0 +1,25 @@
+POST-SPLIT AUDIT — FINAL VERDICT
+=================================================================
+Pipeline Evaluasi Audit:
+  1. Cross-split base group check     : PASS (0 group leakage)
+  2. SHA-256 exact duplicate check   : PASS (0 byte leakage)
+  3. pHash / dHash visual check      : PASS (0 visual leakage)
+  4. Class distribution balance      : PASS (All 5 classes complete)
+  5. Object-size distribution        : PASS (Small/Med/Large consistent)
+  6. Final leakage verification      : PASS (0.00% leakage)
+
+VERDICT: PASS — ALL CRITERIA SATISFIED
+=================================================================
+Total images                : 12,829
+Train                       : 8,980 (70.00%)
+Valid                       : 2,567 (20.01%)
+Test                        : 1,282 (9.99%)
+
+Dataset Riset Resmi Telah Dibuat:
+  Folder: D:\UNDIP\SKRIPSI\cassava-v7-research
+  Struktur:
+    cassava-v7-research/
+    ├── train/ (images, labels)
+    ├── valid/ (images, labels)
+    ├── test/  (images, labels)
+    └── data.yaml
