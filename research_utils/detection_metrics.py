@@ -15,14 +15,93 @@ Unified, single-source-of-truth mathematical evaluation engine for:
 
 from __future__ import annotations
 
+import hashlib
 import math
 from collections import Counter
 from pathlib import Path
 from typing import Any
 
 import numpy as np
+from PIL import Image
 
 CLASS_NAMES = ["CBB", "CBSD", "CGM", "CMD", "HEALTHY"]
+
+
+def compute_file_sha256(filepath: str | Path) -> str:
+    """Computes SHA-256 hash of a file. Returns empty string if file does not exist."""
+    p = Path(filepath)
+    if not p.exists() or not p.is_file():
+        return ""
+    h = hashlib.sha256()
+    with open(p, "rb") as f:
+        while chunk := f.read(65536):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def compute_dataset_inventory_fingerprint(
+    images_dir: str | Path,
+    labels_dir: str | Path | None = None,
+) -> str:
+    """
+    Computes a deterministic inventory fingerprint for a dataset directory based on:
+    - Sorted filenames
+    - File sizes
+    - Sampled or label metadata
+    Ensures that any file additions, deletions, or size modifications alter the fingerprint.
+    """
+    img_p = Path(images_dir)
+    if not img_p.exists() or not img_p.is_dir():
+        return ""
+
+    h = hashlib.sha256()
+    # Sort image entries deterministically
+    img_files = sorted(img_p.iterdir(), key=lambda p: p.name)
+    h.update(f"NUM_IMAGES:{len(img_files)}\n".encode("utf-8"))
+
+    for f in img_files:
+        if f.is_file():
+            stat = f.stat()
+            h.update(f"IMG:{f.name}:{stat.st_size}\n".encode("utf-8"))
+
+    if labels_dir:
+        lbl_p = Path(labels_dir)
+        if lbl_p.exists() and lbl_p.is_dir():
+            lbl_files = sorted(lbl_p.iterdir(), key=lambda p: p.name)
+            h.update(f"NUM_LABELS:{len(lbl_files)}\n".encode("utf-8"))
+            for lf in lbl_files:
+                if lf.is_file():
+                    stat = lf.stat()
+                    h.update(f"LBL:{lf.name}:{stat.st_size}\n".encode("utf-8"))
+
+    return h.hexdigest()
+
+
+def get_image_dimensions(img_path: str | Path) -> tuple[int, int]:
+    """
+    Reads image dimensions (width, height) safely from image header.
+    Returns (width, height) in integer pixels.
+    Raises FileNotFoundError or ValueError if invalid.
+    """
+    p = Path(img_path)
+    if not p.exists():
+        raise FileNotFoundError(f"Image not found: {p}")
+
+    try:
+        with Image.open(p) as img:
+            w, h = img.size
+    except Exception as e:
+        # Fallback to OpenCV if PIL fails
+        import cv2
+        im = cv2.imread(str(p))
+        if im is None:
+            raise ValueError(f"Failed to read image dimensions for {p}: {e}")
+        h, w = im.shape[:2]
+
+    if w <= 0 or h <= 0:
+        raise ValueError(f"Invalid non-positive image dimensions ({w}x{h}) for {p}")
+
+    return int(w), int(h)
 
 
 def calculate_iou_xyxy(box1: Any, box2: Any) -> float:
@@ -64,7 +143,7 @@ def classify_object_size(area_px: float) -> tuple[str, float]:
     """
     if area_px < (32.0 * 32.0):
         return "Small", 1.0
-    elif area_px <= (96.0 * 96.0):
+    elif area_px < (96.0 * 96.0):
         return "Medium", 0.5
     else:
         return "Large", 0.0
@@ -362,7 +441,12 @@ def calculate_mixture_weights(
     Computes Mixture Adaptive Sampling distribution P(k):
     P(k) = (1 - lambda) / N + lambda * D_k / sum(D)
     Supports both dict and list inputs.
+    Strictly validates 0.0 <= lambda <= 1.0, finite difficulties in [0.0, 1.0],
+    explicit fallback to uniform 1/N when sum(D) == 0, and strictly positive probabilities.
     """
+    if not (0.0 <= mixture_lambda <= 1.0):
+        raise ValueError(f"Mixture lambda must be in [0.0, 1.0], got {mixture_lambda}")
+
     is_dict = isinstance(d_image_data, dict)
     if is_dict:
         keys = list(d_image_data.keys())
@@ -375,6 +459,10 @@ def calculate_mixture_weights(
     if n == 0:
         raise ValueError("Image difficulty collection is empty!")
 
+    for idx, d_val in enumerate(d_vals):
+        if not math.isfinite(d_val) or d_val < 0.0 or d_val > 1.0:
+            raise ValueError(f"Invalid difficulty value at index {idx}: {d_val} (must be finite in [0.0, 1.0])")
+
     sum_d = sum(d_vals)
     uniform_floor = (1.0 - mixture_lambda) / n
 
@@ -383,13 +471,14 @@ def calculate_mixture_weights(
     else:
         weights = []
         for d_val in d_vals:
-            if not math.isfinite(d_val) or d_val < 0.0:
-                raise ValueError(f"Invalid difficulty value: {d_val}")
             p_k = uniform_floor + mixture_lambda * (d_val / sum_d)
+            if p_k <= 0.0 or not math.isfinite(p_k):
+                raise ValueError(f"Calculated non-positive or non-finite probability {p_k} for d_val {d_val}")
             weights.append(float(p_k))
 
         total_p = sum(weights)
-        weights = [w / total_p for w in weights]
+        if abs(total_p - 1.0) > 1e-5:
+            weights = [w / total_p for w in weights]
 
     if is_dict:
         return {k: weights[idx] for idx, k in enumerate(keys)}

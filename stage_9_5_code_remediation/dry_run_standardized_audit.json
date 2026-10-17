@@ -1,0 +1,86 @@
+{
+  "total_txt_files": 12,
+  "total_yaml_files": 4,
+  "research_leakage_count": 0,
+  "standardized_path_count": 35920,
+  "total_split_lines": 35920,
+  "folds": {},
+  "group_leakage": [
+    {
+      "fold_a": "fold_1",
+      "fold_b": "fold_2",
+      "shared_groups": "0",
+      "leakage_status": "ZERO_LEAKAGE"
+    },
+    {
+      "fold_a": "fold_1",
+      "fold_b": "fold_3",
+      "shared_groups": "0",
+      "leakage_status": "ZERO_LEAKAGE"
+    },
+    {
+      "fold_a": "fold_1",
+      "fold_b": "fold_4",
+      "shared_groups": "0",
+      "leakage_status": "ZERO_LEAKAGE"
+    },
+    {
+      "fold_a": "fold_2",
+      "fold_b": "fold_3",
+      "shared_groups": "0",
+      "leakage_status": "ZERO_LEAKAGE"
+    },
+    {
+      "fold_a": "fold_2",
+      "fold_b": "fold_4",
+      "shared_groups": "0",
+      "leakage_status": "ZERO_LEAKAGE"
+    },
+    {
+      "fold_a": "fold_3",
+      "fold_b": "fold_4",
+      "shared_groups": "0",
+      "leakage_status": "ZERO_LEAKAGE"
+    }
+  ],
+  "nested_assignments": [
+    {
+      "fold_id": "1",
+      "outer_holdout_fold": "1",
+      "outer_holdout_images": "2246",
+      "inner_train_folds": "3+4",
+      "inner_train_images": "4490",
+      "inner_val_fold": "2",
+      "inner_val_images": "2244"
+    },
+    {
+      "fold_id": "2",
+      "outer_holdout_fold": "2",
+      "outer_holdout_images": "2244",
+      "inner_train_folds": "1+4",
+      "inner_train_images": "4491",
+      "inner_val_fold": "3",
+      "inner_val_images": "2245"
+    },
+    {
+      "fold_id": "3",
+      "outer_holdout_fold": "3",
+      "outer_holdout_images": "2245",
+      "inner_train_folds": "1+2",
+      "inner_train_images": "4490",
+      "inner_val_fold": "4",
+      "inner_val_images": "2245"
+    },
+    {
+      "fold_id": "4",
+      "outer_holdout_fold": "4",
+      "outer_holdout_images": "2245",
+      "inner_train_folds": "2+3",
+      "inner_train_images": "4489",
+      "inner_val_fold": "1",
+      "inner_val_images": "2246"
+    }
+  ],
+  "zero_research_leakage_verified": true,
+  "zero_group_leakage_verified": true
+}

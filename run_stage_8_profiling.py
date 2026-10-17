@@ -21,7 +21,11 @@ from pathlib import Path
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Stage 8 Profiling Pipeline Orchestrator (8.1 + 8.2)")
-    parser.add_argument("--data-yaml", default=None, help="Path ke data.yaml (Single Source of Truth)")
+    parser.add_argument(
+        "--data-yaml",
+        default="d:/UNDIP/SKRIPSI/cassava-v7-standardized/data.yaml",
+        help="Path ke data.yaml (Single Source of Truth, default: standardized)",
+    )
     parser.add_argument("--dataset-dir", default=None, help="Path root dataset (misal cassava-v7-standardized)")
     parser.add_argument("--research-dir", default="d:/UNDIP/SKRIPSI/cassava-v7-research", help="Path fallback dataset")
     parser.add_argument("--output-dir-81", default="d:/UNDIP/SKRIPSI/stage_8_1_oof", help="Folder output Stage 8.1")
@@ -48,7 +52,7 @@ def main():
     print("STAGE 8 — PROFILING PIPELINE ORCHESTRATOR (HARDENED)")
     print(f"Waktu Mulai: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print(f"Data YAML  : {args.data_yaml}")
-    print(f"Dataset Dir: {args.dataset_dir or args.research_dir}")
+    print(f"Dataset Dir: {args.dataset_dir or 'Derived from data.yaml' if args.data_yaml else args.research_dir}")
     print(f"Mode OOF   : {args.checkpoint_selection_mode}")
     print("=" * 80)
 
@@ -68,11 +72,12 @@ def main():
         "--conf-oof", str(args.conf_oof),
     ]
     if args.data_yaml:
-        cmd_8_1.extend(["--data-yaml", args.data_yaml])
-    if args.dataset_dir:
-        cmd_8_1.extend(["--dataset-dir", args.dataset_dir])
+        cmd_8_1.extend(["--data-yaml", str(Path(args.data_yaml).resolve())])
+    elif args.dataset_dir:
+        cmd_8_1.extend(["--dataset-dir", str(Path(args.dataset_dir).resolve())])
     else:
-        cmd_8_1.extend(["--research-dir", args.research_dir])
+        cmd_8_1.extend(["--research-dir", str(Path(args.research_dir).resolve())])
+
     if args.skip_training_if_done:
         cmd_8_1.append("--skip-training-if-done")
     if args.dry_run:
@@ -106,11 +111,11 @@ def main():
         "--mixture-lambda", str(args.mixture_lambda),
     ]
     if args.data_yaml:
-        cmd_8_2.extend(["--data-yaml", args.data_yaml])
-    if args.dataset_dir:
-        cmd_8_2.extend(["--dataset-dir", args.dataset_dir])
+        cmd_8_2.extend(["--data-yaml", str(Path(args.data_yaml).resolve())])
+    elif args.dataset_dir:
+        cmd_8_2.extend(["--dataset-dir", str(Path(args.dataset_dir).resolve())])
     else:
-        cmd_8_2.extend(["--research-dir", args.research_dir])
+        cmd_8_2.extend(["--research-dir", str(Path(args.research_dir).resolve())])
 
     res2 = subprocess.run(cmd_8_2)
     if res2.returncode != 0:

@@ -1,0 +1,171 @@
+{
+  "audit_stage": "STAGE 9.5 — TARGETED REMEDIATION, ARTIFACT INTEGRITY, AND INDEPENDENT PIPELINE VERIFICATION",
+  "audit_timestamp": "2026-10-17T16:55:00+07:00",
+  "auditor_role": "Senior Machine Learning Engineer, Computer Vision Research Engineer, Python Test Engineer, and Independent Research Code Auditor",
+  "base_commit": "a74eec540c649959d319a192d77442bff2a0f3f7",
+  "active_branch": "stage-9-5-targeted-remediation",
+  "environment": {
+    "python_version": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]",
+    "os_platform": "Windows-11-10.0.26200-SP0",
+    "pytorch_version": "2.9.1+cpu",
+    "cuda_available": false,
+    "ultralytics_version": "8.3.235"
+  },
+  "dataset_architecture": {
+    "canonical_standardized_dataset": {
+      "path": "d:/UNDIP/SKRIPSI/cassava-v7-standardized",
+      "data_yaml": "d:/UNDIP/SKRIPSI/cassava-v7-standardized/data.yaml",
+      "data_yaml_sha256": "e40454b874596ad6f0275ae489a44eca51b2350540c16e50e4b489f479e9ed84",
+      "annotation_format": "YOLO 5-column detection (class_id xc yc w h)",
+      "splits": {
+        "train": { "images": 8980, "labels": 8980, "status": "VERIFIED" },
+        "valid": { "images": 2567, "labels": 2567, "status": "VERIFIED" },
+        "test": { "images": 1282, "labels": 1282, "status": "VERIFIED" }
+      },
+      "total_images": 12829,
+      "total_annotations": 48957,
+      "geometric_equivalence": "100.0% (tol <= 1e-4)",
+      "class_mapping": ["CBB", "CBSD", "CGM", "CMD", "HEALTHY"]
+    },
+    "historical_research_dataset": {
+      "path": "d:/UNDIP/SKRIPSI/cassava-v7-research",
+      "data_yaml": "d:/UNDIP/SKRIPSI/cassava-v7-research/data.yaml",
+      "status": "PRESERVED_HISTORICAL_ARTIFACT_UNTOUCHED"
+    }
+  },
+  "pipeline_modules_audit": {
+    "research_utils/detection_metrics.py": {
+      "role": "Single Source of Truth Evaluation Engine",
+      "sha256": "910a2cfdb928fe7b5cd0fd266619020db2fc3afb5434436ed5567138cdba6056",
+      "dynamic_dimension_support": true,
+      "size_boundaries": { "small": "< 32^2", "medium": "[32^2, 96^2)", "large": ">= 96^2" },
+      "status": "ACTIVE_VERIFIED"
+    },
+    "stage_8_1_group_oof_profiling.py": {
+      "role": "Nested Group-Aware 4-Fold OOF Probe Profiler",
+      "sha256": "45b8eac51beb896095a96fd360bf2144eb51e9b38d3d18b51177db1341ccb0cb",
+      "checkpoint_reuse_safety": "COMPREHENSIVE_20_FIELD_IDENTITY_AND_FAIL_FAST_REUSE_GUARD",
+      "checkpoint_selection_modes": ["nested_inner_val", "fixed_epoch_last"],
+      "isolation_status": "ZERO_CROSS_FOLD_AND_ZERO_HOLDOUT_LEAKAGE",
+      "status": "REMEDIATED_VERIFIED"
+    },
+    "stage_8_2_build_difficulty_manifest.py": {
+      "role": "Post-OOF Difficulty Manifest Builder & Sanity Gate",
+      "sha256": "96816d78cbeec088b4cad9b5f28f0442870c86ae15e2756a297b846a22e228e5",
+      "matching_policy": "greedy_bipartite_matching (descending IoU)",
+      "mixture_lambda": 0.70,
+      "confusion_penalty": 0.35,
+      "dynamic_dimension_support": true,
+      "status": "REMEDIATED_VERIFIED"
+    },
+    "stage_8_3_adaptive_pipeline.py": {
+      "role": "Adaptive DataLoader & On-the-Fly Context Augmentation",
+      "sha256": "b885b54a49e71e469a878382a3a477be8c45a36958c3f3e7bc1e39d80b7a10e6",
+      "manifest_coverage_check": "FAIL_FAST_ZERO_SILENT_FALLBACK",
+      "lazy_image_loading_fallback": true,
+      "context_margin": 2.0,
+      "visibility_threshold": 0.30,
+      "status": "REMEDIATED_VERIFIED"
+    },
+    "stage_8_4_run_ablation_experiments.py": {
+      "role": "Ablation Study Orchestrator (EXP-0 to EXP-3)",
+      "sha256": "9a5cb779def622c8de9be45fc28e5bee46641eb74d37a052ab89905c1227ca18",
+      "default_output_dir": "d:/UNDIP/SKRIPSI/stage_10_11_clean_experiments",
+      "checkpoint_reuse_safety": "EXPLICIT_RUN_IDENTITY_FINGERPRINT_VERIFICATION",
+      "historic_anti_overwrite_protection": "ENFORCED",
+      "status": "REMEDIATED_VERIFIED"
+    },
+    "stage_8_5_model_selection_and_validation.py": {
+      "role": "Validation Model Selection & Error Decomposition",
+      "sha256": "d897c4bdf56a40aef76e20b4e524bf16ebcbf064ca38251a81e8ef483de99868",
+      "selection_protocol": "Primary: max(mAP50-95) -> Tie-1: max(R_Small, delta<=1e-5) -> Tie-2: max(mAP50) -> Tie-3: min(FN)",
+      "dataset_path_resolution": "DYNAMIC_FROM_DATA_YAML",
+      "dynamic_dimension_support": true,
+      "status": "REMEDIATED_VERIFIED"
+    },
+    "stage_8_6_final_test_benchmark.py": {
+      "role": "Locked Test Set Final Evaluation",
+      "sha256": "04785ce7273102c57fbaf07305919d0066805f016c4aa87192cd3c43e3819bc1",
+      "execution_guard": "LOCKED_CONFIRMATION_REQUIRED",
+      "dynamic_dimension_support": true,
+      "status": "REMEDIATED_VERIFIED"
+    },
+    "stage_7_baseline_and_error_analysis.py": {
+      "role": "Baseline & Diagnostic Error Analysis Evaluator",
+      "sha256": "e30ece1818f246200438f7bbd9e9f674f3b6c2018dd7ac4275e90f6d6f448e51",
+      "evaluator_version": "Stage-9.5-Canonical-v1",
+      "unification_status": "FULLY_UNIFIED_WITH_CANONICAL_DETECTION_METRICS",
+      "status": "REMEDIATED_VERIFIED"
+    },
+    "execute_phase_b_standardization.py": {
+      "role": "Annotation Standardization & Integrity Verification Engine",
+      "sha256": "dd0ca3db4f515cc7ca913c1c4c0a0bf9ddd03b6aedd700e21c8197a9a42f6d31",
+      "verification_mode": "STRICT_VERIFY_ONLY_IMAGE_LABEL_PARITY_AND_GEOMETRIC_EQUIVALENCE",
+      "status": "REMEDIATED_VERIFIED"
+    },
+    "run_stage_8_profiling.py": {
+      "role": "Stage 8.1 + 8.2 Execution Orchestrator",
+      "sha256": "5edd5f4694136af4751d5cb9101f2b3edb4cefadd4b93e2607afeaea7ad01702",
+      "default_data_yaml": "cassava-v7-standardized/data.yaml",
+      "dry_run_flow": "STOPS_BEFORE_MANIFEST_IF_OOF_PREDICTIONS_ABSENT",
+      "status": "REMEDIATED_VERIFIED"
+    }
+  },
+  "regression_testing": {
+    "suites": [
+      {
+        "file": "test_stage_9_3_regression.py",
+        "sha256": "9dec01c05dce738be2d4a64d708a7d01a94c979cd1fab66c19cb76817da2554c",
+        "tests_run": 16,
+        "passed": 16,
+        "failed": 0,
+        "errors": 0,
+        "status": "100_PERCENT_PASS"
+      },
+      {
+        "file": "test_stage_9_4_regression.py",
+        "sha256": "4cb04025d67e733e4904db3c97dfacf9a32aabe5a332fa0fad6d15f0b54ce9ff",
+        "tests_run": 26,
+        "passed": 26,
+        "failed": 0,
+        "errors": 0,
+        "status": "100_PERCENT_PASS"
+      },
+      {
+        "file": "test_stage_9_5_regression.py",
+        "sha256": "17840e47009581df46f1ee9a5cbdd02e9597e2cc583e0de0165ad182b5b636be",
+        "tests_run": 48,
+        "passed": 48,
+        "failed": 0,
+        "errors": 0,
+        "status": "100_PERCENT_PASS"
+      }
+    ],
+    "total_tests_run": 90,
+    "total_passed": 90,
+    "total_failed": 0,
+    "total_errors": 0,
+    "overall_status": "100_PERCENT_PASS"
+  },
+  "empirical_verifications": {
+    "standardization_verify_only": {
+      "command": "python execute_phase_b_standardization.py --verify-only --src-root cassava-v7-research --dst-root cassava-v7-standardized",
+      "exit_code": 0,
+      "images_verified": 12829,
+      "annotations_verified": 48957,
+      "geometric_precision_rate": "100.0%",
+      "status": "PASS"
+    },
+    "oof_dry_run_standardized": {
+      "command": "python run_stage_8_profiling.py --dry-run --data-yaml cassava-v7-standardized/data.yaml --output-dir-81 stage_9_5_code_remediation/dry_run_standardized",
+      "exit_code": 0,
+      "splits_generated": 12,
+      "total_split_lines": 35920,
+      "historical_path_leakage": "0 / 35920 (0.0%)",
+      "standardized_path_ratio": "35920 / 35920 (100.0%)",
+      "cross_fold_group_leakage": "0.0% (0 / 5546 groups)",
+      "status": "PASS"
+    }
+  },
+  "final_gate_decision": "READY_FOR_CLEAN_OOF"
+}

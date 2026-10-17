@@ -48,21 +48,15 @@ from typing import Any
 
 import torch
 import yaml
+import ultralytics
 from ultralytics import YOLO
 
+from research_utils.detection_metrics import (
+    compute_file_sha256,
+    compute_dataset_inventory_fingerprint,
+)
+
 CLASS_NAMES = ["CBB", "CBSD", "CGM", "CMD", "HEALTHY"]
-
-
-def compute_file_sha256(filepath: str | Path) -> str:
-    """Computes SHA-256 checksum of a file."""
-    p = Path(filepath)
-    if not p.exists():
-        return ""
-    h = hashlib.sha256()
-    with open(p, "rb") as f:
-        while chunk := f.read(65536):
-            h.update(chunk)
-    return h.hexdigest()
 
 
 def parse_args():
@@ -468,11 +462,118 @@ names: {CLASS_NAMES}
             "inner_val_fold": inner_val_fold,
             "inner_val_count": len(inner_val_images),
             "holdout_txt": str(holdout_txt.resolve()),
+            "train_txt": str(train_txt.resolve()),
+            "val_txt": str(val_txt.resolve()) if (selection_mode == "nested_inner_val" and inner_val_fold) else "",
             "yaml_file": str(yaml_file.resolve()),
         }
 
     print(f"[DATA CONFIG] 4 file YAML konfigurasi fold nested dibuat di {config_dir}")
     return yaml_paths, nested_specs
+
+
+def build_fold_run_identity(
+    script_path: str | Path,
+    yaml_path: str | Path,
+    inner_train_txt: str | Path,
+    inner_val_txt: str | Path,
+    outer_holdout_txt: str | Path,
+    dataset_inventory_fingerprint: str,
+    checkpoint_selection_mode: str,
+    fold_id: int,
+    epochs: int,
+    batch_size: int,
+    imgsz: int,
+    seed: int,
+    conf_thresh: float,
+    model_variant: str = "yolo11n.pt",
+    device: str = "",
+    checkpoint_eval_sha256: str = "",
+    predictions_sha256: str = "",
+    holdout_image_count: int = 0,
+    inner_train_count: int = 0,
+    inner_val_count: int = 0,
+) -> dict[str, Any]:
+    """Membangun objek identitas konfigurasi fold run secara eksplisit (20+ parameter)."""
+    p_script = Path(script_path)
+    p_yaml = Path(yaml_path)
+    p_train = Path(inner_train_txt)
+    p_val = Path(inner_val_txt)
+    p_holdout = Path(outer_holdout_txt)
+
+    return {
+        "fold_id": fold_id,
+        "checkpoint_selection_mode": checkpoint_selection_mode,
+        "epochs": epochs,
+        "batch": batch_size,
+        "imgsz": imgsz,
+        "seed": seed,
+        "conf_oof": conf_thresh,
+        "model_name": model_variant,
+        "device": str(device),
+        "outer_holdout_count": holdout_image_count,
+        "inner_train_count": inner_train_count,
+        "inner_val_count": inner_val_count,
+        "script_sha256": compute_file_sha256(p_script) if p_script.exists() else str(script_path),
+        "fold_yaml_sha256": compute_file_sha256(p_yaml) if p_yaml.exists() else str(yaml_path),
+        "inner_train_sha256": compute_file_sha256(p_train) if p_train.exists() else str(inner_train_txt),
+        "inner_val_sha256": compute_file_sha256(p_val) if p_val.exists() else str(inner_val_txt),
+        "outer_holdout_sha256": compute_file_sha256(p_holdout) if p_holdout.exists() else str(outer_holdout_txt),
+        "dataset_inventory_fingerprint": dataset_inventory_fingerprint,
+        "python_version": sys.version.split()[0],
+        "torch_version": torch.__version__,
+        "ultralytics_version": getattr(ultralytics, "__version__", ""),
+        "checkpoint_sha256": checkpoint_eval_sha256,
+        "pred_csv_sha256": predictions_sha256,
+        "evaluated_images": holdout_image_count,
+    }
+
+
+def verify_fold_reuse_safety(
+    meta_path: Path,
+    expected_identity: dict[str, Any],
+    checkpoint_path: Path,
+    predictions_path: Path,
+    holdout_image_count: int,
+) -> tuple[bool, str]:
+    """
+    Memverifikasi apakah artefak fold yang sudah ada aman untuk digunakan kembali (--skip-training-if-done).
+    Memeriksa seluruh field identitas konfigurasi, hash skrip, YAML, daftar split,
+    serta hash aktual checkpoint dan file prediksi.
+    """
+    if not meta_path.exists():
+        return False, "Metadata JSON not found"
+    if not checkpoint_path.exists():
+        return False, "Checkpoint file does not exist"
+    if not predictions_path.exists():
+        return False, "Predictions CSV file does not exist"
+
+    try:
+        with open(meta_path, "r", encoding="utf-8") as f:
+            saved_meta = json.load(f)
+    except Exception as e:
+        return False, f"Failed to parse metadata JSON: {e}"
+
+    for k, exp_val in expected_identity.items():
+        if k in ("checkpoint_sha256", "pred_csv_sha256", "evaluated_images", "timestamp"):
+            continue
+        saved_val = saved_meta.get(k)
+        if saved_val != exp_val:
+            return False, f"{k} mismatch: saved={saved_val} vs exp={exp_val}"
+
+    actual_ckpt_sha = compute_file_sha256(checkpoint_path)
+    saved_ckpt_sha = saved_meta.get("checkpoint_sha256", "")
+    if not saved_ckpt_sha or actual_ckpt_sha != saved_ckpt_sha:
+        return False, f"Checkpoint hash mismatch: saved={saved_ckpt_sha[:8]} vs actual={actual_ckpt_sha[:8]}"
+
+    actual_pred_sha = compute_file_sha256(predictions_path)
+    saved_pred_sha = saved_meta.get("pred_csv_sha256", "")
+    if not saved_pred_sha or actual_pred_sha != saved_pred_sha:
+        return False, f"Predictions CSV hash mismatch: saved={saved_pred_sha[:8]} vs actual={actual_pred_sha[:8]}"
+
+    if saved_meta.get("evaluated_images") != holdout_image_count:
+        return False, f"Evaluated images count mismatch: saved={saved_meta.get('evaluated_images')} vs exp={holdout_image_count}"
+
+    return True, "Artifacts and metadata verified 100% matching"
 
 
 def train_and_predict_fold(
@@ -483,10 +584,13 @@ def train_and_predict_fold(
     annotation_data: dict,
     output_dir: Path,
     args,
+    images_dir: Path | None = None,
+    labels_dir: Path | None = None,
 ):
     """
     Melatih probe model YOLO11n pada inner-train (12 epoch), memilih checkpoint berdasarkan
     inner-validation (atau last.pt), lalu menjalankan inferensi diagnostik pada outer holdout fold (@conf=0.001).
+    Menjamin validasi checksum identitas run secara lengkap sebelum mengizinkan reuse checkpoint.
     """
     fold_dir = output_dir / f"fold_{fold_id}"
     fold_dir.mkdir(parents=True, exist_ok=True)
@@ -498,101 +602,108 @@ def train_and_predict_fold(
     last_weight_path = weights_dir / "last.pt"
     eval_weight_path = best_weight_path if args.checkpoint_selection_mode == "nested_inner_val" else last_weight_path
 
-    # Compute config fingerprint
-    script_sha256 = compute_file_sha256(__file__)
-    yaml_sha256 = compute_file_sha256(yaml_path)
+    dataset_inv_sha = ""
+    if images_dir and Path(images_dir).exists():
+        dataset_inv_sha = compute_dataset_inventory_fingerprint(images_dir, labels_dir)
 
-    expected_metadata = {
-        "fold_id": fold_id,
-        "checkpoint_selection_mode": args.checkpoint_selection_mode,
-        "epochs": args.epochs,
-        "batch": args.batch,
-        "imgsz": args.imgsz,
-        "seed": args.seed,
-        "conf_oof": args.conf_oof,
-        "outer_holdout_count": nested_spec["outer_holdout_count"],
-        "inner_train_count": nested_spec["inner_train_count"],
-        "inner_val_count": nested_spec["inner_val_count"],
-        "script_sha256": script_sha256,
-        "data_yaml_sha256": yaml_sha256,
-        "torch_version": torch.__version__,
-    }
+    expected_identity = build_fold_run_identity(
+        script_path=__file__,
+        yaml_path=yaml_path,
+        inner_train_txt=nested_spec.get("train_txt", ""),
+        inner_val_txt=nested_spec.get("val_txt", "") if nested_spec.get("val_txt") else "",
+        outer_holdout_txt=nested_spec.get("holdout_txt", ""),
+        dataset_inventory_fingerprint=dataset_inv_sha,
+        checkpoint_selection_mode=args.checkpoint_selection_mode,
+        fold_id=fold_id,
+        epochs=args.epochs,
+        batch_size=args.batch,
+        imgsz=args.imgsz,
+        seed=args.seed,
+        conf_thresh=args.conf_oof,
+        model_variant="yolo11n.pt",
+        device=str(args.device),
+        holdout_image_count=nested_spec["outer_holdout_count"],
+        inner_train_count=nested_spec["inner_train_count"],
+        inner_val_count=nested_spec["inner_val_count"],
+    )
 
     # Strict Checksum and Artifact Verification for --skip-training-if-done
     if args.skip_training_if_done and pred_csv_path.exists() and eval_weight_path.exists():
-        if metadata_path.exists():
-            try:
-                with open(metadata_path, "r", encoding="utf-8") as f:
-                    saved_meta = json.load(f)
-                meta_match = all(
-                    saved_meta.get(k) == expected_metadata[k]
-                    for k in ["fold_id", "checkpoint_selection_mode", "epochs", "batch", "imgsz", "seed", "outer_holdout_count"]
-                )
-                if meta_match:
-                    print(f"[FOLD {fold_id}] Melewati pelatihan dan inferensi (artefak dan metadata terverifikasi cocok).")
-                    return pred_csv_path
-                else:
-                    print(f"[FOLD {fold_id}] WARNING: Metadata artefak lama tidak cocok dengan konfigurasi saat ini! Menjalankan ulang...")
-            except Exception as e:
-                print(f"[FOLD {fold_id}] WARNING: Gagal membaca metadata ({e}). Menjalankan ulang...")
+        can_reuse, reason = verify_fold_reuse_safety(
+            meta_path=metadata_path,
+            expected_identity=expected_identity,
+            checkpoint_path=eval_weight_path,
+            predictions_path=pred_csv_path,
+            holdout_image_count=len(holdout_filenames),
+        )
+        if can_reuse:
+            print(f"[FOLD {fold_id}] Melewati pelatihan dan inferensi (artefak dan metadata terverifikasi cocok 100%).")
+            return pred_csv_path
         else:
-            print(f"[FOLD {fold_id}] WARNING: fold_metadata.json tidak ditemukan. Menolak penggunaan artefak lama tanpa verifikasi checksum.")
+            print(f"[FOLD {fold_id}] WARNING: Artefak lama tidak lolos verifikasi reuse ({reason})!")
 
-    # 1. Train Model (Hanya jika belum ada atau skip tidak disetujui)
-    if not eval_weight_path.exists():
-        print("=" * 80)
-        print(f"MEMULAI PROBE TRAINING (NESTED ISOLATION): FOLD {fold_id} / 4")
-        print(f"Outer Holdout  : Fold {nested_spec['outer_holdout_fold']} ({nested_spec['outer_holdout_count']:,} citra - TERISOLASI 100%)")
-        print(f"Inner Train    : Folds {nested_spec['inner_train_folds']} ({nested_spec['inner_train_count']:,} citra)")
-        print(f"Inner Val      : Fold {nested_spec['inner_val_fold']} ({nested_spec['inner_val_count']:,} citra - CHECKPOINT SELECTION)")
-        print(f"Selection Mode : {args.checkpoint_selection_mode}")
-        print(f"Train Epochs   : {args.epochs}")
-        print(f"Batch Size     : {args.batch}")
-        print(f"YAML Path      : {yaml_path}")
-        print("=" * 80)
-
-        t_start = time.time()
-        model = YOLO("yolo11n.pt")
-
-        train_results = model.train(
-            data=str(yaml_path),
-            epochs=args.epochs,
-            imgsz=args.imgsz,
-            batch=args.batch,
-            seed=args.seed,
-            device=args.device,
-            workers=0,
-            project=str(fold_dir),
-            name="train_run",
-            save=True,
-            exist_ok=True,
-            verbose=False,
-            val=True,
-            plots=False,
+    # Guard against accidental reuse of unverified/mismatched checkpoint
+    if eval_weight_path.exists():
+        raise RuntimeError(
+            f"[FOLD {fold_id}] SAFETY VIOLATION: Checkpoint '{eval_weight_path}' sudah ada di folder tujuan tetapi gagal verifikasi identitas run / checksum!\n"
+            "Untuk melindungi integritas riset, dilarang menjalankan inferensi diam-diam menggunakan bobot yang tidak cocok ataupun menimpa bobot lama.\n"
+            "Gunakan direktori --output-dir baru yang bersih untuk run ini."
         )
 
-        t_train = time.time() - t_start
-        print(f"[FOLD {fold_id}] Pelatihan selesai dalam {t_train / 60:.2f} menit.")
+    # 1. Train Model
+    print("=" * 80)
+    print(f"MEMULAI PROBE TRAINING (NESTED ISOLATION): FOLD {fold_id} / 4")
+    print(f"Outer Holdout  : Fold {nested_spec['outer_holdout_fold']} ({nested_spec['outer_holdout_count']:,} citra - TERISOLASI 100%)")
+    print(f"Inner Train    : Folds {nested_spec['inner_train_folds']} ({nested_spec['inner_train_count']:,} citra)")
+    print(f"Inner Val      : Fold {nested_spec['inner_val_fold']} ({nested_spec['inner_val_count']:,} citra - CHECKPOINT SELECTION)")
+    print(f"Selection Mode : {args.checkpoint_selection_mode}")
+    print(f"Train Epochs   : {args.epochs}")
+    print(f"Batch Size     : {args.batch}")
+    print(f"YAML Path      : {yaml_path}")
+    print("=" * 80)
 
-        weights_dir.mkdir(parents=True, exist_ok=True)
-        trained_best = fold_dir / "train_run" / "weights" / "best.pt"
-        trained_last = fold_dir / "train_run" / "weights" / "last.pt"
+    t_start = time.time()
+    model = YOLO("yolo11n.pt")
 
-        if trained_best.exists():
-            shutil.copy2(trained_best, best_weight_path)
-        if trained_last.exists():
-            shutil.copy2(trained_last, last_weight_path)
+    train_results = model.train(
+        data=str(yaml_path),
+        epochs=args.epochs,
+        imgsz=args.imgsz,
+        batch=args.batch,
+        seed=args.seed,
+        device=args.device,
+        workers=0,
+        project=str(fold_dir),
+        name="train_run",
+        save=True,
+        exist_ok=True,
+        verbose=False,
+        val=True,
+        plots=False,
+    )
 
-        if not eval_weight_path.exists():
-            raise FileNotFoundError(f"Model checkpoint yang dibutuhkan ({eval_weight_path}) tidak ditemukan di {fold_dir}")
+    t_train = time.time() - t_start
+    print(f"[FOLD {fold_id}] Pelatihan selesai dalam {t_train / 60:.2f} menit.")
 
-        del model, train_results
-        import gc
-        gc.collect()
-        if torch.cuda.is_available():
-            torch.cuda.empty_cache()
-    else:
-        print(f"[FOLD {fold_id}] Checkpoint {eval_weight_path.name} ditemukan. Melanjutkan ke inferensi diagnostik.")
+    weights_dir.mkdir(parents=True, exist_ok=True)
+    trained_best = fold_dir / "train_run" / "weights" / "best.pt"
+    trained_last = fold_dir / "train_run" / "weights" / "last.pt"
+
+    if trained_best.exists():
+        shutil.copy2(trained_best, best_weight_path)
+    if trained_last.exists():
+        shutil.copy2(trained_last, last_weight_path)
+
+    if not eval_weight_path.exists():
+        raise FileNotFoundError(f"Model checkpoint yang dibutuhkan ({eval_weight_path}) tidak ditemukan di {fold_dir}")
+
+    checkpoint_sha256 = compute_file_sha256(eval_weight_path)
+
+    del model, train_results
+    import gc
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
 
     # 2. Diagnostic OOF Prediction pada Outer Holdout (@conf=0.001)
     print(f"[FOLD {fold_id}] Menjalankan inferensi diagnostik OOF @ conf = {args.conf_oof} pada OUTER HOLDOUT...")
@@ -643,6 +754,20 @@ def train_and_predict_fold(
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
 
+    # Verify holdout prediction integrity
+    if evaluated_count != len(holdout_filenames):
+        raise ValueError(
+            f"[FOLD {fold_id}] FAIL: Jumlah citra dievaluasi ({evaluated_count}) "
+            f"tidak sama dengan jumlah holdout ({len(holdout_filenames)})!"
+        )
+
+    holdout_set = set(holdout_filenames)
+    foreign_preds = [p["image_id"] for p in predictions if p["image_id"] not in holdout_set]
+    if foreign_preds:
+        raise ValueError(
+            f"[FOLD {fold_id}] FAIL: Ditemukan {len(foreign_preds)} prediksi untuk citra dari luar fold holdout!"
+        )
+
     t_infer = time.time() - t_infer_start
     print(f"[FOLD {fold_id}] Inferensi selesai: {evaluated_count:,} citra diproses, "
           f"{len(predictions):,} bounding box terdeteksi ({t_infer / 60:.2f} menit).")
@@ -657,13 +782,19 @@ def train_and_predict_fold(
         writer.writeheader()
         writer.writerows(predictions)
 
+    pred_csv_sha256 = compute_file_sha256(pred_csv_path)
+
     # 4. Simpan fold_metadata.json
-    expected_metadata["num_predictions"] = len(predictions)
-    expected_metadata["evaluated_images"] = evaluated_count
-    expected_metadata["checkpoint_used"] = str(eval_weight_path.name)
-    expected_metadata["timestamp"] = datetime.now().isoformat()
+    fold_metadata = dict(expected_identity)
+    fold_metadata["checkpoint_sha256"] = checkpoint_sha256
+    fold_metadata["pred_csv_sha256"] = pred_csv_sha256
+    fold_metadata["checkpoint_used"] = str(eval_weight_path.name)
+    fold_metadata["evaluated_images"] = evaluated_count
+    fold_metadata["num_predictions"] = len(predictions)
+    fold_metadata["timestamp"] = datetime.now().isoformat()
+
     with open(metadata_path, "w", encoding="utf-8") as f:
-        json.dump(expected_metadata, f, indent=2)
+        json.dump(fold_metadata, f, indent=2)
 
     print(f"[FOLD {fold_id}] Prediksi dan metadata tersimpan di {fold_dir}")
     return pred_csv_path
@@ -776,10 +907,28 @@ def main():
             ])
     print(f"[OUTPUT] Tersimpan: {nested_assign_path}")
 
+    # Path integrity verification across generated splits
+    is_standardized = bool(args.data_yaml and "standardized" in str(args.data_yaml).lower())
+    for f_id in range(1, 5):
+        spec = nested_specs[f_id]
+        for check_key in ["train_txt", "val_txt", "holdout_txt"]:
+            check_path = spec.get(check_key, "")
+            if check_path and Path(check_path).exists():
+                lines = Path(check_path).read_text(encoding="utf-8").splitlines()
+                if is_standardized:
+                    research_leaks = [l for l in lines if "cassava-v7-research" in l]
+                    if research_leaks:
+                        raise RuntimeError(
+                            f"FATAL INTEGRITY VIOLATION: Split file {check_path} (Fold {f_id}) "
+                            f"contains {len(research_leaks)} paths pointing to historical 'cassava-v7-research'!\n"
+                            f"Contoh: {research_leaks[:3]}"
+                        )
+
     if args.dry_run:
         print("\n" + "=" * 80)
         print("[DRY-RUN] Verifikasi partisi, nested isolation, dan label audit SELESAI (100% SUKSES).")
         print("          Outer holdout 100% terisolasi dari training dan validation YAML.")
+        print(f"          Path dataset terstandarisasi diverifikasi: {is_standardized} (Zero research path leakage).")
         print("=" * 80)
         return
 
@@ -795,6 +944,8 @@ def main():
             annotation_data=annotation_data,
             output_dir=output_dir,
             args=args,
+            images_dir=images_dir,
+            labels_dir=labels_dir,
         )
         fold_pred_files[fold_id] = pred_file
 
@@ -841,17 +992,29 @@ def main():
     print("SAFETY CHECKS PASCA-OOF PROFILING")
     print("=" * 80)
 
-    # Check 1: 8980 unique images assigned
-    if len(image_fold_assignment) != 8980:
-        raise ValueError(f"FAIL: Expected 8980 unique images, got {len(image_fold_assignment)}")
-    print("[SAFETY CHECK 1] Total citra ter-assign: 8.980 (PASS)")
+    actual_image_count = len(annotation_data)
+    expected_benchmark_count = 8980
 
-    # Check 2: 8980 images accounted in evaluated_images
+    # Check 1: Unique images assigned equals dataset inventory
+    if len(image_fold_assignment) != actual_image_count:
+        raise ValueError(
+            f"FAIL: Assigned images count ({len(image_fold_assignment):,}) does not match "
+            f"actual dataset inventory ({actual_image_count:,})!"
+        )
+    if args.data_yaml and "standardized" in str(args.data_yaml).lower():
+        if actual_image_count != expected_benchmark_count:
+            raise ValueError(
+                f"FAIL: Standardized cassava dataset expected {expected_benchmark_count} images, "
+                f"got {actual_image_count}!"
+            )
+    print(f"[SAFETY CHECK 1] Total citra ter-assign: {len(image_fold_assignment):,} (Actual: {actual_image_count:,}, Expected Benchmark: {expected_benchmark_count:,}) (PASS)")
+
+    # Check 2: Images accounted in evaluated_images
     with open(evaluated_img_path, "r", encoding="utf-8") as f:
         eval_rows = list(csv.DictReader(f))
-    if len(eval_rows) != 8980:
-        raise ValueError(f"FAIL: Expected 8980 evaluated images, got {len(eval_rows)}")
-    print("[SAFETY CHECK 2] Total citra dievaluasi OOF: 8.980 (PASS)")
+    if len(eval_rows) != actual_image_count:
+        raise ValueError(f"FAIL: Expected {actual_image_count} evaluated images, got {len(eval_rows)}")
+    print(f"[SAFETY CHECK 2] Total citra dievaluasi OOF: {len(eval_rows):,} (PASS)")
 
     # Check 3: fold_prediction == fold_assignment
     mismatch_count = 0

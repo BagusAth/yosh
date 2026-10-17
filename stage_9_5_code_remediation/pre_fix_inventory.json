@@ -1,0 +1,62 @@
+{
+  "stage_8_1_group_oof_profiling.py": {
+    "sha256": "97841ca06e7847998205ab1b14a92cc87a5c344afe94bc3810171021a02c0311",
+    "size": 38598,
+    "backup_path": "stage_9_5_code_remediation/pre_fix_backup\\stage_8_1_group_oof_profiling.py"
+  },
+  "stage_8_2_build_difficulty_manifest.py": {
+    "sha256": "5251406923a2eadb9901862a1fbb4ee49c088277671f0da5c6362b1488b46f04",
+    "size": 20693,
+    "backup_path": "stage_9_5_code_remediation/pre_fix_backup\\stage_8_2_build_difficulty_manifest.py"
+  },
+  "stage_8_3_adaptive_pipeline.py": {
+    "sha256": "4210cd8f18ab7f925df5f6bed88d28ae40cca0dc0d658150a79c20987d161f71",
+    "size": 23178,
+    "backup_path": "stage_9_5_code_remediation/pre_fix_backup\\stage_8_3_adaptive_pipeline.py"
+  },
+  "stage_8_4_run_ablation_experiments.py": {
+    "sha256": "7765236e62b8f6fd5d45ed1cdd33c06a771dc136d0a6c0ad37dfe7881a4773ac",
+    "size": 16291,
+    "backup_path": "stage_9_5_code_remediation/pre_fix_backup\\stage_8_4_run_ablation_experiments.py"
+  },
+  "stage_8_5_model_selection_and_validation.py": {
+    "sha256": "ba9f1bd8a0d8b4dd861396bbc14a02b102d2bea11f76a07a689dffc415a3b4b4",
+    "size": 15272,
+    "backup_path": "stage_9_5_code_remediation/pre_fix_backup\\stage_8_5_model_selection_and_validation.py"
+  },
+  "stage_8_6_final_test_benchmark.py": {
+    "sha256": "2d92b3c71ef3327c9e7b02ea92517ba7329c353936f47043e3e41eed6d1fae69",
+    "size": 10414,
+    "backup_path": "stage_9_5_code_remediation/pre_fix_backup\\stage_8_6_final_test_benchmark.py"
+  },
+  "stage_7_baseline_and_error_analysis.py": {
+    "sha256": "79d3ed4b7ddef7ae274e045f909f5c210ce660cc238b58ac9ded9bc967107704",
+    "size": 21579,
+    "backup_path": "stage_9_5_code_remediation/pre_fix_backup\\stage_7_baseline_and_error_analysis.py"
+  },
+  "research_utils/detection_metrics.py": {
+    "sha256": "8457b7dc4b35b8ff14584234821203da4bddc72fc80fd2145e1ecf14a68742ac",
+    "size": 17607,
+    "backup_path": "stage_9_5_code_remediation/pre_fix_backup\\research_utils/detection_metrics.py"
+  },
+  "execute_phase_b_standardization.py": {
+    "sha256": "855d8cbe79f88258f0fe153e1d70a68fdaab0e00ff5811fd69cdc6be2e4bb46d",
+    "size": 10677,
+    "backup_path": "stage_9_5_code_remediation/pre_fix_backup\\execute_phase_b_standardization.py"
+  },
+  "run_stage_8_profiling.py": {
+    "sha256": "5c9e7967f0293977d29fd9e035ddf3d42424c92fe56ea15b675556e5e827eb7e",
+    "size": 5458,
+    "backup_path": "stage_9_5_code_remediation/pre_fix_backup\\run_stage_8_profiling.py"
+  },
+  "test_stage_9_3_regression.py": {
+    "sha256": "9dec01c05dce738be2d4a64d708a7d01a94c979cd1fab66c19cb76817da2554c",
+    "size": 22934,
+    "backup_path": "stage_9_5_code_remediation/pre_fix_backup\\test_stage_9_3_regression.py"
+  },
+  "test_stage_9_4_regression.py": {
+    "sha256": "4cb04025d67e733e4904db3c97dfacf9a32aabe5a332fa0fad6d15f0b54ce9ff",
+    "size": 27367,
+    "backup_path": "stage_9_5_code_remediation/pre_fix_backup\\test_stage_9_4_regression.py"
+  }
+}

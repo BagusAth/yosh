@@ -33,9 +33,14 @@ from typing import Any
 
 import torch
 import yaml
+import ultralytics
 from ultralytics import YOLO
 
-from research_utils.detection_metrics import extract_canonical_metrics
+from research_utils.detection_metrics import (
+    compute_file_sha256,
+    compute_dataset_inventory_fingerprint,
+    extract_canonical_metrics,
+)
 from stage_8_3_adaptive_pipeline import AdaptiveDetectionTrainer
 
 CLASS_NAMES = ["CBB", "CBSD", "CGM", "CMD", "HEALTHY"]
@@ -160,6 +165,95 @@ def parse_args():
     return parser.parse_args()
 
 
+def build_experiment_run_identity(
+    exp_id: str,
+    spec: dict[str, Any],
+    script_path: str | Path,
+    yaml_path: str | Path,
+    manifest_path: str | Path,
+    dataset_inventory_fingerprint: str,
+    pretrained_weights_path: str | Path,
+    epochs: int,
+    batch_size: int,
+    imgsz: int,
+    seed: int,
+    device: str = "",
+    checkpoint_best_sha256: str = "",
+) -> dict[str, Any]:
+    """Membangun objek identitas konfigurasi eksperimen ablasi secara kanonis."""
+    p_script = Path(script_path) if script_path else None
+    p_yaml = Path(yaml_path) if yaml_path else None
+    p_manifest = Path(manifest_path) if manifest_path else None
+    p_pre = Path(pretrained_weights_path) if pretrained_weights_path else None
+
+    return {
+        "exp_id": exp_id,
+        "exp_name": spec["name"],
+        "sampling": spec["sampling"],
+        "augmentation": spec["augmentation"],
+        "enable_mixture_sampling": spec["enable_mixture_sampling"],
+        "enable_targeted_aug": spec["enable_targeted_aug"],
+        "epochs": epochs,
+        "batch_size": batch_size,
+        "batch": batch_size,
+        "imgsz": imgsz,
+        "seed": seed,
+        "device": str(device),
+        "model_base": "yolo11n.pt",
+        "script_sha256": compute_file_sha256(p_script) if p_script and p_script.exists() else str(script_path),
+        "data_yaml_sha256": compute_file_sha256(p_yaml) if p_yaml and p_yaml.exists() else str(yaml_path),
+        "manifest_sha256": compute_file_sha256(p_manifest) if (p_manifest and p_manifest.exists() and (spec["enable_mixture_sampling"] or spec["enable_targeted_aug"])) else "",
+        "pretrained_weights_sha256": compute_file_sha256(p_pre) if (p_pre and p_pre.exists()) else "",
+        "pretrained_sha256": compute_file_sha256(p_pre) if (p_pre and p_pre.exists()) else "",
+        "dataset_inventory_fingerprint": dataset_inventory_fingerprint,
+        "best_weight_sha256": checkpoint_best_sha256,
+        "python_version": sys.version.split()[0],
+        "torch_version": torch.__version__,
+        "ultralytics_version": getattr(ultralytics, "__version__", ""),
+    }
+
+
+def verify_ablation_reuse_safety(
+    meta_path: Path,
+    expected_identity: dict[str, Any],
+    checkpoint_best_path: Path,
+) -> tuple[bool, str]:
+    """
+    Memverifikasi apakah artefak ablasi lama valid dan cocok 100% untuk di-skip (--skip-if-done).
+    Memeriksa seluruh field konfigurasi, fingerprint skrip, YAML, manifest, dan bobot pretrained.
+    """
+    if not meta_path.exists():
+        return False, "run_metadata.json not found"
+    if not checkpoint_best_path.exists():
+        return False, "Checkpoint best.pt does not exist"
+
+    try:
+        with open(meta_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        meta = data.get("run_metadata", data)
+    except Exception as e:
+        return False, f"Failed to parse metadata JSON: {e}"
+
+    for k, exp_val in expected_identity.items():
+        if k in ("best_weight_sha256", "duration_minutes", "timestamp", "metrics_validation"):
+            continue
+        if k == "batch_size" and "batch_size" not in meta and "batch" in meta:
+            saved_val = meta["batch"]
+        elif k == "pretrained_weights_sha256" and "pretrained_weights_sha256" not in meta and "pretrained_sha256" in meta:
+            saved_val = meta["pretrained_sha256"]
+        else:
+            saved_val = meta.get(k)
+        if saved_val != exp_val:
+            return False, f"{k} mismatch: saved={saved_val} vs exp={exp_val}"
+
+    actual_best_sha = compute_file_sha256(checkpoint_best_path)
+    saved_best_sha = meta.get("best_weight_sha256", "")
+    if not saved_best_sha or actual_best_sha != saved_best_sha:
+        return False, f"best.pt hash mismatch: saved={saved_best_sha[:8]} vs actual={actual_best_sha[:8]}"
+
+    return True, "Ablation run verified and safe for reuse"
+
+
 def run_single_experiment(exp_idx: int, args) -> dict[str, Any]:
     """Menjalankan satu eksperimen ablasi (EXP-0, EXP-1, EXP-2, atau EXP-3)."""
     spec = EXPERIMENT_SPECS[exp_idx]
@@ -178,30 +272,56 @@ def run_single_experiment(exp_idx: int, args) -> dict[str, Any]:
     summary_json_path = exp_dir / "metrics_summary.json"
     best_weight_path = exp_dir / "weights" / "best.pt"
 
-    script_sha256 = compute_file_sha256(__file__)
-    data_yaml_sha256 = compute_file_sha256(args.data_yaml)
-    manifest_sha256 = compute_file_sha256(args.manifest_path) if spec["enable_mixture_sampling"] or spec["enable_targeted_aug"] else ""
+    dataset_inv_sha = ""
+    try:
+        yaml_p = Path(args.data_yaml).resolve()
+        if yaml_p.exists():
+            with open(yaml_p, "r", encoding="utf-8") as f:
+                dy = yaml.safe_load(f)
+            base_p = Path(dy["path"]).resolve() if "path" in dy and dy["path"] else yaml_p.parent
+            tr_p = (base_p / dy.get("train", "train/images")).resolve()
+            im_dir = tr_p if tr_p.name == "images" else tr_p / "images"
+            lbl_dir = im_dir.parent / "labels"
+            dataset_inv_sha = compute_dataset_inventory_fingerprint(im_dir, lbl_dir)
+    except Exception:
+        pass
 
-    # Check for valid skip
+    expected_identity = build_experiment_run_identity(
+        exp_id=spec["id"],
+        spec=spec,
+        script_path=__file__,
+        yaml_path=args.data_yaml,
+        manifest_path=args.manifest_path,
+        dataset_inventory_fingerprint=dataset_inv_sha,
+        pretrained_weights_path="yolo11n.pt",
+        epochs=args.epochs,
+        batch_size=args.batch,
+        imgsz=args.imgsz,
+        seed=args.seed,
+        device=str(args.device),
+    )
+
+    # Strict Fingerprint and Artifact Verification for --skip-if-done
     if args.skip_if_done and summary_json_path.exists() and best_weight_path.exists():
-        try:
+        can_reuse, reason = verify_ablation_reuse_safety(
+            meta_path=summary_json_path,
+            expected_identity=expected_identity,
+            checkpoint_best_path=best_weight_path,
+        )
+        if can_reuse:
+            print(f"[{spec['id']}] Artefak dan seluruh metadata checksum terverifikasi cocok 100%. Melewati pelatihan.")
             with open(summary_json_path, "r", encoding="utf-8") as f:
-                saved = json.load(f)
-            meta = saved.get("run_metadata", {})
-            match = (
-                meta.get("epochs") == args.epochs and
-                meta.get("batch") == args.batch and
-                meta.get("imgsz") == args.imgsz and
-                meta.get("seed") == args.seed and
-                meta.get("data_yaml_sha256") == data_yaml_sha256
-            )
-            if match:
-                print(f"[{spec['id']}] Artefak dan metadata checksum cocok. Melewati pelatihan.")
-                return saved
-            else:
-                print(f"[{spec['id']}] WARNING: Metadata lama tidak cocok dengan parameter saat ini. Menjalankan ulang...")
-        except Exception as e:
-            print(f"[{spec['id']}] WARNING: Gagal memverifikasi metadata ({e}). Menjalankan ulang...")
+                return json.load(f)
+        else:
+            print(f"[{spec['id']}] WARNING: Metadata lama tidak cocok dengan parameter saat ini ({reason}). Menolak skip...")
+
+    # Guard against overwriting unverified / mismatched existing checkpoint
+    if best_weight_path.exists():
+        raise PermissionError(
+            f"[{spec['id']}] SAFETY VIOLATION: Checkpoint '{best_weight_path}' sudah ada di folder tujuan tetapi gagal verifikasi metadata/fingerprint!\n"
+            "Penimpaan ke direktori dengan artefak yang tidak cocok dilarang keras.\n"
+            "Harap gunakan folder --output-dir baru yang bersih."
+        )
 
     print("\n" + "=" * 80)
     print(f"MEMULAI EKSPERIMEN: {spec['id']} — {spec['title']}")
@@ -268,6 +388,11 @@ def run_single_experiment(exp_idx: int, args) -> dict[str, Any]:
     # Use canonical extract_canonical_metrics from research_utils
     canonical_m = extract_canonical_metrics(val_metrics, CLASS_NAMES)
 
+    best_weight_sha256 = compute_file_sha256(best_weight_path)
+
+    run_meta = dict(expected_identity)
+    run_meta["best_weight_sha256"] = best_weight_sha256
+
     summary = {
         "exp_id": spec["id"],
         "name": spec["name"],
@@ -287,18 +412,9 @@ def run_single_experiment(exp_idx: int, args) -> dict[str, Any]:
             "per_class_mAP50": canonical_m["per_class_ap50"],
         },
         "best_weight_path": str(best_weight_path),
+        "best_weight_sha256": best_weight_sha256,
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "run_metadata": {
-            "epochs": args.epochs,
-            "batch": args.batch,
-            "imgsz": args.imgsz,
-            "seed": args.seed,
-            "device": args.device,
-            "script_sha256": script_sha256,
-            "data_yaml_sha256": data_yaml_sha256,
-            "manifest_sha256": manifest_sha256,
-            "torch_version": torch.__version__,
-        },
+        "run_metadata": run_meta,
     }
 
     with open(summary_json_path, "w", encoding="utf-8") as f:

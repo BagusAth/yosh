@@ -36,6 +36,7 @@ from ultralytics import YOLO
 from research_utils.detection_metrics import (
     classify_object_size,
     extract_canonical_metrics,
+    get_image_dimensions,
     greedy_bipartite_matching,
     parse_yolo_labels,
 )
@@ -109,7 +110,8 @@ def evaluate_test_set(
     gt_dict = {}
     for img_path in test_images:
         lbl_path = test_lbl_dir / f"{img_path.stem}.txt"
-        gt_objs = parse_yolo_labels(lbl_path, img_width=640.0, img_height=640.0)
+        img_w, img_h = get_image_dimensions(img_path)
+        gt_objs = parse_yolo_labels(lbl_path, img_width=img_w, img_height=img_h)
         gt_dict[img_path.name] = gt_objs
         for gt in gt_objs:
             total_gt += 1

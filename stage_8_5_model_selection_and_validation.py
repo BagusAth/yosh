@@ -39,6 +39,7 @@ from ultralytics import YOLO
 
 from research_utils.detection_metrics import (
     classify_object_size,
+    get_image_dimensions,
     greedy_bipartite_matching,
     parse_yolo_labels,
     select_best_model,
@@ -99,7 +100,8 @@ def evaluate_model_on_validation(
     gt_dict = {}
     for img_path in val_images:
         lbl_path = val_lbl_dir / f"{img_path.stem}.txt"
-        gt_objs = parse_yolo_labels(lbl_path, img_width=640.0, img_height=640.0)
+        img_w, img_h = get_image_dimensions(img_path)
+        gt_objs = parse_yolo_labels(lbl_path, img_width=img_w, img_height=img_h)
         gt_dict[img_path.name] = gt_objs
         for gt in gt_objs:
             total_gt += 1

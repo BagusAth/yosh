@@ -42,6 +42,7 @@ from research_utils.detection_metrics import (
     calculate_mixture_weights,
     calculate_object_difficulty,
     classify_object_size,
+    get_image_dimensions,
     greedy_bipartite_matching,
     parse_yolo_labels,
 )
@@ -136,7 +137,7 @@ def resolve_train_paths(args) -> tuple[Path, Path]:
 
 
 def load_ground_truth(images_dir: Path, labels_dir: Path) -> dict[str, list[dict]]:
-    """Membaca seluruh ground truth objek menggunakan parse_yolo_labels kanonis."""
+    """Membaca seluruh ground truth objek menggunakan parse_yolo_labels kanonis dengan dimensi citra aktual."""
     image_files = sorted(os.listdir(images_dir))
     gt_by_image = {}
     total_gt_objects = 0
@@ -144,9 +145,10 @@ def load_ground_truth(images_dir: Path, labels_dir: Path) -> dict[str, list[dict
     for fname in image_files:
         stem = Path(fname).stem
         lbl_file = labels_dir / f"{stem}.txt"
+        img_file = images_dir / fname
 
-        # parse_yolo_labels supports dynamic width/height
-        parsed_objs = parse_yolo_labels(lbl_file, img_width=640.0, img_height=640.0)
+        img_w, img_h = get_image_dimensions(img_file)
+        parsed_objs = parse_yolo_labels(lbl_file, img_width=img_w, img_height=img_h)
         objects = []
         for obj_id, po in enumerate(parsed_objs):
             box_xyxy = po["box"].tolist() if isinstance(po["box"], np.ndarray) else list(po["box"])
@@ -169,6 +171,8 @@ def load_ground_truth(images_dir: Path, labels_dir: Path) -> dict[str, list[dict
                 "area_px": area_px,
                 "size_cat": size_cat,
                 "size_score": size_score,
+                "img_width": img_w,
+                "img_height": img_h,
             })
             total_gt_objects += 1
 
@@ -306,6 +310,8 @@ def process_difficulty_manifest(
                         "d_i": d_i,
                         "box": g["box_xyxy"],
                         "class_id": gt_cls,
+                        "img_width": g.get("img_width", 640.0),
+                        "img_height": g.get("img_height", 640.0),
                     })
 
                 object_rows.append({
@@ -338,18 +344,33 @@ def process_difficulty_manifest(
     n_images = len(all_d_images_raw)
     for idx, (fname, d_image, has_gt, target_smalls) in enumerate(all_d_images_raw):
         p_mixture = p_weights[idx]
+        gts_for_img = gt_by_image.get(fname, [])
+        first_gt = gts_for_img[0] if gts_for_img else {}
+        base_w = int(first_gt.get("img_width", 640))
+        base_h = int(first_gt.get("img_height", 640))
 
         if target_smalls:
             best_small = max(target_smalls, key=lambda x: x["d_i"])
             target_small_exists = 1
             target_gt_id = best_small["gt_id"]
-            target_box = ",".join(f"{v:.1f}" for v in best_small["box"])
+            im_w = float(best_small.get("img_width", base_w))
+            im_h = float(best_small.get("img_height", base_h))
+            bx1, by1, bx2, by2 = best_small["box"]
+            nbx1 = max(0.0, min(1.0, bx1 / im_w))
+            nby1 = max(0.0, min(1.0, by1 / im_h))
+            nbx2 = max(0.0, min(1.0, bx2 / im_w))
+            nby2 = max(0.0, min(1.0, by2 / im_h))
+            target_box = f"{nbx1:.6f},{nby1:.6f},{nbx2:.6f},{nby2:.6f}"
             target_d_i = f"{best_small['d_i']:.4f}"
+            box_fmt = "norm_xyxy"
+            row_w, row_h = int(im_w), int(im_h)
         else:
             target_small_exists = 0
             target_gt_id = -1
             target_box = ""
             target_d_i = "0.0000"
+            box_fmt = ""
+            row_w, row_h = base_w, base_h
 
         image_rows.append({
             "image_id": fname,
@@ -360,6 +381,9 @@ def process_difficulty_manifest(
             "target_gt_id": target_gt_id,
             "target_small_di": target_d_i,
             "target_small_box": target_box,
+            "box_format": box_fmt,
+            "img_width": row_w,
+            "img_height": row_h,
         })
 
     # Simpan train_object_difficulty.csv
@@ -379,7 +403,8 @@ def process_difficulty_manifest(
     with open(img_csv_path, "w", newline="", encoding="utf-8") as f:
         fieldnames = [
             "image_id", "d_image", "p_sampling", "has_gt", "has_target_small",
-            "target_gt_id", "target_small_di", "target_small_box"
+            "target_gt_id", "target_small_di", "target_small_box",
+            "box_format", "img_width", "img_height"
         ]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()

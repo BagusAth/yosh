@@ -100,6 +100,9 @@ def load_difficulty_manifest(manifest_path: str | Path) -> dict[str, dict]:
                 "target_gt_id": tgt_gt_id,
                 "target_small_di": tgt_di,
                 "target_small_box": tgt_box,
+                "box_format": row.get("box_format", ""),
+                "img_width": row.get("img_width", ""),
+                "img_height": row.get("img_height", ""),
             }
 
     return records
@@ -141,6 +144,7 @@ class AdaptiveYOLODataset(YOLODataset):
         if manifest_path:
             self.manifest_data = load_difficulty_manifest(manifest_path)
 
+        kwargs.pop("enable_mixture_sampling", None)
         super().__init__(*args, hyp=hyp, **kwargs)
 
         # Fail-fast validation: jika augmentasi terarah aktif, seluruh citra HARUS ada dalam manifest
@@ -206,8 +210,12 @@ class AdaptiveYOLODataset(YOLODataset):
             raise ValueError("Ditemukan bobot sampling <= 0 pada mixture sampler!")
 
         sum_w = weights_tensor.sum().item()
-        if abs(sum_w - 1.0) > 1e-3:
-            LOGGER.warning(f"[SAMPLER] sum(P) = {sum_w:.6f} berbeda dari 1.0, melakukan re-normalisasi.")
+        if abs(sum_w - 1.0) > 0.005:
+            raise ValueError(
+                f"FATAL: Total mixture sampling weights sum(P) = {sum_w:.6f} "
+                f"menyimpang dari 1.0 melebihi batas toleransi 0.005! Manifest tidak valid."
+            )
+        elif abs(sum_w - 1.0) > 1e-5:
             weights_tensor = weights_tensor / sum_w
 
         return weights_tensor
@@ -219,8 +227,17 @@ class AdaptiveYOLODataset(YOLODataset):
         - Memperluas 2x bbox lesi target i* untuk konteks morfologi daun.
         - Mempertahankan lesi lain yang beririsan dengan visibilitas >= 0.30.
         - Resize patch ke resolusi input model (hyp.imgsz).
+        - Menjamin kontrak satuan koordinat (norm_xyxy vs pixel_xyxy dengan metadata dimensi,
+          atau format historis legacy_640).
         """
         img = label.get("img")
+        if img is None and "im_file" in label:
+            im_path = Path(label["im_file"])
+            if im_path.exists():
+                img = cv2.imread(str(im_path))
+                if img is not None:
+                    label["img"] = img
+
         if img is None:
             self.crop_diagnostics["invalid_box_skips"] += 1
             return label
@@ -251,16 +268,40 @@ class AdaptiveYOLODataset(YOLODataset):
             return label
 
         raw_bx1, raw_by1, raw_bx2, raw_by2 = parts
-        if max(raw_bx1, raw_by1, raw_bx2, raw_by2) <= 1.01:
-            bx1 = raw_bx1 * W
-            by1 = raw_by1 * H
-            bx2 = raw_bx2 * W
-            by2 = raw_by2 * H
-        else:
+        box_format = str(target_info.get("box_format", "")).strip().lower()
+
+        # Strict unit contract check:
+        if box_format == "norm_xyxy" or (not box_format and max(raw_bx1, raw_by1, raw_bx2, raw_by2) <= 1.001):
+            if raw_bx1 < -0.01 or raw_by1 < -0.01 or raw_bx2 > 1.01 or raw_by2 > 1.01:
+                self.crop_diagnostics["invalid_box_skips"] += 1
+                return label
+            bx1 = max(0.0, min(1.0, raw_bx1)) * W
+            by1 = max(0.0, min(1.0, raw_by1)) * H
+            bx2 = max(0.0, min(1.0, raw_bx2)) * W
+            by2 = max(0.0, min(1.0, raw_by2)) * H
+        elif box_format == "pixel_xyxy" or "img_width" in target_info:
+            try:
+                orig_w = float(target_info.get("img_width", 0))
+                orig_h = float(target_info.get("img_height", 0))
+            except (ValueError, TypeError):
+                orig_w, orig_h = 0.0, 0.0
+            if orig_w <= 0.0 or orig_h <= 0.0:
+                self.crop_diagnostics["invalid_box_skips"] += 1
+                return label
+            bx1 = raw_bx1 * (W / orig_w)
+            by1 = raw_by1 * (H / orig_h)
+            bx2 = raw_bx2 * (W / orig_w)
+            by2 = raw_by2 * (H / orig_h)
+        elif box_format in ("legacy_640", "legacy_pixel_640") or (not box_format and max(raw_bx1, raw_by1, raw_bx2, raw_by2) > 1.001):
+            # Format historis Stage 8.2 / regresi Stage 9.3: koordinat pixel pada kanvas standar 640x640
             bx1 = raw_bx1 * (W / 640.0)
             by1 = raw_by1 * (H / 640.0)
             bx2 = raw_bx2 * (W / 640.0)
             by2 = raw_by2 * (H / 640.0)
+        else:
+            # Tolak input ambigu yang tidak memiliki metadata dimensi atau format kontrak eksplisit
+            self.crop_diagnostics["invalid_box_skips"] += 1
+            return label
 
         bw = bx2 - bx1
         bh = by2 - by1

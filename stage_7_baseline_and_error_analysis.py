@@ -37,85 +37,17 @@ from pathlib import Path
 
 import numpy as np
 
-CLASS_NAMES = ["CBB", "CBSD", "CGM", "CMD", "HEALTHY"]
+from research_utils.detection_metrics import (
+    calculate_iou_xyxy,
+    classify_object_size,
+    parse_yolo_labels,
+    greedy_bipartite_matching,
+    calculate_object_difficulty,
+    get_image_dimensions,
+    CLASS_NAMES,
+)
 
-
-def calculate_iou_xyxy(box1: np.ndarray, box2: np.ndarray) -> float:
-    """Calculates IoU between two [x1, y1, x2, y2] boxes."""
-    x1 = max(box1[0], box2[0])
-    y1 = max(box1[1], box2[1])
-    x2 = min(box1[2], box2[2])
-    y2 = min(box1[3], box2[3])
-
-    inter_w = max(0.0, x2 - x1)
-    inter_h = max(0.0, y2 - y1)
-    inter_area = inter_w * inter_h
-
-    area1 = max(0.0, box1[2] - box1[0]) * max(0.0, box1[3] - box1[1])
-    area2 = max(0.0, box2[2] - box2[0]) * max(0.0, box2[3] - box2[1])
-
-    union = area1 + area2 - inter_area
-    if union <= 0:
-        return 0.0
-    return float(inter_area / union)
-
-
-def parse_yolo_labels(lbl_path: Path, img_width: float = 640.0, img_height: float = 640.0) -> list[dict]:
-    """Parses YOLO label txt file into list of bounding boxes using dynamic image dimensions."""
-    if not lbl_path.exists():
-        return []
-    objects = []
-    lines = lbl_path.read_text(encoding="utf-8").splitlines()
-    for line in lines:
-        line = line.strip()
-        if not line:
-            continue
-        parts = line.split()
-        try:
-            cid = int(parts[0])
-            coords = [float(x) for x in parts[1:]]
-        except ValueError:
-            continue
-        if len(coords) < 4:
-            continue
-
-        if len(coords) == 4:
-            xc, yc, w, h = coords
-            x1 = max(0.0, (xc - w / 2) * img_width)
-            y1 = max(0.0, (yc - h / 2) * img_height)
-            x2 = min(img_width, (xc + w / 2) * img_width)
-            y2 = min(img_height, (yc + h / 2) * img_height)
-        else:
-            xs = [coords[i] * img_width for i in range(0, len(coords), 2)]
-            ys = [coords[i + 1] * img_height for i in range(0, len(coords), 2)]
-            x1 = max(0.0, min(xs))
-            y1 = max(0.0, min(ys))
-            x2 = min(img_width, max(xs))
-            y2 = min(img_height, max(ys))
-
-        box_w = max(0.0, x2 - x1)
-        box_h = max(0.0, y2 - y1)
-        area = box_w * box_h
-
-        if area < 32 * 32:
-            size_cat = "Small"
-            size_penalty = 1.0
-        elif area < 96 * 96:
-            size_cat = "Medium"
-            size_penalty = 0.5
-        else:
-            size_cat = "Large"
-            size_penalty = 0.0
-
-        objects.append({
-            "class_id": cid,
-            "class_name": CLASS_NAMES[cid] if 0 <= cid < len(CLASS_NAMES) else f"class_{cid}",
-            "box": np.array([x1, y1, x2, y2], dtype=np.float32),
-            "area": area,
-            "size_category": size_cat,
-            "size_penalty": size_penalty,
-        })
-    return objects
+EVALUATOR_VERSION = "Stage-9.5-Canonical-v1"
 
 
 def main():
@@ -291,7 +223,8 @@ def main():
     t0_eval = time.time()
     for idx, img_path in enumerate(val_images):
         lbl_path = val_lbl_dir / f"{img_path.stem}.txt"
-        gt_objects = parse_yolo_labels(lbl_path)
+        img_w, img_h = get_image_dimensions(img_path)
+        gt_objects = parse_yolo_labels(lbl_path, img_width=img_w, img_height=img_h)
 
         # Run inference
         preds = val_model.predict(
@@ -307,57 +240,39 @@ def main():
         pred_scores = preds.boxes.conf.cpu().numpy() if len(preds.boxes) else np.empty((0,))
         pred_classes = preds.boxes.cls.cpu().numpy().astype(int) if len(preds.boxes) else np.empty((0,), dtype=int)
 
-        # One-to-one bipartite greedy matching (descending IoU)
-        candidate_matches = []
-        for gt_idx, gt in enumerate(gt_objects):
-            for p_idx in range(len(pred_boxes)):
-                iou = calculate_iou_xyxy(gt["box"], pred_boxes[p_idx])
-                if iou >= 0.10:
-                    candidate_matches.append((iou, gt_idx, p_idx))
-
-        # Sort candidate matches by IoU descending to prioritize strongest overlaps
-        candidate_matches.sort(key=lambda x: x[0], reverse=True)
-
-        matched_gt_map = {}  # gt_idx -> (p_idx, iou)
-        assigned_preds = set()
-        for iou, gt_idx, p_idx in candidate_matches:
-            if gt_idx not in matched_gt_map and p_idx not in assigned_preds:
-                matched_gt_map[gt_idx] = (p_idx, iou)
-                assigned_preds.add(p_idx)
+        # Canonical one-to-one bipartite greedy matching (descending IoU globally)
+        match_res = greedy_bipartite_matching(
+            gt_objects=gt_objects,
+            pred_boxes=pred_boxes,
+            pred_classes=pred_classes,
+            pred_scores=pred_scores,
+            iou_thresh=0.10,
+            tp_iou_thresh=0.50,
+        )
 
         img_di_scores = []
-        for gt_idx, gt in enumerate(gt_objects):
-            gt_box = gt["box"]
-            gt_cid = gt["class_id"]
+        for a in match_res["gt_assignments"]:
+            gt_idx = a["gt_idx"]
+            gt = gt_objects[gt_idx]
             gt_cname = gt["class_name"]
-            size_cat = gt["size_category"]
-            size_penalty = gt["size_penalty"]
+            size_cat = a["size_category"]
+            size_penalty = a["size_penalty"]
+            error_type = a["error_type"]
+            iou = a["iou"]
+            conf = a["conf"] if a["is_correct_class"] else 0.0
 
-            if gt_idx in matched_gt_map:
-                best_p_idx, best_iou = matched_gt_map[gt_idx]
-                p_cid = pred_classes[best_p_idx]
-                conf = float(pred_scores[best_p_idx])
-                iou = best_iou
-
-                if iou >= 0.5 and p_cid == gt_cid:
-                    error_type = "True_Positive"
-                elif iou >= 0.5 and p_cid != gt_cid:
-                    error_type = "Classification_Confusion"
-                    conf = 0.0  # Conf for correct class is 0
-                elif 0.1 <= iou < 0.5 and p_cid == gt_cid:
-                    error_type = "Localization_Error"
-                else:
-                    error_type = "Localization_and_Class_Error"
-                    conf = 0.0
-            else:
-                # Missed detection completely
-                error_type = "False_Negative_Missed"
-                conf = 0.0
-                iou = 0.0
-
-            # Calculate Difficulty Score Di
-            di = w1 * (1.0 - conf) + w2 * (1.0 - iou) + w3 * size_penalty
-            di = max(0.0, min(1.0, float(di)))
+            # Calculate Difficulty Score Di using canonical formula
+            di = calculate_object_difficulty(
+                matched=(a["matched_pred_idx"] >= 0),
+                conf=a["conf"],
+                iou=iou,
+                size_penalty=size_penalty,
+                correct_class=a["is_correct_class"],
+                confusion_penalty=0.35,
+                w1=w1,
+                w2=w2,
+                w3=w3,
+            )
             img_di_scores.append(di)
 
             # Assign Difficulty Tier
@@ -383,10 +298,9 @@ def main():
                 "difficulty_tier": tier,
             })
 
-        # Count False Positives (predictions with no matching GT)
-        for p_idx in range(len(pred_boxes)):
-            if p_idx not in matched_preds:
-                error_type_counter["False_Positive_Hallucination"] += 1
+        # Count False Positives (predictions with no matching GT) using canonical unassigned_preds
+        unassigned_count = len(match_res["unassigned_preds"])
+        error_type_counter["False_Positive_Hallucination"] += unassigned_count
 
         # Image-level difficulty aggregation
         mean_di = float(np.mean(img_di_scores)) if img_di_scores else 0.0
