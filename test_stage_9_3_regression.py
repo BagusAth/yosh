@@ -33,7 +33,7 @@ from pathlib import Path
 from collections import Counter, defaultdict
 
 # Add workspace root to sys.path
-WORKSPACE_DIR = Path("d:/UNDIP/SKRIPSI").resolve()
+WORKSPACE_DIR = Path(__file__).resolve().parent
 if str(WORKSPACE_DIR) not in sys.path:
     sys.path.insert(0, str(WORKSPACE_DIR))
 

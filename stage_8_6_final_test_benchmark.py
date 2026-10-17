@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 """
-Stage 8.6 — One-Door Locked Test Set Final Benchmark & Thesis Chapter 4 Report
-==============================================================================
+Stage 8.6 — One-Door Locked Test Set Final Benchmark (Hardened)
+==============================================================
 
 Tujuan Metodologis:
-1. Membuka pintu evaluasi akhir pada Locked Test Set (1.282 citra).
-2. Mengevaluasi seluruh varian eksperimen ablasi (EXP-0 s.d. EXP-3) satu kali saja
-   tanpa iterasi berulang (zero test leakage / unbiased test benchmark).
-3. Mengekstrak metrik performa objektif:
-   - Precision, Recall, mAP@50, mAP@50-95
-   - Performa per-kelas (CBB, CBSD, CGM, CMD, HEALTHY)
-   - Dekomposisi taksonomi error (TP, Missed FN, Confusion, Loc Error)
-4. Menghasilkan tabel komparasi final dan narasi komprehensif untuk Bab 4 Skripsi.
+1. Membuka pintu evaluasi akhir pada Locked Test Set (1.282 citra) hanya dengan konfirmasi eksplisit.
+2. Mengevaluasi varian eksperimen ablasi secara objektif tanpa data snooping.
+3. Menggunakan evaluasi kanonis terpadu dari research_utils.detection_metrics:
+   - extract_canonical_metrics (pemisahan kanonis AP@50 dan AP@50-95 per kelas)
+   - greedy_bipartite_matching (Global 1-to-1 bipartite greedy matching pada IoU >= 0.10, zero reuse)
+   - classify_object_size (Small < 32^2, Medium 32^2-96^2, Large >= 96^2)
+   - parse_yolo_labels (dimensi dinamis)
+4. Menghitung dekomposisi error berstrata ukuran: Small, Medium, Large (GT, TP, Recall).
+5. Single Source of Truth: Menentukan direktori test images dan labels secara dinamis dari --data-yaml.
 """
 
 from __future__ import annotations
@@ -29,83 +30,47 @@ from typing import Any
 
 import numpy as np
 import torch
+import yaml
 from ultralytics import YOLO
+
+from research_utils.detection_metrics import (
+    classify_object_size,
+    extract_canonical_metrics,
+    greedy_bipartite_matching,
+    parse_yolo_labels,
+)
 
 CLASS_NAMES = ["CBB", "CBSD", "CGM", "CMD", "HEALTHY"]
 
 
-def calculate_iou_xyxy(box1: np.ndarray, box2: np.ndarray) -> float:
-    """Menghitung IoU antara dua bounding box [x1, y1, x2, y2]."""
-    x1 = max(box1[0], box2[0])
-    y1 = max(box1[1], box2[1])
-    x2 = min(box1[2], box2[2])
-    y2 = min(box1[3], box2[3])
+def resolve_test_paths(data_yaml_path: str | Path) -> tuple[Path, Path]:
+    """Menentukan direktori test images dan labels secara dinamis dari data.yaml."""
+    yaml_p = Path(data_yaml_path).resolve()
+    if not yaml_p.exists():
+        raise FileNotFoundError(f"data.yaml tidak ditemukan di {yaml_p}")
 
-    inter_w = max(0.0, x2 - x1)
-    inter_h = max(0.0, y2 - y1)
-    inter_area = inter_w * inter_h
+    with open(yaml_p, "r", encoding="utf-8") as f:
+        data_cfg = yaml.safe_load(f)
 
-    area1 = max(0.0, box1[2] - box1[0]) * max(0.0, box1[3] - box1[1])
-    area2 = max(0.0, box2[2] - box2[0]) * max(0.0, box2[3] - box2[1])
+    base_path = yaml_p.parent
+    if "path" in data_cfg and data_cfg["path"]:
+        base_path = Path(data_cfg["path"]).resolve()
 
-    union = area1 + area2 - inter_area
-    if union <= 0:
-        return 0.0
-    return float(inter_area / union)
+    test_entry = data_cfg.get("test", "test/images")
+    test_path = (base_path / test_entry).resolve()
+    if test_path.name == "images":
+        test_img_dir = test_path
+        test_lbl_dir = test_path.parent / "labels"
+    else:
+        test_img_dir = test_path / "images"
+        test_lbl_dir = test_path / "labels"
 
+    if not test_img_dir.exists():
+        raise FileNotFoundError(f"Direktori citra test tidak ditemukan: {test_img_dir}")
+    if not test_lbl_dir.exists():
+        raise FileNotFoundError(f"Direktori label test tidak ditemukan: {test_lbl_dir}")
 
-def parse_yolo_labels(lbl_path: Path, img_width: float = 640.0, img_height: float = 640.0) -> list[dict]:
-    """Membaca anotasi test set YOLO (dengan konversi poligon jika ada) menggunakan dimensi dinamis."""
-    if not lbl_path.exists():
-        return []
-    objects = []
-    lines = lbl_path.read_text(encoding="utf-8").splitlines()
-    for line in lines:
-        line = line.strip()
-        if not line:
-            continue
-        parts = line.split()
-        try:
-            cid = int(parts[0])
-            coords = [float(x) for x in parts[1:]]
-        except ValueError:
-            continue
-        if len(coords) < 4:
-            continue
-
-        if len(coords) == 4:
-            xc, yc, w, h = coords
-            x1 = max(0.0, (xc - w / 2) * img_width)
-            y1 = max(0.0, (yc - h / 2) * img_height)
-            x2 = min(img_width, (xc + w / 2) * img_width)
-            y2 = min(img_height, (yc + h / 2) * img_height)
-        else:
-            xs = [coords[i] * img_width for i in range(0, len(coords), 2)]
-            ys = [coords[i + 1] * img_height for i in range(0, len(coords), 2)]
-            x1 = max(0.0, min(xs))
-            y1 = max(0.0, min(ys))
-            x2 = min(img_width, max(xs))
-            y2 = min(img_height, max(ys))
-
-        box_w = max(0.0, x2 - x1)
-        box_h = max(0.0, y2 - y1)
-        area = box_w * box_h
-
-        if area < 32 * 32:
-            size_cat = "Small"
-        elif area < 96 * 96:
-            size_cat = "Medium"
-        else:
-            size_cat = "Large"
-
-        objects.append({
-            "class_id": cid,
-            "class_name": CLASS_NAMES[cid] if 0 <= cid < len(CLASS_NAMES) else f"class_{cid}",
-            "box": np.array([x1, y1, x2, y2], dtype=np.float32),
-            "area": area,
-            "size_category": size_cat,
-        })
-    return objects
+    return test_img_dir, test_lbl_dir
 
 
 def evaluate_test_set(
@@ -117,7 +82,7 @@ def evaluate_test_set(
     iou_thresh: float = 0.45,
     chunk_size: int = 32,
 ) -> dict[str, Any]:
-    """Mengevaluasi model pada test set via Ultralytics val() dan greedy matching."""
+    """Mengevaluasi model pada test set via Ultralytics val() kanonis dan greedy bipartite matching."""
     model = YOLO(str(model_path))
 
     # 1. Ultralytics official test split evaluation
@@ -126,31 +91,13 @@ def evaluate_test_set(
         split="test",
         batch=16,
         imgsz=640,
-        device="0",
+        device="0" if torch.cuda.is_available() else "cpu",
         plots=False,
         verbose=False,
     )
 
-    precision = float(val_res.box.mp)
-    recall = float(val_res.box.mr)
-    map50 = float(val_res.box.map50)
-    map50_95 = float(val_res.box.map)
-
-    # Ekstrak per-class AP@50 dan AP@50-95 secara terpisah dan kanonis
-    per_class_ap50 = {}
-    per_class_map50_95 = {}
-
-    if hasattr(val_res.box, "ap50") and val_res.box.ap50 is not None:
-        ap50_arr = val_res.box.ap50
-        ap_class_idx = list(val_res.box.ap_class_index) if hasattr(val_res.box, "ap_class_index") else list(range(len(ap50_arr)))
-        for i, c_idx in enumerate(ap_class_idx):
-            if c_idx < len(CLASS_NAMES) and i < len(ap50_arr):
-                per_class_ap50[CLASS_NAMES[c_idx]] = float(ap50_arr[i])
-
-    if hasattr(val_res.box, "maps") and val_res.box.maps is not None:
-        for idx, cname in enumerate(CLASS_NAMES):
-            if idx < len(val_res.box.maps):
-                per_class_map50_95[cname] = float(val_res.box.maps[idx])
+    # Canonical metrics extraction
+    canonical_m = extract_canonical_metrics(val_res, CLASS_NAMES)
 
     # 2. Granular error decomposition on Test Set
     test_images = sorted(list(test_img_dir.glob("*.jpg")))
@@ -162,7 +109,7 @@ def evaluate_test_set(
     gt_dict = {}
     for img_path in test_images:
         lbl_path = test_lbl_dir / f"{img_path.stem}.txt"
-        gt_objs = parse_yolo_labels(lbl_path)
+        gt_objs = parse_yolo_labels(lbl_path, img_width=640.0, img_height=640.0)
         gt_dict[img_path.name] = gt_objs
         for gt in gt_objs:
             total_gt += 1
@@ -177,43 +124,37 @@ def evaluate_test_set(
             conf=conf_thresh,
             iou=iou_thresh,
             imgsz=640,
-            device="0",
+            device="0" if torch.cuda.is_available() else "cpu",
             verbose=False,
         )
 
         for img_path, pred_res in zip(chunk, preds):
             gt_objs = gt_dict[img_path.name]
-            det_boxes = []
-            det_cls = []
+            pred_boxes = []
+            pred_cls = []
 
             if pred_res.boxes is not None and len(pred_res.boxes) > 0:
-                det_boxes = pred_res.boxes.xyxy.cpu().numpy()
-                det_cls = pred_res.boxes.cls.cpu().numpy().astype(int)
+                pred_boxes = pred_res.boxes.xyxy.cpu().numpy()
+                pred_cls = pred_res.boxes.cls.cpu().numpy().astype(int)
 
-            matched_det = set()
+            gt_boxes = [g["box"] for g in gt_objs]
+            # Canonical greedy bipartite matching from research_utils
+            matches, unassigned_preds = greedy_bipartite_matching(
+                gt_boxes=gt_boxes,
+                pred_boxes=pred_boxes,
+                iou_thresh=0.10,
+            )
 
-            for gt in gt_objs:
-                gt_box = gt["box"]
+            for g_idx, gt in enumerate(gt_objs):
                 gt_cid = gt["class_id"]
                 gt_size = gt["size_category"]
 
-                best_iou = 0.0
-                best_det_idx = -1
+                if g_idx in matches:
+                    p_idx, iou_val = matches[g_idx]
+                    p_cid = pred_cls[p_idx]
+                    is_correct_class = (p_cid == gt_cid)
 
-                for d_idx in range(len(det_boxes)):
-                    if d_idx in matched_det:
-                        continue
-                    iou = calculate_iou_xyxy(gt_box, det_boxes[d_idx])
-                    if iou > best_iou:
-                        best_iou = iou
-                        best_det_idx = d_idx
-
-                if best_det_idx >= 0 and best_iou >= 0.10:
-                    matched_det.add(best_det_idx)
-                    pred_cid = det_cls[best_det_idx]
-                    is_correct_class = (pred_cid == gt_cid)
-
-                    if best_iou >= 0.50:
+                    if iou_val >= 0.50:
                         if is_correct_class:
                             taxonomy_counts["True_Positive"] += 1
                             tp_by_size[gt_size] += 1
@@ -230,17 +171,22 @@ def evaluate_test_set(
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
 
+    recall_small = (tp_by_size["Small"] / gt_by_size["Small"]) if gt_by_size["Small"] > 0 else 0.0
     recall_med = (tp_by_size["Medium"] / gt_by_size["Medium"]) if gt_by_size["Medium"] > 0 else 0.0
     recall_large = (tp_by_size["Large"] / gt_by_size["Large"]) if gt_by_size["Large"] > 0 else 0.0
 
     return {
-        "precision": round(precision, 4),
-        "recall": round(recall, 4),
-        "map50": round(map50, 4),
-        "map50_95": round(map50_95, 4),
-        "per_class_ap50": per_class_ap50,
-        "per_class_map50_95": per_class_map50_95,
-        "per_class_map50": per_class_ap50,  # Backward compatibility alias
+        "precision": canonical_m["precision"],
+        "recall": canonical_m["recall"],
+        "map50": canonical_m["map50"],
+        "map50_95": canonical_m["map50_95"],
+        "per_class_ap50": canonical_m["per_class_ap50"],
+        "per_class_map50_95": canonical_m["per_class_map50_95"],
+        "per_class_map50": canonical_m["per_class_ap50"],
+        "total_gt": total_gt,
+        "gt_by_size": dict(gt_by_size),
+        "tp_by_size": dict(tp_by_size),
+        "recall_small": round(recall_small, 4),
         "recall_medium": round(recall_med, 4),
         "recall_large": round(recall_large, 4),
         "fn_missed": taxonomy_counts.get("False_Negative_Missed", 0),
@@ -251,15 +197,33 @@ def evaluate_test_set(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Stage 8.6: One-Door Locked Test Set Benchmark")
-    parser.add_argument("--ablation-dir", default="d:/UNDIP/SKRIPSI/stage_8_ablation", help="Folder hasil Stage 8.4")
-    parser.add_argument("--data-yaml", default="d:/UNDIP/SKRIPSI/cassava-v7-research/data.yaml", help="Path ke data.yaml")
+    parser = argparse.ArgumentParser(description="Stage 8.6: One-Door Locked Test Set Benchmark (Hardened)")
+    parser.add_argument("--ablation-dir", default="d:/UNDIP/SKRIPSI/stage_10_11_clean_experiments", help="Folder hasil ablasi")
+    parser.add_argument("--data-yaml", default="d:/UNDIP/SKRIPSI/cassava-v7-standardized/data.yaml", help="Path ke data.yaml")
+    parser.add_argument(
+        "--confirm-final-evaluation",
+        action="store_true",
+        help="Konfirmasi eksplisit untuk membuka pintu uji akhir test set (Wajib diberikan untuk menjalankan benchmark).",
+    )
     args = parser.parse_args()
+
+    # Safety guard: prevent accidental test set leakage
+    if not args.confirm_final_evaluation:
+        print("=" * 80)
+        print("PROTEKSI INTEGRITAS TEST SET — STAGE 8.6 TERKUNCI")
+        print("=" * 80)
+        print("Evaluasi final pada Locked Test Set HANYA boleh dijalankan setelah:")
+        print("1. Seluruh clean training selesai.")
+        print("2. Model kandidat definitif telah dipilih murni berdasarkan Validation Set.")
+        print("3. Argumen --confirm-final-evaluation diberikan secara sadar.")
+        print("\nSesuai Aturan Stage 9.4 (Comprehensive Audit Remediation), evaluasi final")
+        print("pada test set ditangguhkan untuk mencegah unconfirmed test snooping.")
+        print("=" * 80)
+        sys.exit(0)
 
     ablation_dir = Path(args.ablation_dir).resolve()
     data_yaml_path = Path(args.data_yaml).resolve()
-    test_img_dir = Path("d:/UNDIP/SKRIPSI/cassava-v7-research/test/images").resolve()
-    test_lbl_dir = Path("d:/UNDIP/SKRIPSI/cassava-v7-research/test/labels").resolve()
+    test_img_dir, test_lbl_dir = resolve_test_paths(data_yaml_path)
 
     experiments = [
         {"id": "EXP-0", "name": "exp_0_baseline", "title": "Baseline (Re-run)"},
@@ -269,11 +233,11 @@ def main():
     ]
 
     print("=" * 80)
-    print("STAGE 8.6 — ONE-DOOR FINAL BENCHMARK ON LOCKED TEST SET (1.282 CITRA)")
+    print("STAGE 8.6 — ONE-DOOR FINAL BENCHMARK ON LOCKED TEST SET")
     print("=" * 80)
+    print(f"Data YAML  : {data_yaml_path}")
     print(f"Test Images: {test_img_dir}")
     print(f"Test Labels: {test_lbl_dir}")
-    print("Mengevaluasi seluruh model ablasi satu kali tanpa data snooping...")
     print("=" * 80)
 
     test_results = []
@@ -297,93 +261,7 @@ def main():
 
         print(f"[{exp['id']}] SELESAI ({duration}s): mAP@50 = {res['map50']*100:.2f}% | "
               f"mAP@50-95 = {res['map50_95']*100:.2f}% | P = {res['precision']*100:.2f}% | "
-              f"R = {res['recall']*100:.2f}% | Missed FN = {res['fn_missed']}")
-
-    # Simpan CSV hasil test
-    csv_out_path = ablation_dir / "test_set_final_metrics.csv"
-    with open(csv_out_path, "w", newline="", encoding="utf-8") as f:
-        fieldnames = [
-            "exp_id", "title", "map50", "map50_95", "precision", "recall",
-            "recall_medium", "recall_large", "fn_missed", "cls_confusion", "loc_error", "tp_count", "duration_sec"
-        ]
-        writer = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore")
-        writer.writeheader()
-        for r in test_results:
-            writer.writerow(r)
-
-    # Susun Laporan Komprehensif Bab 4 Skripsi
-    report_path = ablation_dir / "STAGE_8_FINAL_THESIS_BENCHMARK_REPORT.md"
-    now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    md_content = f"""# Laporan Hasil Uji Akhir (Stage 8.6) — Locked Test Set Benchmark
-Tanggal Evaluasi: {now_str}
-Dataset: Locked Test Set `cassava-v7-research/test` (1.282 Citra, 0.00% Kebocoran Data)
-
-## 1. Tabel Utama Hasil Evaluasi Objektif Test Set (Bab 4 Skripsi)
-
-| ID | Varian Eksperimen | Mekanisme Sampling | Kebijakan Augmentasi | Precision | Recall | mAP@50 | mAP@50-95 | Missed FN | Reduksi FN vs Baseline |
-| :---: | :--- | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-"""
-    base_fn = test_results[0]["fn_missed"] if test_results else 0
-    for r in test_results:
-        fn_diff = base_fn - r["fn_missed"]
-        diff_str = f"+{fn_diff}" if fn_diff > 0 else f"{fn_diff}"
-        md_content += (
-            f"| **{r['exp_id']}** | {r['title']} | "
-            f"{'Mixture P(k)' if 'Sampling' in r['title'] or 'Full' in r['title'] else 'Uniform (1/N)'} | "
-            f"{'On-the-Fly 2× Crop' if 'Augmentation' in r['title'] or 'Full' in r['title'] else 'Standard'} | "
-            f"{r['precision']*100:.2f}% | {r['recall']*100:.2f}% | "
-            f"**{r['map50']*100:.2f}%** | **{r['map50_95']*100:.2f}%** | "
-            f"{r['fn_missed']} | {diff_str} |\n"
-        )
-
-    md_content += f"""
-## 2. Performa Deteksi Per-Kelas Gejala Penyakit (AP@50 pada Test Set)
-
-| ID Eksperimen | CBB | CBSD | CGM | CMD | HEALTHY | Mean AP@50 |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-"""
-    for r in test_results:
-        pcm = r.get("per_class_ap50", r.get("per_class_map50", {}))
-        cbb = pcm.get("CBB", 0.0) * 100
-        cbsd = pcm.get("CBSD", 0.0) * 100
-        cgm = pcm.get("CGM", 0.0) * 100
-        cmd = pcm.get("CMD", 0.0) * 100
-        hlth = pcm.get("HEALTHY", 0.0) * 100
-        md_content += f"| **{r['exp_id']}** | {cbb:.2f}% | {cbsd:.2f}% | {cgm:.2f}% | {cmd:.2f}% | {hlth:.2f}% | **{r['map50']*100:.2f}%** |\n"
-
-    md_content += f"""
-## 3. Performa Deteksi Per-Kelas Gejala Penyakit (AP@50-95 pada Test Set)
-
-| ID Eksperimen | CBB | CBSD | CGM | CMD | HEALTHY | Mean AP@50-95 |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-"""
-    for r in test_results:
-        pcm_95 = r.get("per_class_map50_95", {})
-        cbb = pcm_95.get("CBB", 0.0) * 100
-        cbsd = pcm_95.get("CBSD", 0.0) * 100
-        cgm = pcm_95.get("CGM", 0.0) * 100
-        cmd = pcm_95.get("CMD", 0.0) * 100
-        hlth = pcm_95.get("HEALTHY", 0.0) * 100
-        md_content += f"| **{r['exp_id']}** | {cbb:.2f}% | {cbsd:.2f}% | {cgm:.2f}% | {cmd:.2f}% | {hlth:.2f}% | **{r['map50_95']*100:.2f}%** |\n"
-
-    md_content += f"""
-## 4. Pembahasan Komprehensif untuk Naskah Skripsi (Bab 4)
-
-### 3.1 Ringkasan Temuan Eksperimen
-1. **Targeted Context Augmentation (EXP-2)** terbukti secara konsisten mengurangi lesi yang terlewat (False Negative) dan memberikan penguatan deteksi pada penyakit dengan bercak lesi nekrotik kecil (seperti CBB).
-2. **Mixture Adaptive Sampling (EXP-1)** membuktikan fenomena metodologis penting dalam deteksi citra pertanian: bahwa peningkatan frekuensi sampel sulit secara agresif tanpa kompensasi peredam noise (*focal re-weighting*) dapat mendistorsi optimasi model akibat tingginya noise latar belakang daun singkong alami.
-3. **Full Proposed Integration (EXP-3)** mendemonstrasikan fungsi restoratif augmentasi konteks terhadap degradasi sampling, mengonfirmasi interaksi positif antar-komponen meski titik performa global mAP tertinggi tetap dipegang konfigurasi baseline empiris.
-
-### 3.2 Implikasi Praktis
-Model yang dihasilkan menyediakan trade-off yang jelas:
-- Jika objektif sistem adalah **presisi deteksi umum tertinggi**, konfigurasi **EXP-0** adalah model utama.
-- Jika objektif sistem adalah **meminimalkan lesi terlewat (sensitivitas/recall tertinggi)** pada lesi sulit dan kecil, konfigurasi **EXP-2** memberikan penangkapan lesi yang lebih peka.
-"""
-
-    report_path.write_text(md_content, encoding="utf-8")
-    print(f"\n[SUKSES] Laporan benchmark akhir Test Set tersimpan di: {report_path}")
-    print(f"[SUKSES] Data CSV tersimpan di: {csv_out_path}")
+              f"R = {res['recall']*100:.2f}% | R_Small = {res['recall_small']*100:.2f}% | Missed FN = {res['fn_missed']}")
 
 
 if __name__ == "__main__":

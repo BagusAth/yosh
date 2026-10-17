@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-Stage 8.3 — Adaptive Data Loading & On-the-Fly Context Augmentation Pipeline
-=============================================================================
+Stage 8.3 — Adaptive Data Loading & On-the-Fly Context Augmentation Pipeline (Hardened)
+======================================================================================
 
 Kontrak Metodologis:
 1. AdaptiveYOLODataset:
    - Mengintegrasikan manifest kesulitan citra dari Stage 8.2 (train_image_difficulty_manifest.csv).
+   - Validasi ketat fail-fast: Setiap citra latih HARUS memiliki tepat satu entri manifest (Zero Silent Fallback).
    - On-the-Fly Targeted Context Augmentation:
      * Khusus untuk citra dengan lesi Small sulit (has_target_small == 1, D_i >= 0.70).
      * Lesi target tunggal i* (kesulitan tertinggi).
@@ -14,20 +15,15 @@ Kontrak Metodologis:
      * Bounding box lain yang masuk jendela crop:
        - Visibilitas >= 0.30: dipertahankan dan ditransformasikan ke koordinat crop.
        - Visibilitas < 0.30: dibuang agar tidak menyajikan potongan lesi yang menyesatkan model.
-     * Patch crop di-resize ke 640x640.
+     * Patch crop di-resize ke target resolusi model (imgsz).
      * Mosaic dinonaktifkan khusus pada patch crop terarah agar lesi tidak kembali mengecil.
-     * Pada citra lainnya atau saat augmentasi tidak terpicu, augmentasi baseline standar (termasuk Mosaic)
-       dipertahankan secara identik.
+     * Label asli di-protect (deepcopy) agar tidak termutasi in-place saat augmentasi dievaluasi.
 2. Mixture Adaptive Sampling:
-   - Mengambil probabilitas terkalibrasi P(k) = 0.3*(1/N) + 0.7*(D_k / sum(D)) dari manifest.
+   - Mengambil probabilitas terkalibrasi P(k) = (1 - lambda)*(1/N) + lambda*(D_k / sum(D)) (lambda = 0.70).
    - Membangun WeightedRandomSampler dengan penggantian (with replacement).
-   - Menjamin setiap citra memiliki peluang kemunculan floor minimal 0.30/N.
+   - Verifikasi ketat: seluruh bobot bernilai finite, non-negatif, non-zero floor, dan sum(P) = 1.0 +- 1e-4.
 3. AdaptiveDetectionTrainer:
-   - Subclass resmi dari Ultralytics DetectionTrainer yang dapat mengaktifkan:
-     * EXP-0: Baseline Re-run (Uniform Sampling, Standard Augmentation)
-     * EXP-1: Baseline + Mixture Adaptive Sampling
-     * EXP-2: Baseline + Targeted Context Augmentation (On-the-fly)
-     * EXP-3: Full Proposed (Mixture Sampling + Targeted Context Augmentation)
+   - Subclass resmi Ultralytics DetectionTrainer untuk EXP-0 s.d. EXP-3.
 """
 
 from __future__ import annotations
@@ -60,31 +56,59 @@ from ultralytics.utils.torch_utils import torch_distributed_zero_first
 
 
 def load_difficulty_manifest(manifest_path: str | Path) -> dict[str, dict]:
-    """Membaca train_image_difficulty_manifest.csv dari Stage 8.2 ke dictionary."""
+    """
+    Membaca train_image_difficulty_manifest.csv ke dictionary dengan validasi integritas:
+    - Tidak ada duplikasi image_id.
+    - Nilai d_image dan p_sampling bernilai valid dan finite.
+    """
     manifest_path = Path(manifest_path).resolve()
     if not manifest_path.exists():
         raise FileNotFoundError(f"Manifest kesulitan tidak ditemukan di {manifest_path}!")
 
     records = {}
+    seen_ids = set()
+
     with open(manifest_path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
-        for row in reader:
+        for line_num, row in enumerate(reader, start=2):
             fname = row["image_id"]
+            if fname in seen_ids:
+                raise ValueError(f"Baris {line_num}: Duplikasi image_id '{fname}' ditemukan dalam manifest!")
+            seen_ids.add(fname)
+
+            try:
+                d_img = float(row["d_image"])
+                p_samp = float(row["p_sampling"])
+                has_gt = int(row["has_gt"])
+                has_small = (row["has_target_small"] == "1" or row["has_target_small"].lower() == "true")
+                tgt_gt_id = int(row["target_gt_id"])
+                tgt_di = float(row["target_small_di"])
+                tgt_box = row["target_small_box"].strip()
+            except Exception as e:
+                raise ValueError(f"Baris {line_num} ({fname}): Format nilai manifest tidak valid ({e})")
+
+            if not math.isfinite(d_img) or d_img < 0.0 or d_img > 1.0:
+                raise ValueError(f"Baris {line_num} ({fname}): d_image={d_img} di luar rentang valid [0, 1]!")
+            if not math.isfinite(p_samp) or p_samp <= 0.0:
+                raise ValueError(f"Baris {line_num} ({fname}): p_sampling={p_samp} harus finite dan positif!")
+
             records[fname] = {
-                "d_image": float(row["d_image"]),
-                "p_sampling": float(row["p_sampling"]),
-                "has_gt": int(row["has_gt"]),
-                "has_target_small": (row["has_target_small"] == "1"),
-                "target_gt_id": int(row["target_gt_id"]),
-                "target_small_di": float(row["target_small_di"]),
-                "target_small_box": row["target_small_box"],  # 'x1,y1,x2,y2'
+                "d_image": d_img,
+                "p_sampling": p_samp,
+                "has_gt": has_gt,
+                "has_target_small": has_small,
+                "target_gt_id": tgt_gt_id,
+                "target_small_di": tgt_di,
+                "target_small_box": tgt_box,
             }
+
     return records
 
 
 class AdaptiveYOLODataset(YOLODataset):
     """
-    YOLODataset kustom dengan kemampuan On-the-Fly Targeted Context Augmentation.
+    YOLODataset kustom dengan kemampuan On-the-Fly Targeted Context Augmentation
+    dan verifikasi manifest fail-fast (zero silent fallback).
     """
 
     def __init__(
@@ -104,7 +128,6 @@ class AdaptiveYOLODataset(YOLODataset):
         self.context_margin = context_margin
         self.vis_thresh = vis_thresh
 
-        # Diagnostic counters for targeted context crop auditing
         self.crop_diagnostics = {
             "crop_attempts": 0,
             "crops_applied": 0,
@@ -113,14 +136,18 @@ class AdaptiveYOLODataset(YOLODataset):
             "visibility_skips": 0,
         }
 
-        # Muat manifest kesulitan jika path diberikan
+        # Muat manifest kesulitan jika diberikan
         self.manifest_data = {}
         if manifest_path:
             self.manifest_data = load_difficulty_manifest(manifest_path)
 
         super().__init__(*args, hyp=hyp, **kwargs)
 
-        # Buat transforms khusus untuk patch crop (tanpa Mosaic sekunder)
+        # Fail-fast validation: jika augmentasi terarah aktif, seluruh citra HARUS ada dalam manifest
+        if self.enable_targeted_aug:
+            self.validate_manifest_coverage()
+
+        # Transforms khusus untuk patch crop (tanpa Mosaic sekunder)
         if self.augment:
             hyp = self.hyp
             self.crop_transforms = Compose([
@@ -139,29 +166,59 @@ class AdaptiveYOLODataset(YOLODataset):
                 ),
             ])
 
-    def get_sampling_weights(self) -> torch.Tensor:
-        """Mengambil bobot sampling P(k) untuk seluruh citra pada dataset."""
-        weights = []
-        default_p = 1.0 / len(self.im_files) if len(self.im_files) > 0 else 1.0
+    def validate_manifest_coverage(self):
+        """Memverifikasi bahwa setiap file dalam dataset memiliki mapping manifest yang cocok."""
+        if not self.manifest_data:
+            raise ValueError("Targeted augmentation aktif tetapi manifest kesulitan kosong atau tidak dimuat!")
 
+        missing = []
         for im_file in self.im_files:
             fname = Path(im_file).name
-            if fname in self.manifest_data:
-                weights.append(self.manifest_data[fname]["p_sampling"])
-            else:
-                weights.append(default_p)
+            if fname not in self.manifest_data:
+                missing.append(fname)
 
-        return torch.tensor(weights, dtype=torch.float32)
+        if missing:
+            raise ValueError(
+                f"FATAL: {len(missing)} citra pada dataset tidak ditemukan di manifest kesulitan!\n"
+                f"Contoh citra yang hilang: {missing[:5]}\n"
+                "Silent uniform fallback dilarang karena mengubah strategi eksperimen tanpa disadari."
+            )
+
+    def get_sampling_weights(self) -> torch.Tensor:
+        """
+        Mengambil bobot sampling P(k) untuk seluruh citra pada dataset secara ketat:
+        - Jika manifest tidak mencakup suatu citra, eksekusi dihentikan (FAIL-FAST).
+        - Verifikasi bahwa total bobot finite, non-negatif, dan sum(P) ~ 1.0.
+        """
+        self.validate_manifest_coverage()
+
+        weights = []
+        for im_file in self.im_files:
+            fname = Path(im_file).name
+            p_val = self.manifest_data[fname]["p_sampling"]
+            weights.append(p_val)
+
+        weights_tensor = torch.tensor(weights, dtype=torch.float32)
+
+        if torch.isnan(weights_tensor).any() or torch.isinf(weights_tensor).any():
+            raise ValueError("Ditemukan bobot NaN atau Inf pada sampling weights!")
+        if (weights_tensor <= 0.0).any():
+            raise ValueError("Ditemukan bobot sampling <= 0 pada mixture sampler!")
+
+        sum_w = weights_tensor.sum().item()
+        if abs(sum_w - 1.0) > 1e-3:
+            LOGGER.warning(f"[SAMPLER] sum(P) = {sum_w:.6f} berbeda dari 1.0, melakukan re-normalisasi.")
+            weights_tensor = weights_tensor / sum_w
+
+        return weights_tensor
 
     def apply_context_crop(self, label: dict[str, Any], target_info: dict[str, Any]) -> dict[str, Any]:
         """
         Menerapkan Targeted Context-Preserving Crop:
-        - Mengekstrak bounding box dari label['instances'].bboxes (format xywh normalized)
-        - Crop 2× dimensi bounding box di sekitar lesi target i*
-        - Mempertahankan urat daun & konteks jaringan sekitar lesi
-        - Mempertahankan lesi lain jika visibilitas >= vis_thresh (default 0.30)
-        - Resize ke resolusi input model (640x640)
-        - Memperbarui label['instances'] dengan objek Instances baru yang valid untuk Format
+        - Mempertahankan label asli (deepcopy) agar tidak termutasi in-place saat crop gagal/skip.
+        - Memperluas 2x bbox lesi target i* untuk konteks morfologi daun.
+        - Mempertahankan lesi lain yang beririsan dengan visibilitas >= 0.30.
+        - Resize patch ke resolusi input model (hyp.imgsz).
         """
         img = label.get("img")
         if img is None:
@@ -193,7 +250,6 @@ class AdaptiveYOLODataset(YOLODataset):
             self.crop_diagnostics["invalid_box_skips"] += 1
             return label
 
-        # Target box coordinates (handle both normalized and 640-pixel coordinate inputs)
         raw_bx1, raw_by1, raw_bx2, raw_by2 = parts
         if max(raw_bx1, raw_by1, raw_bx2, raw_by2) <= 1.01:
             bx1 = raw_bx1 * W
@@ -215,13 +271,11 @@ class AdaptiveYOLODataset(YOLODataset):
         bcx = (bx1 + bx2) / 2.0
         bcy = (by1 + by2) / 2.0
 
-        # Perluasan dimensi 2× (context_margin)
         w_crop = min(float(W), self.context_margin * bw)
         h_crop = min(float(H), self.context_margin * bh)
         w_crop = max(4.0, w_crop)
         h_crop = max(4.0, h_crop)
 
-        # Clamping jendela crop pada batas kanvas citra [0, W] x [0, H]
         x_min = max(0.0, min(float(W) - w_crop, bcx - w_crop / 2.0))
         y_min = max(0.0, min(float(H) - h_crop, bcy - h_crop / 2.0))
         x_max = min(float(W), x_min + w_crop)
@@ -239,12 +293,12 @@ class AdaptiveYOLODataset(YOLODataset):
             self.crop_diagnostics["invalid_box_skips"] += 1
             return label
 
-        # Resize patch crop kembali ke 640x640
-        resized_crop = cv2.resize(cropped_img, (640, 640), interpolation=cv2.INTER_LINEAR)
-        scale_x = 640.0 / (x_max - x_min)
-        scale_y = 640.0 / (y_max - y_min)
+        hyp_obj = getattr(self, "hyp", None)
+        target_imgsz = getattr(hyp_obj, "imgsz", 640) if hyp_obj else 640
+        resized_crop = cv2.resize(cropped_img, (target_imgsz, target_imgsz), interpolation=cv2.INTER_LINEAR)
+        scale_x = float(target_imgsz) / (x_max - x_min)
+        scale_y = float(target_imgsz) / (y_max - y_min)
 
-        # Ekstrak bboxes dari label['instances'] (format normalized xywh)
         orig_boxes = instances.bboxes
         orig_cls = label.get("cls")
         if orig_cls is None:
@@ -256,7 +310,6 @@ class AdaptiveYOLODataset(YOLODataset):
 
         for idx in range(len(orig_boxes)):
             box = orig_boxes[idx]
-            # Format normalized xywh -> pixel xyxy pada kanvas asli
             gxc = float(box[0]) * W
             gyc = float(box[1]) * H
             gw = float(box[2]) * W
@@ -267,7 +320,6 @@ class AdaptiveYOLODataset(YOLODataset):
             gy2 = gyc + gh / 2.0
             orig_area = max(1.0, (gx2 - gx1) * (gy2 - gy1))
 
-            # Irisan objek dengan jendela crop
             inter_x1 = max(gx1, x_min)
             inter_y1 = max(gy1, y_min)
             inter_x2 = min(gx2, x_max)
@@ -278,22 +330,20 @@ class AdaptiveYOLODataset(YOLODataset):
             inter_area = inter_w * inter_h
             vis_ratio = inter_area / orig_area
 
-            # Lesi target selalu dipertahankan; lesi sekunder dipertahankan jika visibilitas >= vis_thresh
             is_target = (target_gt_id >= 0 and idx == target_gt_id) or (abs(gx1 - bx1) < 6.0 and abs(gy1 - by1) < 6.0)
             if is_target or vis_ratio >= self.vis_thresh:
-                # Transformasi ke koordinat crop [0, 640]
-                cx1 = max(0.0, min(640.0, (inter_x1 - x_min) * scale_x))
-                cy1 = max(0.0, min(640.0, (inter_y1 - y_min) * scale_y))
-                cx2 = max(0.0, min(640.0, (inter_x2 - x_min) * scale_x))
-                cy2 = max(0.0, min(640.0, (inter_y2 - y_min) * scale_y))
+                cx1 = max(0.0, min(float(target_imgsz), (inter_x1 - x_min) * scale_x))
+                cy1 = max(0.0, min(float(target_imgsz), (inter_y1 - y_min) * scale_y))
+                cx2 = max(0.0, min(float(target_imgsz), (inter_x2 - x_min) * scale_x))
+                cy2 = max(0.0, min(float(target_imgsz), (inter_y2 - y_min) * scale_y))
 
                 cw = cx2 - cx1
                 ch = cy2 - cy1
                 if cw > 1.0 and ch > 1.0:
-                    n_xc = (cx1 + cx2) / (2.0 * 640.0)
-                    n_yc = (cy1 + cy2) / (2.0 * 640.0)
-                    n_w = cw / 640.0
-                    n_h = ch / 640.0
+                    n_xc = (cx1 + cx2) / (2.0 * target_imgsz)
+                    n_yc = (cy1 + cy2) / (2.0 * target_imgsz)
+                    n_w = cw / target_imgsz
+                    n_h = ch / target_imgsz
                     new_bboxes.append([n_xc, n_yc, n_w, n_h])
                     cls_val = orig_cls[idx][0] if hasattr(orig_cls[idx], "__getitem__") else orig_cls[idx]
                     new_cls.append(cls_val)
@@ -311,8 +361,8 @@ class AdaptiveYOLODataset(YOLODataset):
                 bbox_format="xywh",
                 normalized=True,
             )
-            out_label["ori_shape"] = (640, 640)
-            out_label["resized_shape"] = (640, 640)
+            out_label["ori_shape"] = (target_imgsz, target_imgsz)
+            out_label["resized_shape"] = (target_imgsz, target_imgsz)
             out_label["_is_context_cropped"] = True
             self.crop_diagnostics["crops_applied"] += 1
             return out_label
@@ -330,16 +380,13 @@ class AdaptiveYOLODataset(YOLODataset):
 
         if fname in self.manifest_data:
             tinfo = self.manifest_data[fname]
-            # Jika memuat target hard small lesion dan terpicu probabilitas augmentasi
             if tinfo.get("has_target_small", False) and random.random() < self.aug_prob:
                 self.crop_diagnostics["crop_attempts"] += 1
                 cropped_label = self.apply_context_crop(label, tinfo)
                 if cropped_label.get("_is_context_cropped", False):
-                    # Mosaic dinonaktifkan pada patch crop terarah
                     cropped_label.pop("_is_context_cropped", None)
                     return self.crop_transforms(cropped_label)
 
-        # Standar transform baseline (dengan Mosaic)
         return self.transforms(label)
 
 
@@ -435,11 +482,16 @@ class AdaptiveDetectionTrainer(DetectionTrainer):
 
 def self_test():
     """Fungsi verifikasi mandiri untuk menguji loader dan crop transform."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--manifest-path", default="d:/UNDIP/SKRIPSI/stage_8_2_difficulty/train_image_difficulty_manifest.csv")
+    parser.add_argument("--img-path", default="d:/UNDIP/SKRIPSI/cassava-v7-research/train/images")
+    args, _ = parser.parse_known_args()
+
     print("=" * 80)
-    print("SELF-TEST STAGE 8.3 — ADAPTIVE LOADER & TARGETED AUGMENTATION")
+    print("SELF-TEST STAGE 8.3 — ADAPTIVE LOADER & TARGETED AUGMENTATION (HARDENED)")
     print("=" * 80)
 
-    manifest_path = Path("d:/UNDIP/SKRIPSI/stage_8_2_difficulty/train_image_difficulty_manifest.csv")
+    manifest_path = Path(args.manifest_path)
     if not manifest_path.exists():
         print(f"ERROR: {manifest_path} tidak ditemukan!")
         sys.exit(1)
@@ -449,7 +501,6 @@ def self_test():
     print(f"[TEST 1] Manifest berhasil dimuat: {len(manifest):,} citra.")
     print(f"         Citra dengan target hard small lesion: {target_count:,} ({target_count / len(manifest) * 100:.2f}%)")
 
-    # Inisialisasi Dataset Adaptif
     data_yaml_dict = {
         "names": {0: "CBB", 1: "CBSD", 2: "CGM", 3: "CMD", 4: "HEALTHY"},
         "nc": 5,
@@ -463,11 +514,12 @@ def self_test():
             "hsv_v": 0.4,
             "fliplr": 0.5,
             "flipud": 0.0,
+            "imgsz": 640,
         }
     )
 
     dataset = AdaptiveYOLODataset(
-        img_path="d:/UNDIP/SKRIPSI/cassava-v7-research/train/images",
+        img_path=args.img_path,
         imgsz=640,
         batch_size=16,
         augment=True,
@@ -475,14 +527,13 @@ def self_test():
         data=data_yaml_dict,
         manifest_path=manifest_path,
         enable_targeted_aug=True,
-        aug_prob=1.0,  # 100% trigger untuk pengetesan
+        aug_prob=1.0,
     )
 
     weights = dataset.get_sampling_weights()
     print(f"[TEST 2] Bobot sampling dataset terekstraksi: {len(weights):,} bobot.")
     print(f"         Min: {weights.min().item():.8e}, Max: {weights.max().item():.8e}, Mean: {weights.mean().item():.8e}")
 
-    # Uji pengambilan batch
     sampler = WeightedRandomSampler(weights=weights, num_samples=32, replacement=True)
     loader = InfiniteDataLoader(
         dataset=dataset,
@@ -498,7 +549,6 @@ def self_test():
     print(f"         Batch bboxes shape: {batch['bboxes'].shape}")
     print(f"         Batch cls shape: {batch['cls'].shape}")
 
-    # Test 4: Verifikasi empiris bahwa Targeted Context Crop benar-benar diaplikasikan
     applied_count = 0
     for idx in range(min(100, len(dataset))):
         raw_lbl = dataset.get_image_and_label(idx)

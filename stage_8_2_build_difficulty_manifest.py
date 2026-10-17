@@ -1,28 +1,23 @@
 #!/usr/bin/env python3
 """
-Stage 8.2 — Build Object & Image Difficulty Manifest (Post-OOF)
-==============================================================
+Stage 8.2 — Build Object & Image Difficulty Manifest (Post-OOF) (Hardened)
+==========================================================================
 
 Kontrak Metodologis:
 1. Membaca prediksi OOF mentah dari stage_8_1_oof/oof_predictions_raw.csv (conf >= 0.001).
 2. Membaca ground truth langsung dari file label YOLO (8.980 citra train).
-3. Melakukan class-agnostic greedy one-to-one matching pada threshold IoU >= 0.10.
-4. Menetapkan taksonomi error (TP, Localization, Confusion, Loc+Class, FN, FP).
-5. Menghitung kesulitan objek (D_i):
-   - Matched + Correct Class : 0.40(1 - C_i) + 0.40(1 - IoU_i) + 0.20 S_i
-   - Matched + Wrong Class   : min(1.0, 0.40(1 - C_i) + 0.40(1 - IoU_i) + 0.20 S_i + 0.35)
-   - Unmatched (FN)          : 0.80 + 0.20 S_i (design convention)
-6. Menghitung kesulitan citra hybrid (D_image):
-   - Citra berobjek: 0.5 * max(D_i) + 0.5 * mean(D_i)
-   - Citra kosong: max(C_FP) jika ada FP, 0.0 jika bersih
-7. Menghitung probabilitas sampling mixture:
-   P(k) = 0.3 * (1/N) + 0.7 * (D_image / sum(D_image))
-8. Mengevaluasi Sanity Gate:
+3. Menggunakan fungsi evaluasi kanonis terpadu dari research_utils.detection_metrics:
+   - greedy_bipartite_matching (Global 1-to-1 bipartite greedy matching pada IoU >= 0.10, zero reuse)
+   - classify_object_size (Small < 32^2, Medium 32^2-96^2, Large >= 96^2)
+   - calculate_object_difficulty (Matched+Correct, Matched+Wrong Class [penalty 0.35], Unmatched FN [0.80 + 0.20 S_i])
+   - calculate_image_difficulty (0.5 * max + 0.5 * mean untuk citra berobjek, max(C_FP) untuk citra kosong)
+   - calculate_mixture_weights (P(k) = (1 - lambda)/N + lambda * D_k / sum(D), lambda = 0.70)
+4. Sanity Gates:
    - Hard ratio (D_image >= 0.80): <=60% PASS, 60-80% REVIEW, >80% FAIL
-   - Dynamic Range: P90 - P10 >= 0.30 (diagnostic criterion)
-   - Effective Sample Size (ESS) dan ESS_ratio in [0.65, 0.95] (diagnostic range)
+   - Dynamic Range: P90 - P10 >= 0.30
+   - Effective Sample Size (ESS) dan ESS_ratio in [0.65, 0.95]
    - Clipping rate pada wrong-class cases
-9. Mengekspor manifest kesulitan citra untuk digunakan pada Stage 8.3 & 8.4.
+5. Mengekspor manifest kesulitan citra untuk digunakan pada Stage 8.3 & 8.4.
 """
 
 from __future__ import annotations
@@ -36,23 +31,45 @@ import sys
 from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 import numpy as np
+import yaml
+
+from research_utils.detection_metrics import (
+    calculate_image_difficulty,
+    calculate_iou_xyxy,
+    calculate_mixture_weights,
+    calculate_object_difficulty,
+    classify_object_size,
+    greedy_bipartite_matching,
+    parse_yolo_labels,
+)
 
 CLASS_NAMES = ["CBB", "CBSD", "CGM", "CMD", "HEALTHY"]
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Stage 8.2: Build Difficulty Manifest")
+    parser = argparse.ArgumentParser(description="Stage 8.2: Build Difficulty Manifest (Hardened)")
     parser.add_argument(
         "--oof-dir",
         default="d:/UNDIP/SKRIPSI/stage_8_1_oof",
         help="Folder output dari Stage 8.1",
     )
     parser.add_argument(
+        "--data-yaml",
+        default=None,
+        help="Path ke data.yaml (Single Source of Truth). Jika diisi, direktori train diturunkan otomatis.",
+    )
+    parser.add_argument(
+        "--dataset-dir",
+        default=None,
+        help="Path alternatif root dataset (misal cassava-v7-standardized atau cassava-v7-research).",
+    )
+    parser.add_argument(
         "--research-dir",
         default="d:/UNDIP/SKRIPSI/cassava-v7-research",
-        help="Path ke dataset resmi cassava-v7-research",
+        help="Path fallback dataset resmi cassava-v7-research",
     )
     parser.add_argument(
         "--output-dir",
@@ -80,32 +97,47 @@ def parse_args():
     return parser.parse_args()
 
 
-def compute_iou(box1: list[float], box2: list[float]) -> float:
-    """Menghitung Intersection over Union (IoU) antara dua box format [x1, y1, x2, y2]."""
-    x1 = max(box1[0], box2[0])
-    y1 = max(box1[1], box2[1])
-    x2 = min(box1[2], box2[2])
-    y2 = min(box1[3], box2[3])
+def resolve_train_paths(args) -> tuple[Path, Path]:
+    """Menentukan path direktori train/images dan train/labels secara Single Source of Truth."""
+    if args.data_yaml:
+        yaml_p = Path(args.data_yaml).resolve()
+        if not yaml_p.exists():
+            raise FileNotFoundError(f"data.yaml tidak ditemukan di {yaml_p}")
+        with open(yaml_p, "r", encoding="utf-8") as f:
+            data_cfg = yaml.safe_load(f)
+        
+        base_path = yaml_p.parent
+        if "path" in data_cfg and data_cfg["path"]:
+            base_path = Path(data_cfg["path"]).resolve()
 
-    inter_w = max(0.0, x2 - x1)
-    inter_h = max(0.0, y2 - y1)
-    inter_area = inter_w * inter_h
+        train_entry = data_cfg.get("train", "train/images")
+        train_path = (base_path / train_entry).resolve()
+        if train_path.name == "images":
+            images_dir = train_path
+            labels_dir = train_path.parent / "labels"
+        else:
+            images_dir = train_path / "images"
+            labels_dir = train_path / "labels"
+    elif args.dataset_dir:
+        ds_p = Path(args.dataset_dir).resolve()
+        images_dir = ds_p / "train" / "images"
+        labels_dir = ds_p / "train" / "labels"
+    else:
+        r_p = Path(args.research_dir).resolve()
+        images_dir = r_p / "train" / "images"
+        labels_dir = r_p / "train" / "labels"
 
-    area1 = max(0.0, box1[2] - box1[0]) * max(0.0, box1[3] - box1[1])
-    area2 = max(0.0, box2[2] - box2[0]) * max(0.0, box2[3] - box2[1])
+    if not images_dir.exists():
+        raise FileNotFoundError(f"Direktori citra latih tidak ditemukan: {images_dir}")
+    if not labels_dir.exists():
+        raise FileNotFoundError(f"Direktori label latih tidak ditemukan: {labels_dir}")
 
-    union = area1 + area2 - inter_area
-    if union <= 0.0:
-        return 0.0
-    return inter_area / union
+    return images_dir, labels_dir
 
 
-def load_ground_truth(train_dir: Path):
-    """Membaca seluruh ground truth objek dari file label .txt (8.980 citra)."""
-    labels_dir = train_dir / "labels"
-    images_dir = train_dir / "images"
+def load_ground_truth(images_dir: Path, labels_dir: Path) -> dict[str, list[dict]]:
+    """Membaca seluruh ground truth objek menggunakan parse_yolo_labels kanonis."""
     image_files = sorted(os.listdir(images_dir))
-
     gt_by_image = {}
     total_gt_objects = 0
 
@@ -113,60 +145,32 @@ def load_ground_truth(train_dir: Path):
         stem = Path(fname).stem
         lbl_file = labels_dir / f"{stem}.txt"
 
+        # parse_yolo_labels supports dynamic width/height
+        parsed_objs = parse_yolo_labels(lbl_file, img_width=640.0, img_height=640.0)
         objects = []
-        if lbl_file.exists() and os.path.getsize(lbl_file) > 0:
-            with open(lbl_file, "r", encoding="utf-8") as f:
-                for obj_id, line in enumerate(f):
-                    line = line.strip()
-                    if not line:
-                        continue
-                    parts = line.split()
-                    if len(parts) >= 5:
-                        cls_id = int(parts[0])
-                        img_width, img_height = 640.0, 640.0
-                        if len(parts) == 5:
-                            xc = float(parts[1]) * img_width
-                            yc = float(parts[2]) * img_height
-                            w = float(parts[3]) * img_width
-                            h = float(parts[4]) * img_height
-                        else:
-                            coords = np.array([float(x) for x in parts[1:]], dtype=np.float32).reshape(-1, 2)
-                            x_min = float(np.min(coords[:, 0])) * img_width
-                            y_min = float(np.min(coords[:, 1])) * img_height
-                            x_max = float(np.max(coords[:, 0])) * img_width
-                            y_max = float(np.max(coords[:, 1])) * img_height
-                            xc = (x_min + x_max) / 2.0
-                            yc = (y_min + y_max) / 2.0
-                            w = max(0.0, x_max - x_min)
-                            h = max(0.0, y_max - y_min)
+        for obj_id, po in enumerate(parsed_objs):
+            box_xyxy = po["box"].tolist() if isinstance(po["box"], np.ndarray) else list(po["box"])
+            area_px = float(po["area"])
+            size_cat = po["size_category"]
 
-                        x1 = max(0.0, xc - w / 2.0)
-                        y1 = max(0.0, yc - h / 2.0)
-                        x2 = min(img_width, xc + w / 2.0)
-                        y2 = min(img_height, yc + h / 2.0)
+            # Map size to difficulty score S_i
+            if size_cat == "Small":
+                size_score = 1.0
+            elif size_cat == "Medium":
+                size_score = 0.5
+            else:
+                size_score = 0.0
 
-                        area_px = w * h
-                        # Size difficulty score berbasis kategori
-                        if area_px < (32.0 * 32.0):
-                            size_cat = "Small"
-                            size_score = 1.0
-                        elif area_px < (96.0 * 96.0):
-                            size_cat = "Medium"
-                            size_score = 0.5
-                        else:
-                            size_cat = "Large"
-                            size_score = 0.0
-
-                        objects.append({
-                            "gt_id": obj_id,
-                            "class_id": cls_id,
-                            "class_name": CLASS_NAMES[cls_id],
-                            "box_xyxy": [x1, y1, x2, y2],
-                            "area_px": area_px,
-                            "size_cat": size_cat,
-                            "size_score": size_score,
-                        })
-                        total_gt_objects += 1
+            objects.append({
+                "gt_id": obj_id,
+                "class_id": po["class_id"],
+                "class_name": po["class_name"],
+                "box_xyxy": box_xyxy,
+                "area_px": area_px,
+                "size_cat": size_cat,
+                "size_score": size_score,
+            })
+            total_gt_objects += 1
 
         gt_by_image[fname] = objects
 
@@ -174,8 +178,11 @@ def load_ground_truth(train_dir: Path):
     return gt_by_image
 
 
-def load_oof_predictions(raw_pred_file: Path):
+def load_oof_predictions(raw_pred_file: Path) -> dict[str, list[dict]]:
     """Membaca prediksi OOF mentah hasil inferensi diagnostik @ conf = 0.001."""
+    if not raw_pred_file.exists():
+        raise FileNotFoundError(f"File prediksi OOF tidak ditemukan: {raw_pred_file}")
+
     preds_by_image = defaultdict(list)
     total_preds = 0
 
@@ -202,45 +209,9 @@ def load_oof_predictions(raw_pred_file: Path):
     return preds_by_image
 
 
-def greedy_one_to_one_matching(gt_objects: list[dict], pred_objects: list[dict], match_thresh: float):
-    """
-    Algoritma Greedy Global Bipartite Matching:
-    - Class-agnostic
-    - Threshold minimum IoU >= match_thresh
-    - One-to-one: setiap GT maksimal 1 prediksi, setiap prediksi maksimal 1 GT
-    """
-    if not gt_objects or not pred_objects:
-        return {}, set(range(len(pred_objects)))
-
-    # 1. Kumpulkan seluruh pasangan kandidat dengan IoU >= match_thresh
-    candidate_pairs = []
-    for g_idx, g in enumerate(gt_objects):
-        for p_idx, p in enumerate(pred_objects):
-            iou_val = compute_iou(g["box_xyxy"], p["box_xyxy"])
-            if iou_val >= match_thresh:
-                candidate_pairs.append((iou_val, g_idx, p_idx))
-
-    # 2. Urutkan descending berdasarkan IoU
-    candidate_pairs.sort(key=lambda x: x[0], reverse=True)
-
-    # 3. Penugasan serakah satu-ke-satu
-    assigned_gt = set()
-    assigned_pred = set()
-    matches = {}  # g_idx -> (p_idx, iou_val)
-
-    for iou_val, g_idx, p_idx in candidate_pairs:
-        if g_idx not in assigned_gt and p_idx not in assigned_pred:
-            assigned_gt.add(g_idx)
-            assigned_pred.add(p_idx)
-            matches[g_idx] = (p_idx, iou_val)
-
-    unassigned_preds = set(range(len(pred_objects))) - assigned_pred
-    return matches, unassigned_preds
-
-
 def process_difficulty_manifest(
-    gt_by_image: dict,
-    preds_by_image: dict,
+    gt_by_image: dict[str, list[dict]],
+    preds_by_image: dict[str, list[dict]],
     output_dir: Path,
     args,
 ):
@@ -254,14 +225,20 @@ def process_difficulty_manifest(
     wrong_class_total = 0
     wrong_class_clipped = 0
 
-    all_d_images = []
+    all_d_images_raw = []
 
     for fname, gts in sorted(gt_by_image.items()):
         preds = preds_by_image.get(fname, [])
         n_gt = len(gts)
 
-        matches, unassigned_preds = greedy_one_to_one_matching(
-            gts, preds, match_thresh=args.iou_match_thresh
+        # Canonical greedy bipartite matching from research_utils.detection_metrics
+        # Prepares candidate pairs with descending IoU
+        gt_boxes = [g["box_xyxy"] for g in gts]
+        pred_boxes = [p["box_xyxy"] for p in preds]
+        matches, unassigned_preds = greedy_bipartite_matching(
+            gt_boxes=gt_boxes,
+            pred_boxes=pred_boxes,
+            iou_thresh=args.iou_match_thresh,
         )
 
         obj_difficulties = []
@@ -286,34 +263,38 @@ def process_difficulty_manifest(
                             taxonomy = "True_Positive"
                         else:
                             taxonomy = "Localization_Error"
-                        # Formula Matched & Kelas Benar
-                        d_i = 0.40 * (1.0 - conf) + 0.40 * (1.0 - iou_val) + 0.20 * size_score
                     else:
                         if iou_val >= 0.50:
                             taxonomy = "Classification_Confusion"
                         else:
                             taxonomy = "Localization_and_Class_Error"
-
-                        # Formula Matched & Salah Kelas (Design Penalty 0.35)
-                        raw_d_i = 0.40 * (1.0 - conf) + 0.40 * (1.0 - iou_val) + 0.20 * size_score + args.confusion_penalty
-                        d_i = min(1.0, raw_d_i)
-
                         wrong_class_total += 1
-                        if raw_d_i >= 1.0:
-                            wrong_class_clipped += 1
+
+                    # Canonical calculate_object_difficulty
+                    d_i = calculate_object_difficulty(
+                        matched=True,
+                        conf=conf,
+                        iou=iou_val,
+                        size_score=size_score,
+                        correct_class=is_correct_class,
+                        confusion_penalty=args.confusion_penalty,
+                    )
+
+                    if not is_correct_class and (0.40 * (1.0 - conf) + 0.40 * (1.0 - iou_val) + 0.20 * size_score + args.confusion_penalty) >= 1.0:
+                        wrong_class_clipped += 1
 
                     match_status = "Matched"
                     matched_conf = conf
                     matched_iou = iou_val
-                    pred_class = p_cls
                 else:
                     taxonomy = "False_Negative_Missed"
                     match_status = "Unmatched"
                     matched_conf = 0.0
                     matched_iou = 0.0
-                    pred_class = -1
-                    # Formula Unmatched (FN Penalty Design Convention)
-                    d_i = 0.80 + 0.20 * size_score
+                    d_i = calculate_object_difficulty(
+                        matched=False,
+                        size_score=size_score,
+                    )
 
                 taxonomy_counter[taxonomy] += 1
                 obj_difficulties.append(d_i)
@@ -340,33 +321,24 @@ def process_difficulty_manifest(
                     "difficulty_score": f"{d_i:.4f}",
                 })
 
-            # Agregasi Citra Berobjek: 0.5 * max + 0.5 * mean
-            d_max = max(obj_difficulties)
-            d_mean = sum(obj_difficulties) / len(obj_difficulties)
-            d_image = 0.5 * d_max + 0.5 * d_mean
+            fp_confs = [preds[p_idx]["confidence"] for p_idx in unassigned_preds]
+            d_image = calculate_image_difficulty(obj_difficulties=obj_difficulties, fp_confs=fp_confs)
             has_gt = 1
         else:
-            # Citra tanpa GT (empty / clean background)
             has_gt = 0
-            if unassigned_preds:
-                # Memunculkan false positive
-                max_fp_conf = max(preds[p_idx]["confidence"] for p_idx in unassigned_preds)
-                d_image = max_fp_conf
-            else:
-                d_image = 0.0
+            fp_confs = [preds[p_idx]["confidence"] for p_idx in unassigned_preds]
+            d_image = calculate_image_difficulty(obj_difficulties=[], fp_confs=fp_confs)
 
-        all_d_images.append((fname, d_image, has_gt, target_small_candidates))
+        all_d_images_raw.append((fname, d_image, has_gt, target_small_candidates))
 
-    # 4. Hitung Probabilitas Mixture Sampling: P(k) = 0.3 * (1/N) + 0.7 * (D_k / sum(D))
-    n_images = len(all_d_images)
-    sum_d = sum(d for _, d, _, _ in all_d_images)
+    # Mixture sampling weights using canonical calculate_mixture_weights
+    d_list = [d for _, d, _, _ in all_d_images_raw]
+    p_weights = calculate_mixture_weights(d_list, mixture_lambda=args.mixture_lambda)
 
-    for fname, d_image, has_gt, target_smalls in all_d_images:
-        p_uniform = 0.30 * (1.0 / n_images)
-        p_adaptive = 0.70 * (d_image / sum_d) if sum_d > 0 else 0.0
-        p_mixture = p_uniform + p_adaptive
+    n_images = len(all_d_images_raw)
+    for idx, (fname, d_image, has_gt, target_smalls) in enumerate(all_d_images_raw):
+        p_mixture = p_weights[idx]
 
-        # Pilih target tunggal small lesion dengan difficulty tertinggi (i*)
         if target_smalls:
             best_small = max(target_smalls, key=lambda x: x["d_i"])
             target_small_exists = 1
@@ -423,7 +395,7 @@ def process_difficulty_manifest(
     ess = 1.0 / sum_p2 if sum_p2 > 0 else 0.0
     ess_ratio = ess / n_images
 
-    # Kuantil D_image
+    # Percentiles
     def get_percentile(data, pct):
         k = (len(data) - 1) * (pct / 100.0)
         f = math.floor(k)
@@ -447,7 +419,6 @@ def process_difficulty_manifest(
 
     clipping_rate = (wrong_class_clipped / wrong_class_total) if wrong_class_total > 0 else 0.0
 
-    # Evaluasi Status Sanity Gate
     if hard_ratio <= 0.60:
         gate_status = "PASS"
     elif hard_ratio <= 0.80:
@@ -495,7 +466,7 @@ def process_difficulty_manifest(
 
     # Laporan Markdown
     report_md_path = output_dir / "DIFFICULTY_PROFILING_REPORT.md"
-    report_md = f"""# Laporan Hasil Stage 8.2 — Profil Kesulitan Objek & Citra OOF
+    report_md = f"""# Laporan Hasil Stage 8.2 — Profil Kesulitan Objek & Citra OOF (Hardened)
 Tanggal: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 
 ## 1. Status Sanity Gate
@@ -541,10 +512,11 @@ dan identitas lesi target $i^*$ untuk augmentasi on-the-fly.
 def main():
     args = parse_args()
     print("=" * 80)
-    print("STAGE 8.2 — BUILD DIFFICULTY MANIFEST & SANITY GATE")
+    print("STAGE 8.2 — BUILD DIFFICULTY MANIFEST & SANITY GATE (HARDENED)")
     print("=" * 80)
     print(f"OOF Predictions : {Path(args.oof_dir) / 'oof_predictions_raw.csv'}")
-    print(f"Research Dir    : {args.research_dir}")
+    print(f"Data YAML       : {args.data_yaml}")
+    print(f"Dataset Dir     : {args.dataset_dir or args.research_dir}")
     print(f"Output Dir      : {args.output_dir}")
     print(f"IoU Match Thresh: {args.iou_match_thresh}")
     print(f"Confusion Pen.  : {args.confusion_penalty}")
@@ -556,8 +528,8 @@ def main():
         print(f"ERROR: File {raw_pred_file} belum ditemukan. Pastikan Stage 8.1 telah selesai!")
         sys.exit(1)
 
-    research_dir = Path(args.research_dir).resolve()
-    gt_by_image = load_ground_truth(research_dir / "train")
+    images_dir, labels_dir = resolve_train_paths(args)
+    gt_by_image = load_ground_truth(images_dir, labels_dir)
     preds_by_image = load_oof_predictions(raw_pred_file)
 
     process_difficulty_manifest(

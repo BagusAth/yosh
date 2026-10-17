@@ -1,0 +1,102 @@
+{
+  "audit_stage": "STAGE 9.4 — COMPREHENSIVE AUDIT REMEDIATION, PIPELINE HARDENING, AND REGRESSION VALIDATION",
+  "audit_timestamp": "2026-10-17T15:42:00+07:00",
+  "auditor_role": "Senior ML Research Engineer, Computer Vision Engineer, and Independent Code Auditor",
+  "environment": {
+    "python_version": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]",
+    "os_platform": "Windows-11-10.0.26200-SP0",
+    "pytorch_version": "2.6.0+cu124",
+    "cuda_available": true,
+    "gpu_device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "ultralytics_version": "8.4.173"
+  },
+  "dataset_architecture": {
+    "canonical_standardized_dataset": {
+      "path": "d:/UNDIP/SKRIPSI/cassava-v7-standardized",
+      "data_yaml": "d:/UNDIP/SKRIPSI/cassava-v7-standardized/data.yaml",
+      "annotation_format": "YOLO 5-column detection (class_id xc yc w h)",
+      "splits": {
+        "train": { "images": 8980, "labels": 8980, "status": "VERIFIED" },
+        "valid": { "images": 2567, "labels": 2567, "status": "VERIFIED" },
+        "test": { "images": 1282, "labels": 1282, "status": "VERIFIED" }
+      },
+      "total_images": 12829,
+      "class_mapping": ["CBB", "CBSD", "CGM", "CMD", "HEALTHY"]
+    },
+    "historical_research_dataset": {
+      "path": "d:/UNDIP/SKRIPSI/cassava-v7-research",
+      "data_yaml": "d:/UNDIP/SKRIPSI/cassava-v7-research/data.yaml",
+      "status": "PRESERVED_HISTORICAL_ARTIFACT"
+    }
+  },
+  "pipeline_modules_audit": {
+    "research_utils/detection_metrics.py": {
+      "role": "Single Source of Truth Evaluation Engine",
+      "sha256": "8457b7dc4b35b8ff14584234821203da4bddc72fc80fd2145e1ecf14a68742ac",
+      "status": "ACTIVE_VERIFIED"
+    },
+    "stage_8_1_group_oof_profiling.py": {
+      "role": "Nested Group-Aware 4-Fold OOF Probe Profiler",
+      "sha256": "97841ca06e7847998205ab1b14a92cc87a5c344afe94bc3810171021a02c0311",
+      "checkpoint_selection_mode": "nested_inner_val",
+      "isolation_status": "ZERO_CROSS_FOLD_AND_ZERO_HOLDOUT_LEAKAGE",
+      "status": "REMEDIATED_VERIFIED"
+    },
+    "stage_8_2_build_difficulty_manifest.py": {
+      "role": "Post-OOF Difficulty Manifest Builder & Sanity Gate",
+      "sha256": "5251406923a2eadb9901862a1fbb4ee49c088277671f0da5c6362b1488b46f04",
+      "matching_policy": "greedy_bipartite_matching (descending IoU)",
+      "mixture_lambda": 0.70,
+      "confusion_penalty": 0.35,
+      "status": "REMEDIATED_VERIFIED"
+    },
+    "stage_8_3_adaptive_pipeline.py": {
+      "role": "Adaptive DataLoader & On-the-Fly Context Augmentation",
+      "sha256": "4210cd8f18ab7f925df5f6bed88d28ae40cca0dc0d658150a79c20987d161f71",
+      "manifest_coverage_check": "FAIL_FAST_ZERO_SILENT_FALLBACK",
+      "context_margin": 2.0,
+      "visibility_threshold": 0.30,
+      "status": "REMEDIATED_VERIFIED"
+    },
+    "stage_8_4_run_ablation_experiments.py": {
+      "role": "Ablation Study Orchestrator (EXP-0 to EXP-3)",
+      "sha256": "7765236e62b8f6fd5d45ed1cdd33c06a771dc136d0a6c0ad37dfe7881a4773ac",
+      "default_output_dir": "d:/UNDIP/SKRIPSI/stage_10_11_clean_experiments",
+      "historic_anti_overwrite_protection": "ENFORCED",
+      "status": "REMEDIATED_VERIFIED"
+    },
+    "stage_8_5_model_selection_and_validation.py": {
+      "role": "Validation Model Selection & Error Decomposition",
+      "sha256": "ba9f1bd8a0d8b4dd861396bbc14a02b102d2bea11f76a07a689dffc415a3b4b4",
+      "selection_protocol": "Primary: max(mAP50-95) -> Tie-1: max(R_Small, delta<=1e-5) -> Tie-2: max(mAP50) -> Tie-3: min(FN)",
+      "dataset_path_resolution": "DYNAMIC_FROM_DATA_YAML",
+      "status": "REMEDIATED_VERIFIED"
+    },
+    "stage_8_6_final_test_benchmark.py": {
+      "role": "Locked Test Set Final Evaluation",
+      "sha256": "2d92b3c71ef3327c9e7b02ea92517ba7329c353936f47043e3e41eed6d1fae69",
+      "execution_guard": "LOCKED_CONFIRMATION_REQUIRED",
+      "status": "REMEDIATED_VERIFIED"
+    },
+    "run_stage_8_profiling.py": {
+      "role": "Stage 8.1 + 8.2 Execution Orchestrator",
+      "sha256": "5c9e7967f0293977d29fd9e035ddf3d42424c92fe56ea15b675556e5e827eb7e",
+      "status": "REMEDIATED_VERIFIED"
+    },
+    "execute_phase_b_standardization.py": {
+      "role": "Annotation Standardization Engine",
+      "sha256": "855d8cbe79f88258f0fe153e1d70a68fdaab0e00ff5811fd69cdc6be2e4bb46d",
+      "validation_rules": "STRICT_FIVE_COLUMN_FINITE_BOUNDS",
+      "status": "REMEDIATED_VERIFIED"
+    }
+  },
+  "regression_testing": {
+    "suite_file": "test_stage_9_4_regression.py",
+    "total_tests_run": 26,
+    "passed": 26,
+    "failed": 0,
+    "errors": 0,
+    "status": "100_PERCENT_PASS"
+  },
+  "final_gate_decision": "READY_FOR_CLEAN_OOF"
+}

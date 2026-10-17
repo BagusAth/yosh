@@ -1,0 +1,80 @@
+================================================================================
+STAGE 9.4 — COMPREHENSIVE REGRESSION TEST SUITE EXECUTION REPORT
+================================================================================
+Date/Time          : 2026-10-17 15:44:23
+Python Version     : 3.13.7
+PyTorch Version    : 2.6.0+cu124
+CUDA Available     : True
+Total Tests Run    : 26
+Failures           : 0
+Errors             : 0
+Execution Duration : 0.13 seconds
+Overall Outcome    : PASS (100% SUCCEEDED)
+================================================================================
+
+TEST SUITE SUMMARY:
+  [PASS] TestDifficultyFormulaAndBounds.test_image_difficulty_aggregation - Execution verified successfully
+  [PASS] TestDifficultyFormulaAndBounds.test_matched_correct_class_formula - Execution verified successfully
+  [PASS] TestDifficultyFormulaAndBounds.test_matched_wrong_class_penalty_and_clipping - Execution verified successfully
+  [PASS] TestDifficultyFormulaAndBounds.test_unmatched_fn_formula - Execution verified successfully
+  [PASS] TestGlobalOneToOneMatching.test_global_descending_iou_sorting - Execution verified successfully
+  [PASS] TestGlobalOneToOneMatching.test_multiple_predictions_for_single_gt - Execution verified successfully
+  [PASS] TestGlobalOneToOneMatching.test_single_prediction_between_two_gt - Execution verified successfully
+  [PASS] TestManifestFailFastAndCoverage.test_dataset_coverage_fail_fast_on_missing_images - Execution verified successfully
+  [PASS] TestManifestFailFastAndCoverage.test_duplicate_image_id_rejection - Execution verified successfully
+  [PASS] TestManifestFailFastAndCoverage.test_invalid_d_image_bounds_rejection - Execution verified successfully
+  [PASS] TestSamplingWeightsAndMixtureFormula.test_mixture_weights_formula_and_normalization - Execution verified successfully
+  [PASS] TestTargetedContextCropGeometry.test_crop_expansion_and_centering - Execution verified successfully
+  [PASS] TestTargetedContextCropGeometry.test_original_label_not_mutated - Execution verified successfully
+  [PASS] TestExperimentComponentToggles.test_experiment_spec_toggles - Execution verified successfully
+  [PASS] TestEvaluatorDataSourceSSOT.test_resolve_paths_from_yaml - Execution verified successfully
+  [PASS] TestModelSelectionHierarchy.test_primary_criterion_map50_95_strictly_wins - Execution verified successfully
+  [PASS] TestModelSelectionHierarchy.test_tie_break_1_recall_small - Execution verified successfully
+  [PASS] TestModelSelectionHierarchy.test_tie_break_2_map50 - Execution verified successfully
+  [PASS] TestModelSelectionHierarchy.test_tie_break_3_lowest_fn - Execution verified successfully
+  [PASS] TestFullPrecisionMetricSerialization.test_canonical_metric_extraction - Execution verified successfully
+  [PASS] TestIsolatedPathsAndAntiOverwrite.test_historic_stage_8_ablation_overwrite_blocked - Execution verified successfully
+  [PASS] TestStandardizedFiveColumnLabels.test_reject_invalid_class_id - Execution verified successfully
+  [PASS] TestStandardizedFiveColumnLabels.test_reject_polygon_in_standardized_label - Execution verified successfully
+  [PASS] TestStandardizedFiveColumnLabels.test_valid_five_column_detection - Execution verified successfully
+  [PASS] TestNonSquareDynamicDimensionParser.test_dynamic_coordinate_scaling_1920x1080 - Execution verified successfully
+  [PASS] TestNestedOOFGroupIsolation.test_nested_fold_zero_leakage_and_isolation - Execution verified successfully
+
+================================================================================
+RAW UNITTEST EXECUTION LOG:
+================================================================================
+test_image_difficulty_aggregation (__main__.TestDifficultyFormulaAndBounds.test_image_difficulty_aggregation) ... ok
+test_matched_correct_class_formula (__main__.TestDifficultyFormulaAndBounds.test_matched_correct_class_formula) ... ok
+test_matched_wrong_class_penalty_and_clipping (__main__.TestDifficultyFormulaAndBounds.test_matched_wrong_class_penalty_and_clipping) ... ok
+test_unmatched_fn_formula (__main__.TestDifficultyFormulaAndBounds.test_unmatched_fn_formula) ... ok
+test_global_descending_iou_sorting (__main__.TestGlobalOneToOneMatching.test_global_descending_iou_sorting) ... ok
+test_multiple_predictions_for_single_gt (__main__.TestGlobalOneToOneMatching.test_multiple_predictions_for_single_gt) ... ok
+test_single_prediction_between_two_gt (__main__.TestGlobalOneToOneMatching.test_single_prediction_between_two_gt) ... ok
+test_dataset_coverage_fail_fast_on_missing_images (__main__.TestManifestFailFastAndCoverage.test_dataset_coverage_fail_fast_on_missing_images) ... ok
+test_duplicate_image_id_rejection (__main__.TestManifestFailFastAndCoverage.test_duplicate_image_id_rejection) ... ok
+test_invalid_d_image_bounds_rejection (__main__.TestManifestFailFastAndCoverage.test_invalid_d_image_bounds_rejection) ... ok
+test_mixture_weights_formula_and_normalization (__main__.TestSamplingWeightsAndMixtureFormula.test_mixture_weights_formula_and_normalization) ... ok
+test_crop_expansion_and_centering (__main__.TestTargetedContextCropGeometry.test_crop_expansion_and_centering) ... ok
+test_original_label_not_mutated (__main__.TestTargetedContextCropGeometry.test_original_label_not_mutated) ... ok
+test_experiment_spec_toggles (__main__.TestExperimentComponentToggles.test_experiment_spec_toggles) ... ok
+test_resolve_paths_from_yaml (__main__.TestEvaluatorDataSourceSSOT.test_resolve_paths_from_yaml) ... ok
+test_primary_criterion_map50_95_strictly_wins (__main__.TestModelSelectionHierarchy.test_primary_criterion_map50_95_strictly_wins) ... ok
+test_tie_break_1_recall_small (__main__.TestModelSelectionHierarchy.test_tie_break_1_recall_small) ... ok
+test_tie_break_2_map50 (__main__.TestModelSelectionHierarchy.test_tie_break_2_map50) ... ok
+test_tie_break_3_lowest_fn (__main__.TestModelSelectionHierarchy.test_tie_break_3_lowest_fn) ... ok
+test_canonical_metric_extraction (__main__.TestFullPrecisionMetricSerialization.test_canonical_metric_extraction) ... ok
+test_historic_stage_8_ablation_overwrite_blocked (__main__.TestIsolatedPathsAndAntiOverwrite.test_historic_stage_8_ablation_overwrite_blocked) ... ok
+test_reject_invalid_class_id (__main__.TestStandardizedFiveColumnLabels.test_reject_invalid_class_id) ... ok
+test_reject_polygon_in_standardized_label (__main__.TestStandardizedFiveColumnLabels.test_reject_polygon_in_standardized_label) ... ok
+test_valid_five_column_detection (__main__.TestStandardizedFiveColumnLabels.test_valid_five_column_detection) ... ok
+test_dynamic_coordinate_scaling_1920x1080 (__main__.TestNonSquareDynamicDimensionParser.test_dynamic_coordinate_scaling_1920x1080) ... ok
+test_nested_fold_zero_leakage_and_isolation (__main__.TestNestedOOFGroupIsolation.test_nested_fold_zero_leakage_and_isolation) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.135s
+
+OK
+
+================================================================================
+GATE READINESS: READY_FOR_CLEAN_OOF
+================================================================================
