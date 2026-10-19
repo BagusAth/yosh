@@ -1,0 +1,64 @@
+{
+  "stage": "9.8",
+  "status": "INTEGRATED_AND_VERIFIED",
+  "global_training_parameters": {
+    "epochs": 30,
+    "patience": 10,
+    "batch": 16,
+    "imgsz": 640,
+    "seed": 42,
+    "device": "0",
+    "workers": 2,
+    "amp": true,
+    "plots": false,
+    "close_mosaic": 6,
+    "optimizer": "auto",
+    "aug_prob": 0.5,
+    "pretrained_weights": "yolo11n.pt",
+    "pretrained_weights_sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1",
+    "data_yaml": "cassava-v7-standardized/data.yaml",
+    "data_yaml_sha256": "e40454b874596ad6f0275ae489a44eca51b2350540c16e50e4b489f479e9ed84"
+  },
+  "experiment_specifications": {
+    "exp_0_baseline": {
+      "id": 0,
+      "name": "EXP-0 (Baseline Control)",
+      "enable_mixture_sampling": false,
+      "enable_targeted_aug": false,
+      "requires_manifest": false,
+      "description": "Pure baseline control using standard YOLO11n uniform sampling and augmentations."
+    },
+    "exp_1_adaptive_sampling": {
+      "id": 1,
+      "name": "EXP-1 (Mixture Adaptive Sampling)",
+      "enable_mixture_sampling": true,
+      "enable_targeted_aug": false,
+      "requires_manifest": true,
+      "description": "Ablation variant enabling mixture adaptive sampling based on OOF difficulty manifest."
+    },
+    "exp_2_targeted_aug": {
+      "id": 2,
+      "name": "EXP-2 (Targeted Context Augmentation)",
+      "enable_mixture_sampling": false,
+      "enable_targeted_aug": true,
+      "requires_manifest": true,
+      "description": "Ablation variant enabling on-the-fly targeted context crop for hard small lesions."
+    },
+    "exp_3_full_proposed": {
+      "id": 3,
+      "name": "EXP-3 (Full Proposed Method)",
+      "enable_mixture_sampling": true,
+      "enable_targeted_aug": true,
+      "requires_manifest": true,
+      "description": "Full proposed method combining mixture adaptive sampling and targeted context augmentation."
+    }
+  },
+  "runtime_defaults_rationale": {
+    "epochs_30": "Reduced from legacy 50 epochs to balance convergence with training runtime on RTX 4060.",
+    "patience_10": "Early stopping stops unpromising runs after 10 epochs without validation improvement.",
+    "workers_2": "Optimized for Windows dataloading without shared-memory exhaustion or CPU thrashing.",
+    "amp_true": "Enables FP16 mixed precision on Tensor Cores for ~2x throughput and 50% memory reduction.",
+    "plots_false": "Disables redundant matplotlib figure generation during training to save disk I/O and time.",
+    "close_mosaic_6": "Disables mosaic in the last 6 epochs (20% of 30) for fine-grained feature stabilization."
+  }
+}

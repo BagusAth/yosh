@@ -1,0 +1,7 @@
+=== 1-EPOCH SYNTHETIC SMOKE TEST EXECUTION LOG ===
+Base Pretrained Model : yolo11n.pt
+Device Used           : cpu (host PyTorch is torch==2.9.1+cpu)
+Physical GPU          : NVIDIA GeForce RTX 4060 Laptop GPU (detected via nvidia-smi)
+Status                : PASSED (Training + Validation completed)
+Trained Weights       : best.pt produced (size: 5411546 bytes)
+===================================================

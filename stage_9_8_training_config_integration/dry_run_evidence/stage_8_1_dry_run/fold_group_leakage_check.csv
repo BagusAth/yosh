@@ -1,0 +1,7 @@
+fold_a,fold_b,shared_groups,leakage_status
+fold_1,fold_2,0,ZERO_LEAKAGE
+fold_1,fold_3,0,ZERO_LEAKAGE
+fold_1,fold_4,0,ZERO_LEAKAGE
+fold_2,fold_3,0,ZERO_LEAKAGE
+fold_2,fold_4,0,ZERO_LEAKAGE
+fold_3,fold_4,0,ZERO_LEAKAGE

@@ -44,6 +44,7 @@ from research_utils.detection_metrics import (
     extract_canonical_metrics,
     resolve_data_yaml_split,
     validate_output_directory_safety,
+    validate_yolo_dataset_integrity,
     FORBIDDEN_HISTORICAL_DIRS,
 )
 from stage_8_3_adaptive_pipeline import AdaptiveDetectionTrainer
@@ -94,19 +95,60 @@ EXPERIMENT_SPECS = {
 }
 
 
-def compute_file_sha256(filepath: str | Path) -> str:
-    p = Path(filepath)
-    if not p.exists():
-        return ""
-    h = hashlib.sha256()
-    with open(p, "rb") as f:
-        while chunk := f.read(65536):
-            h.update(chunk)
-    return h.hexdigest()
+def resolve_pretrained_weights(model_name_or_path: str | Path, yaml_path: str | Path | None = None) -> Path:
+    """
+    Menemukan file bobot pretrained secara konkret di disk lokal tanpa unduhan dinamis.
+    """
+    p = Path(model_name_or_path)
+    if p.exists() and p.is_file():
+        return p.resolve()
+
+    candidates = [
+        Path.cwd() / p.name,
+        Path(__file__).parent / p.name,
+    ]
+    if yaml_path:
+        yaml_p = Path(yaml_path).resolve()
+        candidates.append(yaml_p.parent / p.name)
+        candidates.append(yaml_p.parent.parent / p.name)
+
+    for cand in candidates:
+        if cand.exists() and cand.is_file():
+            return cand.resolve()
+
+    raise FileNotFoundError(
+        f"Pretrained weights '{model_name_or_path}' tidak ditemukan di disk lokal!\n"
+        "Mengunduh bobot secara otomatis pada tahap preflight dilarang keras.\n"
+        f"Kandidat yang diperiksa: {[str(c) for c in candidates]}"
+    )
+
+
+def validate_training_args(args):
+    """Memvalidasi rentang nilai argumen pelatihan agar fail-fast bila tidak valid."""
+    if args.epochs < 1:
+        raise ValueError(f"Invalid epochs: {args.epochs}. Must be >= 1.")
+    if getattr(args, "patience", 10) < 0:
+        raise ValueError(f"Invalid patience: {getattr(args, 'patience', 10)}. Must be >= 0.")
+    if args.batch < 1:
+        raise ValueError(f"Invalid batch size: {args.batch}. Must be >= 1.")
+    if args.imgsz < 32:
+        raise ValueError(f"Invalid image size: {args.imgsz}. Must be >= 32.")
+    if getattr(args, "workers", 2) < 0:
+        raise ValueError(f"Invalid workers: {getattr(args, 'workers', 2)}. Must be >= 0.")
+    if hasattr(args, "close_mosaic") and args.close_mosaic is not None:
+        if args.close_mosaic < 0:
+            raise ValueError(f"Invalid close_mosaic: {args.close_mosaic}. Must be >= 0.")
+        if args.close_mosaic > args.epochs:
+            raise ValueError(f"Invalid close_mosaic: {args.close_mosaic}. Must be in range [0, epochs={args.epochs}].")
+    else:
+        args.close_mosaic = min(6, args.epochs)
+    aug_prob = getattr(args, "aug_prob", 0.50)
+    if not (0.0 <= aug_prob <= 1.0):
+        raise ValueError(f"Invalid aug_prob: {aug_prob}. Must be in [0.0, 1.0].")
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Stage 8.4: Run Ablation Experiments (EXP-0 .. EXP-3) (Hardened)")
+    parser = argparse.ArgumentParser(description="Stage 8.4: Run Ablation Experiments (EXP-0 .. EXP-3) (Hardened Stage 9.8)")
     parser.add_argument(
         "--exp",
         choices=["all", "0", "1", "2", "3"],
@@ -116,8 +158,14 @@ def parse_args():
     parser.add_argument(
         "--epochs",
         type=int,
-        default=50,
-        help="Jumlah epoch pelatihan (default: 50)",
+        default=30,
+        help="Jumlah epoch maksimum pelatihan (default: 30)",
+    )
+    parser.add_argument(
+        "--patience",
+        type=int,
+        default=10,
+        help="Early stopping patience dalam epoch (default: 10)",
     )
     parser.add_argument(
         "--batch",
@@ -141,6 +189,60 @@ def parse_args():
         "--device",
         default="0",
         help="Device CUDA (default: '0')",
+    )
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=2,
+        help="Jumlah worker data loader (default: 2)",
+    )
+    parser.add_argument(
+        "--amp",
+        dest="amp",
+        action="store_true",
+        default=True,
+        help="Aktifkan Automatic Mixed Precision (AMP) (default: True)",
+    )
+    parser.add_argument(
+        "--no-amp",
+        dest="amp",
+        action="store_false",
+        help="Nonaktifkan Automatic Mixed Precision (AMP)",
+    )
+    parser.add_argument(
+        "--plots",
+        dest="plots",
+        action="store_true",
+        default=False,
+        help="Simpan visualisasi training plots (default: False)",
+    )
+    parser.add_argument(
+        "--no-plots",
+        dest="plots",
+        action="store_false",
+        help="Nonaktifkan visualisasi training plots (default: False)",
+    )
+    parser.add_argument(
+        "--close-mosaic",
+        type=int,
+        default=6,
+        help="Nonaktifkan mosaic augmentation pada N epoch terakhir (default: 6)",
+    )
+    parser.add_argument(
+        "--optimizer",
+        default="auto",
+        help="Pilihan optimizer pelatihan (default: 'auto')",
+    )
+    parser.add_argument(
+        "--aug-prob",
+        type=float,
+        default=0.50,
+        help="Probabilitas aplikasi targeted context crop (default: 0.50)",
+    )
+    parser.add_argument(
+        "--pretrained-weights",
+        default="yolo11n.pt",
+        help="Path atau nama bobot pretrained awal (default: 'yolo11n.pt')",
     )
     parser.add_argument(
         "--data-yaml",
@@ -342,9 +444,20 @@ def build_experiment_run_identity(
     imgsz: int,
     seed: int,
     device: str = "",
+    workers: int = 2,
+    amp: bool = True,
+    plots: bool = False,
+    patience: int = 10,
+    close_mosaic: int = 6,
+    optimizer: str = "auto",
+    aug_prob: float = 0.50,
     checkpoint_best_sha256: str = "",
+    raw_oof_sha256: str = "",
+    clean_oof_run_id: str = "",
+    total_train_images: int = 0,
+    total_val_images: int = 0,
 ) -> dict[str, Any]:
-    """Membangun objek identitas konfigurasi eksperimen ablasi secara kanonis."""
+    """Membangun objek identitas konfigurasi eksperimen ablasi secara kanonis dan komprehensif."""
     p_script = Path(script_path) if script_path else None
     p_yaml = Path(yaml_path) if yaml_path else None
     p_manifest = Path(manifest_path) if manifest_path else None
@@ -358,21 +471,34 @@ def build_experiment_run_identity(
         "enable_mixture_sampling": spec["enable_mixture_sampling"],
         "enable_targeted_aug": spec["enable_targeted_aug"],
         "epochs": epochs,
+        "patience": patience,
         "batch_size": batch_size,
         "batch": batch_size,
         "imgsz": imgsz,
         "seed": seed,
         "device": str(device),
-        "model_base": "yolo11n.pt",
+        "workers": workers,
+        "amp": amp,
+        "plots": plots,
+        "close_mosaic": close_mosaic,
+        "optimizer": optimizer,
+        "aug_prob": aug_prob,
+        "model_base": p_pre.name if p_pre else "yolo11n.pt",
+        "pretrained_weights_path": str(p_pre) if p_pre else "yolo11n.pt",
         "script_sha256": compute_file_sha256(p_script) if p_script and p_script.exists() else str(script_path),
         "data_yaml_sha256": compute_file_sha256(p_yaml) if p_yaml and p_yaml.exists() else str(yaml_path),
         "manifest_sha256": compute_file_sha256(p_manifest) if (p_manifest and p_manifest.exists() and (spec["enable_mixture_sampling"] or spec["enable_targeted_aug"])) else "",
+        "raw_oof_sha256": raw_oof_sha256,
+        "clean_oof_run_id": clean_oof_run_id,
         "pretrained_weights_sha256": compute_pretrained_weights_sha256(p_pre) if (p_pre and p_pre.exists()) else "",
         "pretrained_sha256": compute_pretrained_weights_sha256(p_pre) if (p_pre and p_pre.exists()) else "",
         "dataset_inventory_fingerprint": dataset_inventory_fingerprint,
+        "total_train_images": total_train_images,
+        "total_val_images": total_val_images,
         "best_weight_sha256": checkpoint_best_sha256,
         "python_version": sys.version.split()[0],
         "torch_version": torch.__version__,
+        "cuda_available": torch.cuda.is_available(),
         "ultralytics_version": getattr(ultralytics, "__version__", ""),
     }
 
@@ -399,7 +525,8 @@ def verify_ablation_reuse_safety(
         return False, f"Failed to parse metadata JSON: {e}"
 
     for k, exp_val in expected_identity.items():
-        if k in ("best_weight_sha256", "duration_minutes", "timestamp", "metrics_validation"):
+        if k in ("best_weight_sha256", "duration_minutes", "timestamp", "metrics_validation",
+                 "requested_epochs", "completed_epochs", "best_epoch", "stopped_early"):
             continue
         if k == "batch_size" and "batch_size" not in meta and "batch" in meta:
             saved_val = meta["batch"]
@@ -454,14 +581,63 @@ def run_single_experiment(
         is_root=True,
     )
 
-    # 2. Dataset inventory fingerprint and split resolution
+    epochs = getattr(args, "epochs", 30)
+    patience = getattr(args, "patience", 10)
+    batch = getattr(args, "batch", 16)
+    imgsz = getattr(args, "imgsz", 640)
+    seed = getattr(args, "seed", 42)
+    device = getattr(args, "device", "0")
+    workers = getattr(args, "workers", 2)
+    amp = getattr(args, "amp", True)
+    plots = getattr(args, "plots", False)
+    close_mosaic = getattr(args, "close_mosaic", 6)
+    optimizer = getattr(args, "optimizer", "auto")
+    aug_prob = getattr(args, "aug_prob", 0.50)
+    pretrained_arg = getattr(args, "pretrained_weights", "yolo11n.pt")
+
+    try:
+        concrete_pretrained_path = resolve_pretrained_weights(pretrained_arg, yaml_path=args.data_yaml)
+    except FileNotFoundError:
+        if trainer_cls is not None:
+            concrete_pretrained_path = Path(pretrained_arg)
+        else:
+            raise
+
+    # 2. Strict Dataset Integrity Preflight Validation (SSOT)
     train_images_dir, train_labels_dir, train_image_files = resolve_data_yaml_split(args.data_yaml, "train")
+    train_integrity = validate_yolo_dataset_integrity(
+        images_dir=train_images_dir,
+        labels_dir=train_labels_dir,
+        image_files=train_image_files,
+        data_yaml_path=args.data_yaml,
+        num_classes=len(CLASS_NAMES),
+        class_names=CLASS_NAMES,
+        allow_empty_labels=True,
+    )
+    if train_integrity.get("status") != "VALID":
+        raise ValueError(f"[{spec['id']}] Train dataset integrity validation failed: {train_integrity}")
+
+    val_images_dir, val_labels_dir, val_image_files = resolve_data_yaml_split(args.data_yaml, "val")
+    val_integrity = validate_yolo_dataset_integrity(
+        images_dir=val_images_dir,
+        labels_dir=val_labels_dir,
+        image_files=val_image_files,
+        data_yaml_path=args.data_yaml,
+        num_classes=len(CLASS_NAMES),
+        class_names=CLASS_NAMES,
+        allow_empty_labels=True,
+    )
+    if val_integrity.get("status") != "VALID":
+        raise ValueError(f"[{spec['id']}] Validation dataset integrity validation failed: {val_integrity}")
+
     dataset_inv_sha = compute_dataset_inventory_fingerprint(
         train_images_dir, train_labels_dir, data_yaml_path=args.data_yaml
     )
     data_yaml_sha = compute_file_sha256(args.data_yaml)
 
     # 3. Manifest requirement and provenance verification
+    raw_oof_sha = ""
+    clean_oof_id = ""
     manifest_to_use = args.manifest_path
     if spec["enable_mixture_sampling"] or spec["enable_targeted_aug"]:
         if not manifest_to_use:
@@ -479,6 +655,8 @@ def run_single_experiment(
             raise ValueError(
                 f"[{spec['id']}] MANIFEST PROVENANCE VALIDATION FAILED: {prov_reason}"
             )
+        raw_oof_sha = prov_meta.get("raw_oof_sha256", "")
+        clean_oof_id = prov_meta.get("clean_oof_run_id", "")
         print(f"[{spec['id']}] Manifest provenance & coverage verified: {manifest_to_use}")
     else:
         # EXP-0 Baseline: do NOT require manifest and do NOT use it
@@ -493,12 +671,23 @@ def run_single_experiment(
         yaml_path=args.data_yaml,
         manifest_path=manifest_to_use,
         dataset_inventory_fingerprint=dataset_inv_sha,
-        pretrained_weights_path="yolo11n.pt",
-        epochs=args.epochs,
-        batch_size=args.batch,
-        imgsz=args.imgsz,
-        seed=args.seed,
-        device=str(args.device),
+        pretrained_weights_path=concrete_pretrained_path,
+        epochs=epochs,
+        batch_size=batch,
+        imgsz=imgsz,
+        seed=seed,
+        device=str(device),
+        workers=workers,
+        amp=amp,
+        plots=plots,
+        patience=patience,
+        close_mosaic=close_mosaic,
+        optimizer=optimizer,
+        aug_prob=aug_prob,
+        raw_oof_sha256=raw_oof_sha,
+        clean_oof_run_id=clean_oof_id,
+        total_train_images=len(train_image_files),
+        total_val_images=len(val_image_files),
     )
 
     # Validate exp_dir safety with full expected_identity
@@ -546,6 +735,21 @@ def run_single_experiment(
             "title": spec["title"],
             "dry_run": True,
             "status": "VERIFIED_READY",
+            "effective_config": {
+                "epochs": epochs,
+                "patience": patience,
+                "batch": batch,
+                "imgsz": imgsz,
+                "seed": seed,
+                "device": device,
+                "workers": workers,
+                "amp": amp,
+                "plots": plots,
+                "close_mosaic": close_mosaic,
+                "optimizer": optimizer,
+                "aug_prob": aug_prob,
+                "pretrained_weights": str(concrete_pretrained_path),
+            },
             "run_metadata": expected_identity,
         }
 
@@ -554,9 +758,12 @@ def run_single_experiment(
     print("=" * 80)
     print(f"Sampling Mechanism   : {spec['sampling']}")
     print(f"Augmentation Policy  : {spec['augmentation']}")
-    print(f"Epochs / Batch       : {args.epochs} / {args.batch}")
-    print(f"Image Resolution     : {args.imgsz}")
-    print(f"Random Seed          : {args.seed}")
+    print(f"Epochs / Patience    : {epochs} / {patience}")
+    print(f"Batch / Image Size   : {batch} / {imgsz}")
+    print(f"Random Seed / Device : {seed} / {device}")
+    print(f"Workers / AMP / Plots: {workers} / {amp} / {plots}")
+    print(f"Close Mosaic / Optim : {close_mosaic} / {optimizer}")
+    print(f"Pretrained Weights   : {concrete_pretrained_path}")
     print(f"Data YAML            : {args.data_yaml}")
     print(f"Output Directory     : {exp_dir}")
     print("=" * 80)
@@ -569,25 +776,29 @@ def run_single_experiment(
     active_trainer_cls = trainer_cls if trainer_cls is not None else AdaptiveDetectionTrainer
     trainer = active_trainer_cls(
         overrides={
-            "model": "yolo11n.pt",
+            "model": str(concrete_pretrained_path),
             "data": str(Path(args.data_yaml).resolve()),
-            "epochs": args.epochs,
-            "batch": args.batch,
-            "imgsz": args.imgsz,
-            "seed": args.seed,
-            "device": args.device,
-            "workers": 0,
+            "epochs": epochs,
+            "patience": patience,
+            "batch": batch,
+            "imgsz": imgsz,
+            "seed": seed,
+            "device": device,
+            "workers": workers,
             "project": str(output_dir),
             "name": spec["name"],
             "save": True,
             "exist_ok": True,
-            "plots": True,
+            "plots": plots,
             "val": True,
+            "amp": amp,
+            "close_mosaic": close_mosaic,
+            "optimizer": optimizer,
         },
         enable_mixture_sampling=spec["enable_mixture_sampling"],
         enable_targeted_aug=spec["enable_targeted_aug"],
         manifest_path=manifest_to_use,
-        aug_prob=0.50,
+        aug_prob=aug_prob,
     )
 
     trainer.train()
@@ -607,18 +818,18 @@ def run_single_experiment(
         canonical_m = model_eval_fn(
             best_target,
             data_yaml_path=args.data_yaml,
-            batch=args.batch,
-            imgsz=args.imgsz,
-            device=args.device,
+            batch=batch,
+            imgsz=imgsz,
+            device=device,
         )
     else:
         eval_model = YOLO(str(best_target))
         val_metrics = eval_model.val(
             data=str(Path(args.data_yaml).resolve()),
             split="val",
-            batch=args.batch,
-            imgsz=args.imgsz,
-            device=args.device,
+            batch=batch,
+            imgsz=imgsz,
+            device=device,
             plots=False,
         )
         canonical_m = extract_canonical_metrics(val_metrics, CLASS_NAMES)
@@ -626,8 +837,18 @@ def run_single_experiment(
 
     best_weight_sha256 = compute_file_sha256(best_weight_path)
 
+    completed_epochs = getattr(trainer, "epoch", epochs)
+    if isinstance(completed_epochs, int):
+        completed_epochs = min(completed_epochs + 1, epochs)
+    best_epoch = getattr(trainer, "best_epoch", None)
+    stopped_early = bool(completed_epochs < epochs)
+
     run_meta = dict(expected_identity)
     run_meta["best_weight_sha256"] = best_weight_sha256
+    run_meta["requested_epochs"] = epochs
+    run_meta["completed_epochs"] = completed_epochs
+    run_meta["best_epoch"] = best_epoch
+    run_meta["stopped_early"] = stopped_early
 
     summary = {
         "exp_id": spec["id"],
@@ -635,8 +856,20 @@ def run_single_experiment(
         "title": spec["title"],
         "sampling": spec["sampling"],
         "augmentation": spec["augmentation"],
-        "epochs": args.epochs,
-        "seed": args.seed,
+        "epochs": epochs,
+        "patience": patience,
+        "batch": batch,
+        "imgsz": imgsz,
+        "workers": workers,
+        "amp": amp,
+        "plots": plots,
+        "close_mosaic": close_mosaic,
+        "optimizer": optimizer,
+        "seed": seed,
+        "requested_epochs": epochs,
+        "completed_epochs": completed_epochs,
+        "best_epoch": best_epoch,
+        "stopped_early": stopped_early,
         "duration_minutes": round(t_duration / 60.0, 2),
         "metrics_validation": {
             "precision": canonical_m["precision"],
@@ -741,11 +974,14 @@ def run_ablation_pipeline(
 ) -> list[dict[str, Any]]:
     """
     Orkestrator utama ablasi yang mengeksekusi urutan EXP-0 s.d. EXP-3:
-    1. Memvalidasi output root tepat SATU KALI di tingkat orkestrator (is_root=True).
-    2. Menjalankan sub-eksperimen secara berurutan.
-    3. Memastikan artefak antar-eksperimen tidak saling menolak di tingkat root.
-    4. Menghasilkan laporan komparatif hanya jika seluruh eksperimen yang diminta selesai.
+    1. Memvalidasi rentang argumen pelatihan.
+    2. Memvalidasi output root tepat SATU KALI di tingkat orkestrator (is_root=True).
+    3. Menjalankan sub-eksperimen secara berurutan.
+    4. Memastikan artefak antar-eksperimen tidak saling menolak di tingkat root.
+    5. Menghasilkan laporan komparatif hanya jika seluruh eksperimen yang diminta selesai.
     """
+    validate_training_args(args)
+
     if args.exp == "all":
         exp_indices = [0, 1, 2, 3]
     else:
@@ -797,17 +1033,26 @@ def main(argv=None):
     else:
         args = parse_args()
 
+    validate_training_args(args)
+
     print("=" * 80)
-    print("STAGE 8.4 — ABLATION STUDY EXPERIMENTS (EXP-0 .. EXP-3) (HARDENED)")
+    print("STAGE 8.4 — ABLATION STUDY EXPERIMENTS (EXP-0 .. EXP-3) (HARDENED STAGE 9.8)")
     print("=" * 80)
     print(f"Data YAML          : {args.data_yaml}")
     print(f"Manifest Path      : {args.manifest_path}")
     print(f"Output Directory   : {args.output_dir}")
     print(f"Target Eksperimen  : {args.exp}")
     print(f"Epochs per Eksper. : {args.epochs}")
+    print(f"Patience           : {getattr(args, 'patience', 10)}")
     print(f"Batch Size         : {args.batch}")
     print(f"Image Resolution   : {args.imgsz}")
     print(f"Random Seed        : {args.seed}")
+    print(f"Device             : {args.device}")
+    print(f"Workers            : {getattr(args, 'workers', 2)}")
+    print(f"AMP                : {getattr(args, 'amp', True)}")
+    print(f"Plots              : {getattr(args, 'plots', False)}")
+    print(f"Close Mosaic       : {getattr(args, 'close_mosaic', 6)}")
+    print(f"Optimizer          : {getattr(args, 'optimizer', 'auto')}")
     print(f"Skip if Done       : {args.skip_if_done}")
     print("=" * 80)
 

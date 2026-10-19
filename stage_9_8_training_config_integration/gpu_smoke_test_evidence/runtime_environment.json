@@ -1,0 +1,18 @@
+{
+  "python_version": "3.13.7 (tags/v3.13.7:bcee1c3, Aug 14 2025, 14:15:11) [MSC v.1944 64 bit (AMD64)]",
+  "python_executable": "C:\\Program Files\\Python313\\python.exe",
+  "torch_version": "2.9.1+cpu",
+  "torch_cuda_available": false,
+  "torch_cuda_version": null,
+  "cuda_device_count": 0,
+  "physical_gpu": {
+    "name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "memory_total_mib": 8188,
+    "driver_version": "581.86",
+    "cuda_system_version": "13.0",
+    "detected_via": "nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv"
+  },
+  "runtime_verdict": "NEEDS_LOCAL_GPU_SMOKE_TEST",
+  "verdict_reason": "Physical RTX 4060 Laptop GPU is present and active at OS level, but active Python environment contains torch==2.9.1+cpu. GPU acceleration requires PyTorch built with CUDA support (e.g. cu124/cu126).",
+  "recommendation": "Run pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124 in dedicated virtualenv prior to real training."
+}

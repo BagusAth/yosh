@@ -57,6 +57,7 @@ from research_utils.detection_metrics import (
     compute_pretrained_weights_sha256,
     resolve_data_yaml_split,
     validate_output_directory_safety,
+    validate_yolo_dataset_integrity,
 )
 
 CLASS_NAMES = ["CBB", "CBSD", "CGM", "CMD", "HEALTHY"]
@@ -851,7 +852,22 @@ def main():
     )
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # 1. Audit Label & Ground Truth dari file label .txt
+    # 1. Dataset Integrity Preflight Validation (SSOT)
+    integrity_result = validate_yolo_dataset_integrity(
+        images_dir=images_dir,
+        labels_dir=labels_dir,
+        image_files=train_images,
+        data_yaml_path=args.data_yaml if args.data_yaml else None,
+        num_classes=len(CLASS_NAMES),
+        class_names=CLASS_NAMES,
+        allow_empty_labels=True,
+    )
+    if integrity_result.get("status") != "VALID":
+        raise ValueError(f"[STAGE 8.1] Dataset integrity validation failed: {integrity_result}")
+    print(f"[STAGE 8.1] Dataset integrity verified: {integrity_result['total_images']:,} images "
+          f"({integrity_result['background_images']} background), {integrity_result['total_objects']:,} objects.")
+
+    # 2. Audit Label & Ground Truth dari file label .txt
     annotation_data = load_annotations(images_dir, labels_dir, expected_count=args.expected_train_images, train_images=train_images)
 
     # 2. Pemetaan Group

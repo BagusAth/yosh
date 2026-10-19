@@ -1,0 +1,5 @@
+fold_id,outer_holdout_fold,outer_holdout_images,inner_train_folds,inner_train_images,inner_val_fold,inner_val_images
+1,1,2246,3+4,4490,2,2244
+2,2,2244,1+4,4491,3,2245
+3,3,2245,1+2,4490,4,2245
+4,4,2245,2+3,4489,1,2246

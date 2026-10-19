@@ -199,9 +199,17 @@ def validate_yolo_dataset_integrity(
         img_stems_set = set(stems_seen.keys())
         for dlf in disk_label_files:
             if dlf.stem not in img_stems_set:
-                raise ValueError(
-                    f"Orphan label file found without corresponding image in '{lbl_p}': '{dlf.name}'"
-                )
+                has_disk_img = False
+                if images_dir is not None:
+                    img_d_path = Path(images_dir)
+                    for ext in [".jpg", ".jpeg", ".png", ".JPG", ".JPEG", ".PNG"]:
+                        if (img_d_path / f"{dlf.stem}{ext}").exists():
+                            has_disk_img = True
+                            break
+                if not has_disk_img:
+                    raise ValueError(
+                        f"Orphan label file found without corresponding image in '{lbl_p}': '{dlf.name}'"
+                    )
 
     # 5. Validate label content line by line
     total_objects = 0

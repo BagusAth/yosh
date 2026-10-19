@@ -50,6 +50,7 @@ from research_utils.detection_metrics import (
     derive_yolo_label_path,
     resolve_data_yaml_split,
     validate_output_directory_safety,
+    validate_yolo_dataset_integrity,
     CLASS_NAMES,
 )
 
@@ -155,6 +156,31 @@ def main():
     # Preflight validation & fingerprinting Single Source of Truth
     train_img_dir, train_lbl_dir, train_imgs = resolve_data_yaml_split(data_yaml_path, "train")
     val_img_dir, val_lbl_dir, val_images = resolve_data_yaml_split(data_yaml_path, "val")
+
+    # Strict Dataset Integrity Preflight Validation (SSOT)
+    train_integrity = validate_yolo_dataset_integrity(
+        images_dir=train_img_dir,
+        labels_dir=train_lbl_dir,
+        image_files=train_imgs,
+        data_yaml_path=data_yaml_path,
+        num_classes=len(CLASS_NAMES),
+        class_names=CLASS_NAMES,
+        allow_empty_labels=True,
+    )
+    if train_integrity.get("status") != "VALID":
+        raise ValueError(f"[STAGE 7] Train dataset integrity validation failed: {train_integrity}")
+
+    val_integrity = validate_yolo_dataset_integrity(
+        images_dir=val_img_dir,
+        labels_dir=val_lbl_dir,
+        image_files=val_images,
+        data_yaml_path=data_yaml_path,
+        num_classes=len(CLASS_NAMES),
+        class_names=CLASS_NAMES,
+        allow_empty_labels=True,
+    )
+    if val_integrity.get("status") != "VALID":
+        raise ValueError(f"[STAGE 7] Validation dataset integrity validation failed: {val_integrity}")
 
     dataset_inv_sha = compute_dataset_inventory_fingerprint(train_img_dir, train_lbl_dir, data_yaml_path=data_yaml_path)
     data_yaml_sha = compute_file_sha256(data_yaml_path)

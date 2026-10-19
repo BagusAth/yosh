@@ -1,0 +1,618 @@
+Ultralytics 8.3.235  Python-3.13.7 torch-2.9.1+cpu CPU (13th Gen Intel Core i7-13650HX)
+[34m[1mengine\trainer: [0magnostic_nms=False, amp=True, augment=False, auto_augment=randaugment, batch=16, bgr=0.0, box=7.5, cache=False, cfg=None, classes=None, close_mosaic=10, cls=0.5, compile=False, conf=None, copy_paste=0.0, copy_paste_mode=flip, cos_lr=False, cutmix=0.0, data=cassava-v7-research/data.yaml, degrees=0.0, deterministic=True, device=cpu, dfl=1.5, dnn=False, dropout=0.0, dynamic=False, embed=None, epochs=100, erasing=0.4, exist_ok=False, fliplr=0.5, flipud=0.0, format=torchscript, fraction=1.0, freeze=None, half=False, hsv_h=0.015, hsv_s=0.7, hsv_v=0.4, imgsz=640, int8=False, iou=0.7, keras=False, kobj=1.0, line_width=None, lr0=0.01, lrf=0.01, mask_ratio=4, max_det=300, mixup=0.0, mode=train, model=yolo11n.pt, momentum=0.937, mosaic=1.0, multi_scale=False, name=train58, nbs=64, nms=False, opset=None, optimize=False, optimizer=auto, overlap_mask=True, patience=100, perspective=0.0, plots=True, pose=12.0, pretrained=True, profile=False, project=None, rect=False, resume=False, retina_masks=False, save=True, save_conf=False, save_crop=False, save_dir=D:\UNDIP\SKRIPSI\runs\detect\train58, save_frames=False, save_json=False, save_period=-1, save_txt=False, scale=0.5, seed=0, shear=0.0, show=False, show_boxes=True, show_conf=True, show_labels=True, simplify=True, single_cls=False, source=None, split=val, stream_buffer=False, task=detect, time=None, tracker=botsort.yaml, translate=0.1, val=True, verbose=True, vid_stride=1, visualize=False, warmup_bias_lr=0.1, warmup_epochs=3.0, warmup_momentum=0.8, weight_decay=0.0005, workers=8, workspace=None
+Ultralytics 8.3.235  Python-3.13.7 torch-2.9.1+cpu CPU (13th Gen Intel Core i7-13650HX)
+[34m[1mengine\trainer: [0magnostic_nms=False, amp=True, augment=False, auto_augment=randaugment, batch=16, bgr=0.0, box=7.5, cache=False, cfg=None, classes=None, close_mosaic=10, cls=0.5, compile=False, conf=None, copy_paste=0.0, copy_paste_mode=flip, cos_lr=False, cutmix=0.0, data=cassava-v7-research/data.yaml, degrees=0.0, deterministic=True, device=cpu, dfl=1.5, dnn=False, dropout=0.0, dynamic=False, embed=None, epochs=100, erasing=0.4, exist_ok=False, fliplr=0.5, flipud=0.0, format=torchscript, fraction=1.0, freeze=None, half=False, hsv_h=0.015, hsv_s=0.7, hsv_v=0.4, imgsz=640, int8=False, iou=0.7, keras=False, kobj=1.0, line_width=None, lr0=0.01, lrf=0.01, mask_ratio=4, max_det=300, mixup=0.0, mode=train, model=yolo11n.pt, momentum=0.937, mosaic=1.0, multi_scale=False, name=train59, nbs=64, nms=False, opset=None, optimize=False, optimizer=auto, overlap_mask=True, patience=100, perspective=0.0, plots=True, pose=12.0, pretrained=True, profile=False, project=None, rect=False, resume=False, retina_masks=False, save=True, save_conf=False, save_crop=False, save_dir=D:\UNDIP\SKRIPSI\runs\detect\train59, save_frames=False, save_json=False, save_period=-1, save_txt=False, scale=0.5, seed=0, shear=0.0, show=False, show_boxes=True, show_conf=True, show_labels=True, simplify=True, single_cls=False, source=None, split=val, stream_buffer=False, task=detect, time=None, tracker=botsort.yaml, translate=0.1, val=True, verbose=True, vid_stride=1, visualize=False, warmup_bias_lr=0.1, warmup_epochs=3.0, warmup_momentum=0.8, weight_decay=0.0005, workers=8, workspace=None
+Ultralytics 8.3.235  Python-3.13.7 torch-2.9.1+cpu CPU (13th Gen Intel Core i7-13650HX)
+[34m[1mengine\trainer: [0magnostic_nms=False, amp=True, augment=False, auto_augment=randaugment, batch=16, bgr=0.0, box=7.5, cache=False, cfg=None, classes=None, close_mosaic=10, cls=0.5, compile=False, conf=None, copy_paste=0.0, copy_paste_mode=flip, cos_lr=False, cutmix=0.0, data=cassava-v7-research/data.yaml, degrees=0.0, deterministic=True, device=cpu, dfl=1.5, dnn=False, dropout=0.0, dynamic=False, embed=None, epochs=100, erasing=0.4, exist_ok=False, fliplr=0.5, flipud=0.0, format=torchscript, fraction=1.0, freeze=None, half=False, hsv_h=0.015, hsv_s=0.7, hsv_v=0.4, imgsz=640, int8=False, iou=0.7, keras=False, kobj=1.0, line_width=None, lr0=0.01, lrf=0.01, mask_ratio=4, max_det=300, mixup=0.0, mode=train, model=yolo11n.pt, momentum=0.937, mosaic=1.0, multi_scale=False, name=train60, nbs=64, nms=False, opset=None, optimize=False, optimizer=auto, overlap_mask=True, patience=100, perspective=0.0, plots=True, pose=12.0, pretrained=True, profile=False, project=None, rect=False, resume=False, retina_masks=False, save=True, save_conf=False, save_crop=False, save_dir=D:\UNDIP\SKRIPSI\runs\detect\train60, save_frames=False, save_json=False, save_period=-1, save_txt=False, scale=0.5, seed=0, shear=0.0, show=False, show_boxes=True, show_conf=True, show_labels=True, simplify=True, single_cls=False, source=None, split=val, stream_buffer=False, task=detect, time=None, tracker=botsort.yaml, translate=0.1, val=True, verbose=True, vid_stride=1, visualize=False, warmup_bias_lr=0.1, warmup_epochs=3.0, warmup_momentum=0.8, weight_decay=0.0005, workers=8, workspace=None
+Ultralytics 8.3.235  Python-3.13.7 torch-2.9.1+cpu CPU (13th Gen Intel Core i7-13650HX)
+[34m[1mengine\trainer: [0magnostic_nms=False, amp=True, augment=False, auto_augment=randaugment, batch=16, bgr=0.0, box=7.5, cache=False, cfg=None, classes=None, close_mosaic=10, cls=0.5, compile=False, conf=None, copy_paste=0.0, copy_paste_mode=flip, cos_lr=False, cutmix=0.0, data=cassava-v7-research/data.yaml, degrees=0.0, deterministic=True, device=cpu, dfl=1.5, dnn=False, dropout=0.0, dynamic=False, embed=None, epochs=100, erasing=0.4, exist_ok=False, fliplr=0.5, flipud=0.0, format=torchscript, fraction=1.0, freeze=None, half=False, hsv_h=0.015, hsv_s=0.7, hsv_v=0.4, imgsz=640, int8=False, iou=0.7, keras=False, kobj=1.0, line_width=None, lr0=0.01, lrf=0.01, mask_ratio=4, max_det=300, mixup=0.0, mode=train, model=yolo11n.pt, momentum=0.937, mosaic=1.0, multi_scale=False, name=train61, nbs=64, nms=False, opset=None, optimize=False, optimizer=auto, overlap_mask=True, patience=100, perspective=0.0, plots=True, pose=12.0, pretrained=True, profile=False, project=None, rect=False, resume=False, retina_masks=False, save=True, save_conf=False, save_crop=False, save_dir=D:\UNDIP\SKRIPSI\runs\detect\train61, save_frames=False, save_json=False, save_period=-1, save_txt=False, scale=0.5, seed=0, shear=0.0, show=False, show_boxes=True, show_conf=True, show_labels=True, simplify=True, single_cls=False, source=None, split=val, stream_buffer=False, task=detect, time=None, tracker=botsort.yaml, translate=0.1, val=True, verbose=True, vid_stride=1, visualize=False, warmup_bias_lr=0.1, warmup_epochs=3.0, warmup_momentum=0.8, weight_decay=0.0005, workers=8, workspace=None
+Fast image access  (ping: 0.00.0 ms, read: 661.4426.7 MB/s, size: 89.8 KB)
+
+[KScanning D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\labels.cache... 8980 images, 66 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 8980/8980 1.9Git/s 0.0s
+[KScanning D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\labels.cache... 8980 images, 66 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 8980/8980 135.5Mit/s 0.0s
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\1012426959_jpg.rf.d44298fda029570ca7ad384007f99fb3.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\2189559385_jpg.rf.82cb878d807097cf45b40edbb16e5161.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\2271731125_jpg.rf.d6e314546493dd1b724d44c5dd999dc2.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\256556025_jpg.rf.1c3a70d85ccf9954045b6b12586efb3d.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\2677475578_jpg.rf.7f5b5f6e430ab831f9b9bdcf8e71bb15.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\2724931381_jpg.rf.7bbfd0e7d10b2890341a92f14e9905e8.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\352468512_jpg.rf.a3f484fe49ca92af791be87d9e547e4e.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\352468512_jpg.rf.b9033042f78cf620b3d8dbdb5c9b3525.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\3551086821_jpg.rf.750a298ab281675eff83514695abebc6.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\3645419540_jpg.rf.2db10274c71ee4288aef990849ddf3b6.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\4128588977_jpg.rf.c86f01650c3fd427fa9b06f72dbbbeda.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\581235562_jpg.rf.31a46ffc44c972d3b018bc0d9ccbfc8d.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\image_180_jpg.rf.047485e1086b806ddff77cd784be43f1.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\image_192_jpg.rf.bfba12393718630cacfffad7c4b55bf4.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\image_192_jpg.rf.cebd68cdc2e9c026cbac927ce5099c71.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\image_21_jpg.rf.355fc3c09dc4359898aa4ecd5db10d15.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\image_335_jpg.rf.31ae05f5d97f9ef5666679fb7a305ca5.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\image_335_jpg.rf.8555ccfcc5050cdfe97d511ebd0a4589.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\image_475_jpg.rf.12fb96f86795421234442913407df648.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\image_564_jpg.rf.bd383e3ebae628ef6cd688b41018ee3a.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\image_573_jpg.rf.5e00488918db8b92339f110b117fc8db.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\image_623_jpg.rf.cda8a3849a0b10f3fc9bd364d518d1ae.jpg: 2 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\image_651_jpg.rf.d7464b8cdea776da70cedc82f75bac98.jpg: 1 duplicate labels removed
+D:\UNDIP\SKRIPSI\cassava-v7-standardized\train\images\image_699_jpg.rf.a1cceb87dbf917db63d5eab295e92628.jpg: 2 duplicate labels removed
+
+[SMOKE TEST] Batch successfully processed. Actual Runtime Crop Diagnostics: {'crop_attempts': 1, 'crops_applied': 0, 'no_target_skips': 0, 'invalid_box_skips': 1, 'visibility_skips': 0}
+[SMOKE TEST] Runtime diagnostics saved to: D:\UNDIP\SKRIPSI\stage_9_3_code_fix\runtime_crop_diagnostics.csv
+[DATA CONFIG] 4 file YAML konfigurasi fold nested dibuat di C:\Users\LENOVO\AppData\Local\Temp\tmp2gm25za0\data_configs
+================================================================================
+STANDARDIZASI DATASET: C:\Users\LENOVO\AppData\Local\Temp\tmpzr7mxkrp\src -> C:\Users\LENOVO\AppData\Local\Temp\tmpzr7mxkrp\dst
+Mode: VERIFY ONLY
+================================================================================
+
+Processing TRAIN: 1 images, 1 labels...
+================================================================================
+STANDARDIZASI DATASET: C:\Users\LENOVO\AppData\Local\Temp\tmp3kuk9bby\src -> C:\Users\LENOVO\AppData\Local\Temp\tmp3kuk9bby\dst
+Mode: VERIFY ONLY
+================================================================================
+
+Processing TRAIN: 1 images, 1 labels...
+================================================================================
+STANDARDIZASI DATASET: C:\Users\LENOVO\AppData\Local\Temp\tmpsknz1cy6\src -> C:\Users\LENOVO\AppData\Local\Temp\tmpsknz1cy6\dst
+Mode: VERIFY ONLY
+================================================================================
+
+Processing TRAIN: 1 images, 1 labels...
+================================================================================
+STANDARDIZASI DATASET: C:\Users\LENOVO\AppData\Local\Temp\tmpguckiixg\src -> C:\Users\LENOVO\AppData\Local\Temp\tmpguckiixg\dst
+Mode: VERIFY ONLY
+================================================================================
+
+Processing TRAIN: 1 images, 1 labels...
+Fast image access  (ping: 0.00.0 ms, read: 2.80.0 MB/s, size: 32.5 KB)
+
+[KScanning C:\Users\LENOVO\AppData\Local\Temp\tmp_e_l24og... 1 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 1/1 689.2it/s 0.0s
+[KScanning C:\Users\LENOVO\AppData\Local\Temp\tmp_e_l24og... 1 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 1/1 668.8it/s 0.0s
+New cache created: C:\Users\LENOVO\AppData\Local\Temp\tmp_e_l24og.cache
+Fast image access  (ping: 0.00.0 ms, read: 9.93.4 MB/s, size: 6.9 KB)
+
+[KScanning C:\Users\LENOVO\AppData\Local\Temp\tmph5m82kl3\labels... 4 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 4/4 1.6Kit/s 0.0s
+[KScanning C:\Users\LENOVO\AppData\Local\Temp\tmph5m82kl3\labels... 4 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 4/4 1.6Kit/s 0.0s
+New cache created: C:\Users\LENOVO\AppData\Local\Temp\tmph5m82kl3\labels.cache
+Fast image access  (ping: 0.00.0 ms, read: 11.91.0 MB/s, size: 6.9 KB)
+
+[KScanning C:\Users\LENOVO\AppData\Local\Temp\tmpkpynpzdb\labels... 4 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 4/4 1.4Kit/s 0.0s
+[KScanning C:\Users\LENOVO\AppData\Local\Temp\tmpkpynpzdb\labels... 4 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 4/4 1.4Kit/s 0.0s
+New cache created: C:\Users\LENOVO\AppData\Local\Temp\tmpkpynpzdb\labels.cache
+Fast image access  (ping: 0.00.0 ms, read: 12.50.6 MB/s, size: 6.9 KB)
+
+[KScanning C:\Users\LENOVO\AppData\Local\Temp\tmpyfknzc16\labels... 4 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 4/4 1.4Kit/s 0.0s
+[KScanning C:\Users\LENOVO\AppData\Local\Temp\tmpyfknzc16\labels... 4 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 4/4 1.4Kit/s 0.0s
+New cache created: C:\Users\LENOVO\AppData\Local\Temp\tmpyfknzc16\labels.cache
+Fast image access  (ping: 0.00.0 ms, read: 11.43.5 MB/s, size: 7.3 KB)
+
+[KScanning C:\Users\LENOVO\AppData\Local\Temp\test_adaptive_ds_j_10dxhh\labels... 4 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 4/4 1.3Kit/s 0.0s
+[KScanning C:\Users\LENOVO\AppData\Local\Temp\test_adaptive_ds_j_10dxhh\labels... 4 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 4/4 1.3Kit/s 0.0s
+New cache created: C:\Users\LENOVO\AppData\Local\Temp\test_adaptive_ds_j_10dxhh\labels.cache
+Fast image access  (ping: 0.00.0 ms, read: 143.932.0 MB/s, size: 7.3 KB)
+
+[KScanning C:\Users\LENOVO\AppData\Local\Temp\test_adaptive_ds_j_10dxhh\labels.cache... 4 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 4/4 1.5Mit/s 0.0s
+[KScanning C:\Users\LENOVO\AppData\Local\Temp\test_adaptive_ds_j_10dxhh\labels.cache... 4 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 4/4 40.5Kit/s 0.0s
+Fast image access  (ping: 0.00.0 ms, read: 14.01.9 MB/s, size: 7.3 KB)
+
+[KScanning C:\Users\LENOVO\AppData\Local\Temp\test_adaptive_ds_7eqh5k3a\labels... 4 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 4/4 1.8Kit/s 0.0s
+[KScanning C:\Users\LENOVO\AppData\Local\Temp\test_adaptive_ds_7eqh5k3a\labels... 4 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 4/4 1.8Kit/s 0.0s
+New cache created: C:\Users\LENOVO\AppData\Local\Temp\test_adaptive_ds_7eqh5k3a\labels.cache
+[EXP-0] INFO: EXP-0 adalah kontrol baseline murni; manifest 'C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_kwatfh35\difficulty_manifest.csv' diabaikan.
+
+================================================================================
+MEMULAI EKSPERIMEN: EXP-0 — Baseline (Re-run)
+================================================================================
+Sampling Mechanism   : Uniform (1/N)
+Augmentation Policy  : Standard YOLO11n
+Epochs / Patience    : 1 / 10
+Batch / Image Size   : 2 / 64
+Random Seed / Device : 42 / cpu
+Workers / AMP / Plots: 2 / True / False
+Close Mosaic / Optim : 1 / auto
+Pretrained Weights   : D:\UNDIP\SKRIPSI\yolo11n.pt
+Data YAML            : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_kwatfh35\data.yaml
+Output Directory     : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_kwatfh35\ablation_run\exp_0_baseline
+================================================================================
+
+[EXP-0] Mengevaluasi model terbaik (best.pt) pada Validation Set...
+[EXP-0] SELESAI (0.0 menit): mAP@50 = 88.00%, mAP@50-95 = 65.00%, P = 85.00%, R = 80.00%
+[EXP-1] Manifest provenance & coverage verified: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_kwatfh35\difficulty_manifest.csv
+
+================================================================================
+MEMULAI EKSPERIMEN: EXP-1 — Mixture Adaptive Sampling
+================================================================================
+Sampling Mechanism   : Mixture Adaptive P(k)
+Augmentation Policy  : Standard YOLO11n
+Epochs / Patience    : 1 / 10
+Batch / Image Size   : 2 / 64
+Random Seed / Device : 42 / cpu
+Workers / AMP / Plots: 2 / True / False
+Close Mosaic / Optim : 1 / auto
+Pretrained Weights   : D:\UNDIP\SKRIPSI\yolo11n.pt
+Data YAML            : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_kwatfh35\data.yaml
+Output Directory     : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_kwatfh35\ablation_run\exp_1_adaptive_sampling
+================================================================================
+
+[EXP-1] Mengevaluasi model terbaik (best.pt) pada Validation Set...
+[EXP-1] SELESAI (0.0 menit): mAP@50 = 88.00%, mAP@50-95 = 65.00%, P = 85.00%, R = 80.00%
+[EXP-2] Manifest provenance & coverage verified: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_kwatfh35\difficulty_manifest.csv
+
+================================================================================
+MEMULAI EKSPERIMEN: EXP-2 — Targeted Context Augmentation
+================================================================================
+Sampling Mechanism   : Uniform (1/N)
+Augmentation Policy  : On-the-Fly Context Crop (2× bbox)
+Epochs / Patience    : 1 / 10
+Batch / Image Size   : 2 / 64
+Random Seed / Device : 42 / cpu
+Workers / AMP / Plots: 2 / True / False
+Close Mosaic / Optim : 1 / auto
+Pretrained Weights   : D:\UNDIP\SKRIPSI\yolo11n.pt
+Data YAML            : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_kwatfh35\data.yaml
+Output Directory     : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_kwatfh35\ablation_run\exp_2_targeted_aug
+================================================================================
+
+[EXP-2] Mengevaluasi model terbaik (best.pt) pada Validation Set...
+[EXP-2] SELESAI (0.0 menit): mAP@50 = 88.00%, mAP@50-95 = 65.00%, P = 85.00%, R = 80.00%
+[EXP-3] Manifest provenance & coverage verified: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_kwatfh35\difficulty_manifest.csv
+
+================================================================================
+MEMULAI EKSPERIMEN: EXP-3 — Full Proposed (Sampling + Augmentation)
+================================================================================
+Sampling Mechanism   : Mixture Adaptive P(k)
+Augmentation Policy  : On-the-Fly Context Crop (2× bbox)
+Epochs / Patience    : 1 / 10
+Batch / Image Size   : 2 / 64
+Random Seed / Device : 42 / cpu
+Workers / AMP / Plots: 2 / True / False
+Close Mosaic / Optim : 1 / auto
+Pretrained Weights   : D:\UNDIP\SKRIPSI\yolo11n.pt
+Data YAML            : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_kwatfh35\data.yaml
+Output Directory     : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_kwatfh35\ablation_run\exp_3_full_proposed
+================================================================================
+
+[EXP-3] Mengevaluasi model terbaik (best.pt) pada Validation Set...
+[EXP-3] SELESAI (0.0 menit): mAP@50 = 88.00%, mAP@50-95 = 65.00%, P = 85.00%, R = 80.00%
+
+[REPORT] Laporan komparasi tersimpan di: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_kwatfh35\ablation_run\ABLATION_EXPERIMENTS_REPORT.md
+
+================================================================================
+SELURUH EKSPERIMEN ABLASI STAGE 8.4 SELESAI!
+================================================================================
+[EXP-0] INFO: EXP-0 adalah kontrol baseline murni; manifest 'C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_curg39aa\difficulty_manifest.csv' diabaikan.
+
+================================================================================
+MEMULAI EKSPERIMEN: EXP-0 — Baseline (Re-run)
+================================================================================
+Sampling Mechanism   : Uniform (1/N)
+Augmentation Policy  : Standard YOLO11n
+Epochs / Patience    : 1 / 10
+Batch / Image Size   : 2 / 64
+Random Seed / Device : 42 / cpu
+Workers / AMP / Plots: 2 / True / False
+Close Mosaic / Optim : 1 / auto
+Pretrained Weights   : D:\UNDIP\SKRIPSI\yolo11n.pt
+Data YAML            : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_curg39aa\data.yaml
+Output Directory     : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_curg39aa\ablation_run\exp_0_baseline
+================================================================================
+
+[EXP-0] Mengevaluasi model terbaik (best.pt) pada Validation Set...
+[EXP-0] SELESAI (0.0 menit): mAP@50 = 88.00%, mAP@50-95 = 65.00%, P = 85.00%, R = 80.00%
+[EXP-1] Manifest provenance & coverage verified: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_curg39aa\difficulty_manifest.csv
+
+================================================================================
+MEMULAI EKSPERIMEN: EXP-1 — Mixture Adaptive Sampling
+================================================================================
+Sampling Mechanism   : Mixture Adaptive P(k)
+Augmentation Policy  : Standard YOLO11n
+Epochs / Patience    : 1 / 10
+Batch / Image Size   : 2 / 64
+Random Seed / Device : 42 / cpu
+Workers / AMP / Plots: 2 / True / False
+Close Mosaic / Optim : 1 / auto
+Pretrained Weights   : D:\UNDIP\SKRIPSI\yolo11n.pt
+Data YAML            : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_curg39aa\data.yaml
+Output Directory     : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_curg39aa\ablation_run\exp_1_adaptive_sampling
+================================================================================
+[EXP-0] INFO: EXP-0 adalah kontrol baseline murni; manifest 'C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_u5rjeksd\difficulty_manifest.csv' diabaikan.
+
+================================================================================
+MEMULAI EKSPERIMEN: EXP-0 — Baseline (Re-run)
+================================================================================
+Sampling Mechanism   : Uniform (1/N)
+Augmentation Policy  : Standard YOLO11n
+Epochs / Patience    : 1 / 10
+Batch / Image Size   : 2 / 64
+Random Seed / Device : 42 / cpu
+Workers / AMP / Plots: 2 / True / False
+Close Mosaic / Optim : 1 / auto
+Pretrained Weights   : D:\UNDIP\SKRIPSI\yolo11n.pt
+Data YAML            : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_u5rjeksd\data.yaml
+Output Directory     : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_u5rjeksd\ablation_run\exp_0_baseline
+================================================================================
+
+[EXP-0] Mengevaluasi model terbaik (best.pt) pada Validation Set...
+[EXP-0] SELESAI (0.0 menit): mAP@50 = 88.00%, mAP@50-95 = 65.00%, P = 85.00%, R = 80.00%
+[EXP-1] Manifest provenance & coverage verified: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_u5rjeksd\difficulty_manifest.csv
+
+================================================================================
+MEMULAI EKSPERIMEN: EXP-1 — Mixture Adaptive Sampling
+================================================================================
+Sampling Mechanism   : Mixture Adaptive P(k)
+Augmentation Policy  : Standard YOLO11n
+Epochs / Patience    : 1 / 10
+Batch / Image Size   : 2 / 64
+Random Seed / Device : 42 / cpu
+Workers / AMP / Plots: 2 / True / False
+Close Mosaic / Optim : 1 / auto
+Pretrained Weights   : D:\UNDIP\SKRIPSI\yolo11n.pt
+Data YAML            : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_u5rjeksd\data.yaml
+Output Directory     : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_u5rjeksd\ablation_run\exp_1_adaptive_sampling
+================================================================================
+
+[EXP-1] Mengevaluasi model terbaik (best.pt) pada Validation Set...
+[EXP-1] SELESAI (0.0 menit): mAP@50 = 88.00%, mAP@50-95 = 65.00%, P = 85.00%, R = 80.00%
+[EXP-2] Manifest provenance & coverage verified: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_u5rjeksd\difficulty_manifest.csv
+
+================================================================================
+MEMULAI EKSPERIMEN: EXP-2 — Targeted Context Augmentation
+================================================================================
+Sampling Mechanism   : Uniform (1/N)
+Augmentation Policy  : On-the-Fly Context Crop (2× bbox)
+Epochs / Patience    : 1 / 10
+Batch / Image Size   : 2 / 64
+Random Seed / Device : 42 / cpu
+Workers / AMP / Plots: 2 / True / False
+Close Mosaic / Optim : 1 / auto
+Pretrained Weights   : D:\UNDIP\SKRIPSI\yolo11n.pt
+Data YAML            : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_u5rjeksd\data.yaml
+Output Directory     : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_u5rjeksd\ablation_run\exp_2_targeted_aug
+================================================================================
+
+[EXP-2] Mengevaluasi model terbaik (best.pt) pada Validation Set...
+[EXP-2] SELESAI (0.0 menit): mAP@50 = 88.00%, mAP@50-95 = 65.00%, P = 85.00%, R = 80.00%
+[EXP-3] Manifest provenance & coverage verified: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_u5rjeksd\difficulty_manifest.csv
+
+================================================================================
+MEMULAI EKSPERIMEN: EXP-3 — Full Proposed (Sampling + Augmentation)
+================================================================================
+Sampling Mechanism   : Mixture Adaptive P(k)
+Augmentation Policy  : On-the-Fly Context Crop (2× bbox)
+Epochs / Patience    : 1 / 10
+Batch / Image Size   : 2 / 64
+Random Seed / Device : 42 / cpu
+Workers / AMP / Plots: 2 / True / False
+Close Mosaic / Optim : 1 / auto
+Pretrained Weights   : D:\UNDIP\SKRIPSI\yolo11n.pt
+Data YAML            : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_u5rjeksd\data.yaml
+Output Directory     : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_u5rjeksd\ablation_run\exp_3_full_proposed
+================================================================================
+
+[EXP-3] Mengevaluasi model terbaik (best.pt) pada Validation Set...
+[EXP-3] SELESAI (0.0 menit): mAP@50 = 88.00%, mAP@50-95 = 65.00%, P = 85.00%, R = 80.00%
+
+[REPORT] Laporan komparasi tersimpan di: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_u5rjeksd\ablation_run\ABLATION_EXPERIMENTS_REPORT.md
+
+================================================================================
+SELURUH EKSPERIMEN ABLASI STAGE 8.4 SELESAI!
+================================================================================
+[EXP-0] INFO: EXP-0 adalah kontrol baseline murni; manifest 'C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_u5rjeksd\difficulty_manifest.csv' diabaikan.
+[EXP-0] Artefak dan seluruh metadata checksum terverifikasi cocok 100%. Melewati pelatihan.
+[EXP-1] Manifest provenance & coverage verified: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_u5rjeksd\difficulty_manifest.csv
+[EXP-1] Artefak dan seluruh metadata checksum terverifikasi cocok 100%. Melewati pelatihan.
+[EXP-2] Manifest provenance & coverage verified: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_u5rjeksd\difficulty_manifest.csv
+[EXP-2] Artefak dan seluruh metadata checksum terverifikasi cocok 100%. Melewati pelatihan.
+[EXP-3] Manifest provenance & coverage verified: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_u5rjeksd\difficulty_manifest.csv
+[EXP-3] Artefak dan seluruh metadata checksum terverifikasi cocok 100%. Melewati pelatihan.
+
+[REPORT] Laporan komparasi tersimpan di: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_ablation_u5rjeksd\ablation_run\ABLATION_EXPERIMENTS_REPORT.md
+
+================================================================================
+SELURUH EKSPERIMEN ABLASI STAGE 8.4 SELESAI!
+================================================================================
+Fast image access  (ping: 0.00.0 ms, read: 1.40.1 MB/s, size: 0.9 KB)
+
+[KScanning C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_aug_71kssat0\mock_dataset\labels... 2 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 2/2 1.1Kit/s 0.0s
+[KScanning C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_aug_71kssat0\mock_dataset\labels... 2 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 2/2 1.1Kit/s 0.0s
+New cache created: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_aug_71kssat0\mock_dataset\labels.cache
+Fast image access  (ping: 0.00.0 ms, read: 1.00.1 MB/s, size: 0.9 KB)
+
+[KScanning C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_aug_d8t1je7o\mock_dataset\labels... 2 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 2/2 1.1Kit/s 0.0s
+[KScanning C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_aug_d8t1je7o\mock_dataset\labels... 2 images, 0 backgrounds, 0 corrupt: 100% ━━━━━━━━━━━━ 2/2 1.1Kit/s 0.0s
+New cache created: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_7_aug_d8t1je7o\mock_dataset\labels.cache
+[EXP-0] INFO: EXP-0 adalah kontrol baseline murni; manifest 'C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_8_ablation_s3ybqfjh\difficulty_manifest.csv' diabaikan.
+
+================================================================================
+MEMULAI EKSPERIMEN: EXP-0 — Baseline (Re-run)
+================================================================================
+Sampling Mechanism   : Uniform (1/N)
+Augmentation Policy  : Standard YOLO11n
+Epochs / Patience    : 2 / 5
+Batch / Image Size   : 2 / 64
+Random Seed / Device : 42 / cpu
+Workers / AMP / Plots: 2 / True / False
+Close Mosaic / Optim : 1 / auto
+Pretrained Weights   : D:\UNDIP\SKRIPSI\yolo11n.pt
+Data YAML            : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_8_ablation_s3ybqfjh\data.yaml
+Output Directory     : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_8_ablation_s3ybqfjh\ablation_run\exp_0_baseline
+================================================================================
+
+[EXP-0] Mengevaluasi model terbaik (best.pt) pada Validation Set...
+[EXP-0] SELESAI (0.0 menit): mAP@50 = 88.00%, mAP@50-95 = 65.00%, P = 85.00%, R = 80.00%
+[EXP-1] Manifest provenance & coverage verified: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_8_ablation_s3ybqfjh\difficulty_manifest.csv
+
+================================================================================
+MEMULAI EKSPERIMEN: EXP-1 — Mixture Adaptive Sampling
+================================================================================
+Sampling Mechanism   : Mixture Adaptive P(k)
+Augmentation Policy  : Standard YOLO11n
+Epochs / Patience    : 2 / 5
+Batch / Image Size   : 2 / 64
+Random Seed / Device : 42 / cpu
+Workers / AMP / Plots: 2 / True / False
+Close Mosaic / Optim : 1 / auto
+Pretrained Weights   : D:\UNDIP\SKRIPSI\yolo11n.pt
+Data YAML            : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_8_ablation_s3ybqfjh\data.yaml
+Output Directory     : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_8_ablation_s3ybqfjh\ablation_run\exp_1_adaptive_sampling
+================================================================================
+
+[EXP-1] Mengevaluasi model terbaik (best.pt) pada Validation Set...
+[EXP-1] SELESAI (0.0 menit): mAP@50 = 88.00%, mAP@50-95 = 65.00%, P = 85.00%, R = 80.00%
+[EXP-2] Manifest provenance & coverage verified: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_8_ablation_s3ybqfjh\difficulty_manifest.csv
+
+================================================================================
+MEMULAI EKSPERIMEN: EXP-2 — Targeted Context Augmentation
+================================================================================
+Sampling Mechanism   : Uniform (1/N)
+Augmentation Policy  : On-the-Fly Context Crop (2× bbox)
+Epochs / Patience    : 2 / 5
+Batch / Image Size   : 2 / 64
+Random Seed / Device : 42 / cpu
+Workers / AMP / Plots: 2 / True / False
+Close Mosaic / Optim : 1 / auto
+Pretrained Weights   : D:\UNDIP\SKRIPSI\yolo11n.pt
+Data YAML            : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_8_ablation_s3ybqfjh\data.yaml
+Output Directory     : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_8_ablation_s3ybqfjh\ablation_run\exp_2_targeted_aug
+================================================================================
+
+[EXP-2] Mengevaluasi model terbaik (best.pt) pada Validation Set...
+[EXP-2] SELESAI (0.0 menit): mAP@50 = 88.00%, mAP@50-95 = 65.00%, P = 85.00%, R = 80.00%
+[EXP-3] Manifest provenance & coverage verified: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_8_ablation_s3ybqfjh\difficulty_manifest.csv
+
+================================================================================
+MEMULAI EKSPERIMEN: EXP-3 — Full Proposed (Sampling + Augmentation)
+================================================================================
+Sampling Mechanism   : Mixture Adaptive P(k)
+Augmentation Policy  : On-the-Fly Context Crop (2× bbox)
+Epochs / Patience    : 2 / 5
+Batch / Image Size   : 2 / 64
+Random Seed / Device : 42 / cpu
+Workers / AMP / Plots: 2 / True / False
+Close Mosaic / Optim : 1 / auto
+Pretrained Weights   : D:\UNDIP\SKRIPSI\yolo11n.pt
+Data YAML            : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_8_ablation_s3ybqfjh\data.yaml
+Output Directory     : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_8_ablation_s3ybqfjh\ablation_run\exp_3_full_proposed
+================================================================================
+
+[EXP-3] Mengevaluasi model terbaik (best.pt) pada Validation Set...
+[EXP-3] SELESAI (0.0 menit): mAP@50 = 88.00%, mAP@50-95 = 65.00%, P = 85.00%, R = 80.00%
+
+[REPORT] Laporan komparasi tersimpan di: C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_8_ablation_s3ybqfjh\ablation_run\ABLATION_EXPERIMENTS_REPORT.md
+
+================================================================================
+SELURUH EKSPERIMEN ABLASI STAGE 8.4 SELESAI!
+================================================================================
+[EXP-0] INFO: EXP-0 adalah kontrol baseline murni; manifest 'C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_8_ablation_s3594psx\difficulty_manifest.csv' diabaikan.
+
+================================================================================
+MEMULAI EKSPERIMEN: EXP-0 — Baseline (Re-run)
+================================================================================
+Sampling Mechanism   : Uniform (1/N)
+Augmentation Policy  : Standard YOLO11n
+Epochs / Patience    : 2 / 5
+Batch / Image Size   : 2 / 64
+Random Seed / Device : 42 / cpu
+Workers / AMP / Plots: 2 / True / False
+Close Mosaic / Optim : 1 / auto
+Pretrained Weights   : D:\UNDIP\SKRIPSI\yolo11n.pt
+Data YAML            : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_8_ablation_s3594psx\data.yaml
+Output Directory     : C:\Users\LENOVO\AppData\Local\Temp\test_stage_9_8_ablation_s3594psx\ablation_run\exp_0_baseline
+================================================================================
+
+test_component_toggles_matrix (test_stage_9_3_regression.TestComponentIntegrationAndSmoke.test_component_toggles_matrix) ... ok
+test_smoke_dataloader_and_runtime_crop (test_stage_9_3_regression.TestComponentIntegrationAndSmoke.test_smoke_dataloader_and_runtime_crop)
+Smoke test loading 1 batch from standardized dataset and recording crop diagnostics. ... ok
+test_case_1_center_target (test_stage_9_3_regression.TestCritical01ContextCrop.test_case_1_center_target)
+1. Objek target berada di tengah gambar. ... ok
+test_case_2_edges_and_corners (test_stage_9_3_regression.TestCritical01ContextCrop.test_case_2_edges_and_corners)
+2. Objek target berada dekat masing-masing tepi gambar. ... ok
+test_case_3_no_target_objects (test_stage_9_3_regression.TestCritical01ContextCrop.test_case_3_no_target_objects)
+3. Tidak ada objek target. ... ok
+test_case_4_multiple_objects_and_visibility_threshold (test_stage_9_3_regression.TestCritical01ContextCrop.test_case_4_multiple_objects_and_visibility_threshold)
+4. Beberapa objek dalam satu gambar dengan filtering visibilitas sekunder. ... ok
+test_case_5_invalid_boxes (test_stage_9_3_regression.TestCritical01ContextCrop.test_case_5_invalid_boxes)
+5. Ada kotak yang tidak valid. ... ok
+test_case_6_empty_labels (test_stage_9_3_regression.TestCritical01ContextCrop.test_case_6_empty_labels)
+6. Label kosong atau struktur label tidak sesuai. ... ok
+test_case_7_manual_calculation_verification (test_stage_9_3_regression.TestCritical01ContextCrop.test_case_7_manual_calculation_verification)
+7. Crop berhasil menghasilkan gambar dan kotak yang sesuai perhitungan manual. ... ok
+test_case_8_original_label_immutability (test_stage_9_3_regression.TestCritical01ContextCrop.test_case_8_original_label_immutability)
+8. Tidak memutasi label asli secara in-place. ... ok
+test_reconciliation_synthetic_metrics (test_stage_9_3_regression.TestHigh01CanonicalMetrics.test_reconciliation_synthetic_metrics) ... ok
+test_higher_map50_95_always_wins (test_stage_9_3_regression.TestHigh02SelectionProtocol.test_higher_map50_95_always_wins)
+Model with higher mAP@50-95 must win even if competitor has higher Recall Small. ... ok
+test_strict_tie_break_hierarchy (test_stage_9_3_regression.TestHigh02SelectionProtocol.test_strict_tie_break_hierarchy)
+Exact numerical tie evaluates mAP50 -> Recall_Small -> lowest fn_missed. ... ok
+test_adjacent_gts_single_prediction_no_reuse (test_stage_9_3_regression.TestMed01BipartiteMatching.test_adjacent_gts_single_prediction_no_reuse) ... ok
+test_backward_compat_default_640 (test_stage_9_3_regression.TestMed02CoordinateParser.test_backward_compat_default_640) ... ok
+test_dynamic_dimensions (test_stage_9_3_regression.TestMed02CoordinateParser.test_dynamic_dimensions) ... ok
+test_image_difficulty_aggregation (test_stage_9_4_regression.TestDifficultyFormulaAndBounds.test_image_difficulty_aggregation) ... ok
+test_matched_correct_class_formula (test_stage_9_4_regression.TestDifficultyFormulaAndBounds.test_matched_correct_class_formula) ... ok
+test_matched_wrong_class_penalty_and_clipping (test_stage_9_4_regression.TestDifficultyFormulaAndBounds.test_matched_wrong_class_penalty_and_clipping) ... ok
+test_unmatched_fn_formula (test_stage_9_4_regression.TestDifficultyFormulaAndBounds.test_unmatched_fn_formula) ... ok
+test_resolve_paths_from_yaml (test_stage_9_4_regression.TestEvaluatorDataSourceSSOT.test_resolve_paths_from_yaml) ... ok
+test_experiment_spec_toggles (test_stage_9_4_regression.TestExperimentComponentToggles.test_experiment_spec_toggles) ... ok
+test_canonical_metric_extraction (test_stage_9_4_regression.TestFullPrecisionMetricSerialization.test_canonical_metric_extraction) ... ok
+test_global_descending_iou_sorting (test_stage_9_4_regression.TestGlobalOneToOneMatching.test_global_descending_iou_sorting) ... ok
+test_multiple_predictions_for_single_gt (test_stage_9_4_regression.TestGlobalOneToOneMatching.test_multiple_predictions_for_single_gt) ... ok
+test_single_prediction_between_two_gt (test_stage_9_4_regression.TestGlobalOneToOneMatching.test_single_prediction_between_two_gt) ... ok
+test_historic_stage_8_ablation_overwrite_blocked (test_stage_9_4_regression.TestIsolatedPathsAndAntiOverwrite.test_historic_stage_8_ablation_overwrite_blocked) ... ok
+test_dataset_coverage_fail_fast_on_missing_images (test_stage_9_4_regression.TestManifestFailFastAndCoverage.test_dataset_coverage_fail_fast_on_missing_images) ... ok
+test_duplicate_image_id_rejection (test_stage_9_4_regression.TestManifestFailFastAndCoverage.test_duplicate_image_id_rejection) ... ok
+test_invalid_d_image_bounds_rejection (test_stage_9_4_regression.TestManifestFailFastAndCoverage.test_invalid_d_image_bounds_rejection) ... ok
+test_primary_criterion_map50_95_strictly_wins (test_stage_9_4_regression.TestModelSelectionHierarchy.test_primary_criterion_map50_95_strictly_wins) ... ok
+test_tie_break_1_recall_small (test_stage_9_4_regression.TestModelSelectionHierarchy.test_tie_break_1_recall_small) ... ok
+test_tie_break_2_map50 (test_stage_9_4_regression.TestModelSelectionHierarchy.test_tie_break_2_map50) ... ok
+test_tie_break_3_lowest_fn (test_stage_9_4_regression.TestModelSelectionHierarchy.test_tie_break_3_lowest_fn) ... ok
+test_nested_fold_zero_leakage_and_isolation (test_stage_9_4_regression.TestNestedOOFGroupIsolation.test_nested_fold_zero_leakage_and_isolation) ... ok
+test_dynamic_coordinate_scaling_1920x1080 (test_stage_9_4_regression.TestNonSquareDynamicDimensionParser.test_dynamic_coordinate_scaling_1920x1080) ... ok
+test_mixture_weights_formula_and_normalization (test_stage_9_4_regression.TestSamplingWeightsAndMixtureFormula.test_mixture_weights_formula_and_normalization) ... ok
+test_reject_invalid_class_id (test_stage_9_4_regression.TestStandardizedFiveColumnLabels.test_reject_invalid_class_id) ... ok
+test_reject_polygon_in_standardized_label (test_stage_9_4_regression.TestStandardizedFiveColumnLabels.test_reject_polygon_in_standardized_label) ... ok
+test_valid_five_column_detection (test_stage_9_4_regression.TestStandardizedFiveColumnLabels.test_valid_five_column_detection) ... ok
+test_crop_expansion_and_centering (test_stage_9_4_regression.TestTargetedContextCropGeometry.test_crop_expansion_and_centering) ... ok
+test_original_label_not_mutated (test_stage_9_4_regression.TestTargetedContextCropGeometry.test_original_label_not_mutated) ... ok
+test_class_id_out_of_range_rejected (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_class_id_out_of_range_rejected) ... ok
+test_invalid_column_count_rejected (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_invalid_column_count_rejected) ... ok
+test_non_finite_coordinate_strictly_rejected (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_non_finite_coordinate_strictly_rejected) ... ok
+test_out_of_range_coordinate_strictly_rejected (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_out_of_range_coordinate_strictly_rejected) ... ok
+test_valid_box_preservation_with_exact_geometry (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_valid_box_preservation_with_exact_geometry) ... ok
+test_valid_polygon_converted_to_bounding_box (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_valid_polygon_converted_to_bounding_box) ... ok
+test_verify_only_detects_geometric_coordinate_mismatch (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_verify_only_detects_geometric_coordinate_mismatch) ... ok
+test_verify_only_detects_image_checksum_mismatch (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_verify_only_detects_image_checksum_mismatch) ... ok
+test_verify_only_detects_missing_destination_label (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_verify_only_detects_missing_destination_label) ... ok
+test_verify_only_detects_orphan_destination_label (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_verify_only_detects_orphan_destination_label) ... ok
+test_image_without_gt_and_with_false_positives (test_stage_9_5_regression.TestCanonicalMatchingEquivalence.test_image_without_gt_and_with_false_positives) ... ok
+test_iou_above_50_wrong_class (test_stage_9_5_regression.TestCanonicalMatchingEquivalence.test_iou_above_50_wrong_class) ... ok
+test_iou_below_association_threshold (test_stage_9_5_regression.TestCanonicalMatchingEquivalence.test_iou_below_association_threshold) ... ok
+test_iou_between_association_and_localization_threshold (test_stage_9_5_regression.TestCanonicalMatchingEquivalence.test_iou_between_association_and_localization_threshold) ... ok
+test_object_size_classification_thresholds (test_stage_9_5_regression.TestCanonicalMatchingEquivalence.test_object_size_classification_thresholds) ... ok
+test_one_pred_competing_with_two_gt (test_stage_9_5_regression.TestCanonicalMatchingEquivalence.test_one_pred_competing_with_two_gt) ... ok
+test_one_tp_and_one_unmatched_pred (test_stage_9_5_regression.TestCanonicalMatchingEquivalence.test_one_tp_and_one_unmatched_pred) ... ok
+test_pairing_order_invariance (test_stage_9_5_regression.TestCanonicalMatchingEquivalence.test_pairing_order_invariance) ... ok
+test_two_preds_competing_with_one_gt (test_stage_9_5_regression.TestCanonicalMatchingEquivalence.test_two_preds_competing_with_one_gt) ... ok
+test_dynamic_parsing_and_area_calculation (test_stage_9_5_regression.TestDynamicDimensionsAndGeometry.test_dynamic_parsing_and_area_calculation) ... ok
+test_get_image_dimensions_dynamic (test_stage_9_5_regression.TestDynamicDimensionsAndGeometry.test_get_image_dimensions_dynamic) ... ok
+test_hardcoded_640_fallback_is_eliminated_when_dimensions_provided (test_stage_9_5_regression.TestDynamicDimensionsAndGeometry.test_hardcoded_640_fallback_is_eliminated_when_dimensions_provided) ... ok
+test_non_square_context_crop_transformation (test_stage_9_5_regression.TestDynamicDimensionsAndGeometry.test_non_square_context_crop_transformation) ... ok
+test_formula_matches_exact_analytical_values (test_stage_9_5_regression.TestMixtureSamplingFormulaAndRobustness.test_formula_matches_exact_analytical_values) ... ok
+test_invalid_lambda_raises_value_error (test_stage_9_5_regression.TestMixtureSamplingFormulaAndRobustness.test_invalid_lambda_raises_value_error) ... ok
+test_negative_or_nan_difficulty_raises_value_error (test_stage_9_5_regression.TestMixtureSamplingFormulaAndRobustness.test_negative_or_nan_difficulty_raises_value_error) ... ok
+test_probabilities_are_strictly_positive (test_stage_9_5_regression.TestMixtureSamplingFormulaAndRobustness.test_probabilities_are_strictly_positive) ... ok
+test_sum_d_equals_zero_explicit_uniform_fallback (test_stage_9_5_regression.TestMixtureSamplingFormulaAndRobustness.test_sum_d_equals_zero_explicit_uniform_fallback) ... ok
+test_checkpoint_hash_change_detected_and_rejected (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_checkpoint_hash_change_detected_and_rejected) ... ok
+test_identical_metadata_and_checkpoint_allows_reuse (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_identical_metadata_and_checkpoint_allows_reuse) ... ok
+test_inner_train_hash_change_rejects_reuse (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_inner_train_hash_change_rejects_reuse) ... ok
+test_inner_val_hash_change_rejects_reuse (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_inner_val_hash_change_rejects_reuse) ... ok
+test_metadata_exists_but_checkpoint_missing_rejected (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_metadata_exists_but_checkpoint_missing_rejected) ... ok
+test_outer_holdout_hash_change_rejects_reuse (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_outer_holdout_hash_change_rejects_reuse) ... ok
+test_predictions_exist_but_metadata_missing_rejected (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_predictions_exist_but_metadata_missing_rejected) ... ok
+test_safety_guard_rejects_reuse_when_metadata_mismatches_even_if_checkpoint_exists (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_safety_guard_rejects_reuse_when_metadata_mismatches_even_if_checkpoint_exists)
+P0 Requirement: Old checkpoint must never be silently reused if metadata mismatches. ... ok
+test_script_hash_change_rejects_reuse (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_script_hash_change_rejects_reuse) ... ok
+test_yaml_hash_change_rejects_reuse (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_yaml_hash_change_rejects_reuse) ... ok
+test_data_yaml_hash_change_rejects_ablation_reuse (test_stage_9_5_regression.TestStage84AblationFingerprintSafety.test_data_yaml_hash_change_rejects_ablation_reuse) ... ok
+test_epochs_batch_imgsz_seed_mismatch_rejects_reuse (test_stage_9_5_regression.TestStage84AblationFingerprintSafety.test_epochs_batch_imgsz_seed_mismatch_rejects_reuse) ... ok
+test_identical_metadata_allows_reuse (test_stage_9_5_regression.TestStage84AblationFingerprintSafety.test_identical_metadata_allows_reuse) ... ok
+test_manifest_hash_change_rejects_exp1_reuse (test_stage_9_5_regression.TestStage84AblationFingerprintSafety.test_manifest_hash_change_rejects_exp1_reuse) ... ok
+test_missing_metadata_treated_as_unverified (test_stage_9_5_regression.TestStage84AblationFingerprintSafety.test_missing_metadata_treated_as_unverified) ... ok
+test_pretrained_weight_hash_change_rejects_reuse (test_stage_9_5_regression.TestStage84AblationFingerprintSafety.test_pretrained_weight_hash_change_rejects_reuse) ... ok
+test_script_hash_change_rejects_ablation_reuse (test_stage_9_5_regression.TestStage84AblationFingerprintSafety.test_script_hash_change_rejects_ablation_reuse) ... ok
+test_original_labels_preserved_when_conditions_not_met (test_stage_9_5_regression.TestUltralyticsDatasetIntegration.test_original_labels_preserved_when_conditions_not_met) ... ok
+test_targeted_augmentation_applied_when_conditions_met (test_stage_9_5_regression.TestUltralyticsDatasetIntegration.test_targeted_augmentation_applied_when_conditions_met) ... ok
+test_ultralytics_dataset_item_retrieval_and_collate (test_stage_9_5_regression.TestUltralyticsDatasetIntegration.test_ultralytics_dataset_item_retrieval_and_collate) ... ok
+test_fingerprint_detects_byte_modification_same_size (test_stage_9_6_regression.TestContentAwareSHA256Integrity.test_fingerprint_detects_byte_modification_same_size) ... ok
+test_fingerprint_detects_label_modification (test_stage_9_6_regression.TestContentAwareSHA256Integrity.test_fingerprint_detects_label_modification) ... ok
+test_fingerprint_fails_on_empty_dir (test_stage_9_6_regression.TestContentAwareSHA256Integrity.test_fingerprint_fails_on_empty_dir) ... ok
+test_manifest_csv_tamper_rejected (test_stage_9_6_regression.TestManifestProvenanceAndCoverage.test_manifest_csv_tamper_rejected) ... ok
+test_manifest_dataset_fingerprint_mismatch_rejected (test_stage_9_6_regression.TestManifestProvenanceAndCoverage.test_manifest_dataset_fingerprint_mismatch_rejected) ... ok
+test_manifest_duplicate_image_id_rejected (test_stage_9_6_regression.TestManifestProvenanceAndCoverage.test_manifest_duplicate_image_id_rejected) ... ok
+test_manifest_extra_images_rejected (test_stage_9_6_regression.TestManifestProvenanceAndCoverage.test_manifest_extra_images_rejected) ... ok
+test_manifest_historical_oof_rejected (test_stage_9_6_regression.TestManifestProvenanceAndCoverage.test_manifest_historical_oof_rejected) ... ok
+test_manifest_incomplete_coverage_rejected (test_stage_9_6_regression.TestManifestProvenanceAndCoverage.test_manifest_incomplete_coverage_rejected) ... ok
+test_missing_provenance_sidecar_rejected (test_stage_9_6_regression.TestManifestProvenanceAndCoverage.test_missing_provenance_sidecar_rejected) ... ok
+test_valid_manifest_and_provenance_passes (test_stage_9_6_regression.TestManifestProvenanceAndCoverage.test_valid_manifest_and_provenance_passes) ... ok
+test_dry_run_does_not_mutate_directory (test_stage_9_6_regression.TestOutputDirectorySafety.test_dry_run_does_not_mutate_directory) ... ok
+test_empty_output_directory_passes (test_stage_9_6_regression.TestOutputDirectorySafety.test_empty_output_directory_passes) ... ok
+test_historical_output_directory_forbidden (test_stage_9_6_regression.TestOutputDirectorySafety.test_historical_output_directory_forbidden) ... ok
+test_metadata_mismatch_rejected (test_stage_9_6_regression.TestOutputDirectorySafety.test_metadata_mismatch_rejected) ... ok
+test_unverified_partial_output_rejected (test_stage_9_6_regression.TestOutputDirectorySafety.test_unverified_partial_output_rejected) ... ok
+test_valid_verified_reuse_passes (test_stage_9_6_regression.TestOutputDirectorySafety.test_valid_verified_reuse_passes) ... ok
+test_pretrained_weights_sha256_computation (test_stage_9_6_regression.TestPretrainedWeightsSHA256.test_pretrained_weights_sha256_computation) ... ok
+test_collate_fn_with_mixed_cropped_and_uncropped_items (test_stage_9_6_regression.TestRealAdaptiveYOLODatasetTargetedAugmentation.test_collate_fn_with_mixed_cropped_and_uncropped_items) ... ok
+test_real_getitem_augment_applies_context_crop (test_stage_9_6_regression.TestRealAdaptiveYOLODatasetTargetedAugmentation.test_real_getitem_augment_applies_context_crop) ... ok
+test_missing_split_key_raises (test_stage_9_6_regression.TestSingleSourceOfTruthPathResolution.test_missing_split_key_raises) ... ok
+test_resolve_relative_path (test_stage_9_6_regression.TestSingleSourceOfTruthPathResolution.test_resolve_relative_path) ... ok
+test_resolve_txt_file_split (test_stage_9_6_regression.TestSingleSourceOfTruthPathResolution.test_resolve_txt_file_split) ... ok
+test_case_insensitivity_rejected (test_stage_9_7_regression.TestGroupAOutputDirectorySafety.test_case_insensitivity_rejected) ... ok
+test_clean_directory_passes (test_stage_9_7_regression.TestGroupAOutputDirectorySafety.test_clean_directory_passes) ... ok
+test_clean_sibling_permitted (test_stage_9_7_regression.TestGroupAOutputDirectorySafety.test_clean_sibling_permitted) ... ok
+test_historical_target_rejected (test_stage_9_7_regression.TestGroupAOutputDirectorySafety.test_historical_target_rejected) ... ok
+test_identity_mismatch_rejected (test_stage_9_7_regression.TestGroupAOutputDirectorySafety.test_identity_mismatch_rejected) ... ok
+test_nested_subdirectories_rejected (test_stage_9_7_regression.TestGroupAOutputDirectorySafety.test_nested_subdirectories_rejected) ... ok
+test_partial_output_rejected (test_stage_9_7_regression.TestGroupAOutputDirectorySafety.test_partial_output_rejected) ... ok
+test_path_traversal_dotdot_rejected (test_stage_9_7_regression.TestGroupAOutputDirectorySafety.test_path_traversal_dotdot_rejected) ... ok
+test_valid_reuse_passes (test_stage_9_7_regression.TestGroupAOutputDirectorySafety.test_valid_reuse_passes) ... ok
+test_identity_detects_data_yaml_modification (test_stage_9_7_regression.TestGroupBRunIdentityVerification.test_identity_detects_data_yaml_modification) ... ok
+test_identity_detects_pretrained_weights_modification (test_stage_9_7_regression.TestGroupBRunIdentityVerification.test_identity_detects_pretrained_weights_modification) ... ok
+test_identity_detects_script_modification (test_stage_9_7_regression.TestGroupBRunIdentityVerification.test_identity_detects_script_modification) ... ok
+test_identity_exact_match_passes (test_stage_9_7_regression.TestGroupBRunIdentityVerification.test_identity_exact_match_passes) ... ok
+test_manifest_duplicate_image_ids_rejected (test_stage_9_7_regression.TestGroupCManifestProvenanceAndCoverage.test_manifest_duplicate_image_ids_rejected) ... ok
+test_manifest_historical_oof_id_rejected (test_stage_9_7_regression.TestGroupCManifestProvenanceAndCoverage.test_manifest_historical_oof_id_rejected) ... ok
+test_manifest_invalid_sampling_probs_rejected (test_stage_9_7_regression.TestGroupCManifestProvenanceAndCoverage.test_manifest_invalid_sampling_probs_rejected) ... ok
+test_manifest_missing_or_extra_coverage_rejected (test_stage_9_7_regression.TestGroupCManifestProvenanceAndCoverage.test_manifest_missing_or_extra_coverage_rejected) ... ok
+test_manifest_tampered_csv_rejected (test_stage_9_7_regression.TestGroupCManifestProvenanceAndCoverage.test_manifest_tampered_csv_rejected) ... ok
+test_manifest_tampered_raw_oof_rejected (test_stage_9_7_regression.TestGroupCManifestProvenanceAndCoverage.test_manifest_tampered_raw_oof_rejected) ... ok
+test_valid_manifest_and_provenance_passes (test_stage_9_7_regression.TestGroupCManifestProvenanceAndCoverage.test_valid_manifest_and_provenance_passes) ... ok
+test_image_byte_modification_same_size_detected (test_stage_9_7_regression.TestGroupDDatasetInventoryAndIntegrity.test_image_byte_modification_same_size_detected) ... ok
+test_label_byte_modification_detected (test_stage_9_7_regression.TestGroupDDatasetInventoryAndIntegrity.test_label_byte_modification_detected) ... ok
+test_validate_yolo_dataset_integrity_empty_label_treated_as_background (test_stage_9_7_regression.TestGroupDDatasetInventoryAndIntegrity.test_validate_yolo_dataset_integrity_empty_label_treated_as_background) ... ok
+test_validate_yolo_dataset_integrity_invalid_coordinates_rejected (test_stage_9_7_regression.TestGroupDDatasetInventoryAndIntegrity.test_validate_yolo_dataset_integrity_invalid_coordinates_rejected) ... ok
+test_validate_yolo_dataset_integrity_missing_label_rejected (test_stage_9_7_regression.TestGroupDDatasetInventoryAndIntegrity.test_validate_yolo_dataset_integrity_missing_label_rejected) ... ok
+test_validate_yolo_dataset_integrity_orphan_label_rejected (test_stage_9_7_regression.TestGroupDDatasetInventoryAndIntegrity.test_validate_yolo_dataset_integrity_orphan_label_rejected) ... ok
+test_validation_split_content_change_detected (test_stage_9_7_regression.TestGroupDDatasetInventoryAndIntegrity.test_validation_split_content_change_detected) ... ok
+test_resolver_empty_split_raises (test_stage_9_7_regression.TestGroupEDataYamlResolver.test_resolver_empty_split_raises) ... ok
+test_resolver_missing_image_file_in_txt_raises (test_stage_9_7_regression.TestGroupEDataYamlResolver.test_resolver_missing_image_file_in_txt_raises) ... ok
+test_resolver_multi_directory_list (test_stage_9_7_regression.TestGroupEDataYamlResolver.test_resolver_multi_directory_list) ... ok
+test_resolver_relative_and_absolute_paths (test_stage_9_7_regression.TestGroupEDataYamlResolver.test_resolver_relative_and_absolute_paths) ... ok
+test_resolver_txt_file_subset (test_stage_9_7_regression.TestGroupEDataYamlResolver.test_resolver_txt_file_subset) ... ok
+test_ablation_orchestrator_exp_all_mock_execution (test_stage_9_7_regression.TestGroupFAblationOrchestratorMockIntegration.test_ablation_orchestrator_exp_all_mock_execution) ... ok
+test_single_experiment_failure_halts_pipeline (test_stage_9_7_regression.TestGroupFAblationOrchestratorMockIntegration.test_single_experiment_failure_halts_pipeline) ... ok
+test_skip_if_done_reuses_completed_experiments (test_stage_9_7_regression.TestGroupFAblationOrchestratorMockIntegration.test_skip_if_done_reuses_completed_experiments) ... ok
+test_adaptive_yolo_dataset_collate_fn (test_stage_9_7_regression.TestGroupGPretrainedAugmentationMechanics.test_adaptive_yolo_dataset_collate_fn) ... ok
+test_adaptive_yolo_dataset_getitem_augment_true (test_stage_9_7_regression.TestGroupGPretrainedAugmentationMechanics.test_adaptive_yolo_dataset_getitem_augment_true) ... ok
+test_experiment_mechanism_toggles (test_stage_9_7_regression.TestGroupGPretrainedAugmentationMechanics.test_experiment_mechanism_toggles) ... ok
+test_pretrained_weights_sha256_fixture_computation (test_stage_9_7_regression.TestGroupGPretrainedAugmentationMechanics.test_pretrained_weights_sha256_fixture_computation) ... ok
+test_cli_boolean_flag_overrides (test_stage_9_8_regression.TestGroupATrainingConfiguration.test_cli_boolean_flag_overrides) ... ok
+test_default_training_parameters (test_stage_9_8_regression.TestGroupATrainingConfiguration.test_default_training_parameters) ... ok
+test_invalid_cli_arguments_rejected (test_stage_9_8_regression.TestGroupATrainingConfiguration.test_invalid_cli_arguments_rejected) ... ok
+test_run_identity_stores_all_effective_parameters (test_stage_9_8_regression.TestGroupATrainingConfiguration.test_run_identity_stores_all_effective_parameters) ... ok
+test_exact_match_allows_reuse (test_stage_9_8_regression.TestGroupBRunIdentityAndReuse.test_exact_match_allows_reuse) ... ok
+test_missing_identity_field_causes_fail_closed (test_stage_9_8_regression.TestGroupBRunIdentityAndReuse.test_missing_identity_field_causes_fail_closed) ... ok
+test_parameter_change_rejects_reuse (test_stage_9_8_regression.TestGroupBRunIdentityAndReuse.test_parameter_change_rejects_reuse) ... ok
+test_partial_run_rejected_for_reuse (test_stage_9_8_regression.TestGroupBRunIdentityAndReuse.test_partial_run_rejected_for_reuse) ... ok
+test_validation_content_change_rejects_reuse (test_stage_9_8_regression.TestGroupBRunIdentityAndReuse.test_validation_content_change_rejects_reuse) ... ok
+test_empty_split_rejected (test_stage_9_8_regression.TestGroupCDatasetIntegrity.test_empty_split_rejected) ... ok
+test_fingerprint_detects_same_size_byte_modification (test_stage_9_8_regression.TestGroupCDatasetIntegrity.test_fingerprint_detects_same_size_byte_modification) ... ok
+test_invalid_class_id_rejected (test_stage_9_8_regression.TestGroupCDatasetIntegrity.test_invalid_class_id_rejected) ... ok
+test_missing_label_file_rejected (test_stage_9_8_regression.TestGroupCDatasetIntegrity.test_missing_label_file_rejected) ... ok
+test_orphan_label_file_rejected (test_stage_9_8_regression.TestGroupCDatasetIntegrity.test_orphan_label_file_rejected) ... ok
+test_txt_subset_resolution_preserves_exact_list (test_stage_9_8_regression.TestGroupCDatasetIntegrity.test_txt_subset_resolution_preserves_exact_list) ... ok
+test_valid_dataset_passes_integrity (test_stage_9_8_regression.TestGroupCDatasetIntegrity.test_valid_dataset_passes_integrity) ... ok
+test_validator_called_by_stage_8_4_preflight (test_stage_9_8_regression.TestGroupCDatasetIntegrity.test_validator_called_by_stage_8_4_preflight) ... ok
+test_zero_dimension_bbox_rejected (test_stage_9_8_regression.TestGroupCDatasetIntegrity.test_zero_dimension_bbox_rejected) ... ok
+test_ablation_orchestrator_exp_all_mock_execution (test_stage_9_8_regression.TestGroupDAblationConfiguration.test_ablation_orchestrator_exp_all_mock_execution) ... ok
+test_experiment_spec_toggles (test_stage_9_8_regression.TestGroupDAblationConfiguration.test_experiment_spec_toggles) ... ok
+test_single_experiment_failure_halts_pipeline (test_stage_9_8_regression.TestGroupDAblationConfiguration.test_single_experiment_failure_halts_pipeline) ... ok
+test_collate_fn_with_mixed_cropped_and_uncropped_items (test_stage_9_8_regression.TestGroupEDataLoadingAndAugmentation.test_collate_fn_with_mixed_cropped_and_uncropped_items) ... ok
+test_context_crop_target_imgsz_fallback (test_stage_9_8_regression.TestGroupEDataLoadingAndAugmentation.test_context_crop_target_imgsz_fallback) ... ok
+test_nonexistent_weights_raises_file_not_found (test_stage_9_8_regression.TestGroupEDataLoadingAndAugmentation.test_nonexistent_weights_raises_file_not_found) ... ok
+test_pretrained_weights_resolution (test_stage_9_8_regression.TestGroupEDataLoadingAndAugmentation.test_pretrained_weights_resolution) ... ok
+test_all_forbidden_historical_directories_rejected (test_stage_9_8_regression.TestGroupFOutputSafetyAndZeroMutation.test_all_forbidden_historical_directories_rejected) ... ok
+test_clean_output_directory_permitted (test_stage_9_8_regression.TestGroupFOutputSafetyAndZeroMutation.test_clean_output_directory_permitted) ... ok
+test_verify_dataset_files_and_checksums_unmutated_before_after (test_stage_9_8_regression.TestGroupFOutputSafetyAndZeroMutation.test_verify_dataset_files_and_checksums_unmutated_before_after) ... ok
+test_zero_mutation_dataset_verification (test_stage_9_8_regression.TestGroupFOutputSafetyAndZeroMutation.test_zero_mutation_dataset_verification) ... ok
+
+----------------------------------------------------------------------
+Ran 181 tests in 3.155s
+
+OK

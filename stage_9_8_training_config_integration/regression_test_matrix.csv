@@ -1,0 +1,30 @@
+group,test_class,test_name,description,status
+Group A: Training Configuration Integration,TestGroupATrainingConfiguration,test_cli_boolean_flag_overrides,,PASS
+Group A: Training Configuration Integration,TestGroupATrainingConfiguration,test_default_training_parameters,,PASS
+Group A: Training Configuration Integration,TestGroupATrainingConfiguration,test_invalid_cli_arguments_rejected,,PASS
+Group A: Training Configuration Integration,TestGroupATrainingConfiguration,test_run_identity_stores_all_effective_parameters,,PASS
+Group B: Run Identity & Strict Reuse Verification,TestGroupBRunIdentityAndReuse,test_exact_match_allows_reuse,,PASS
+Group B: Run Identity & Strict Reuse Verification,TestGroupBRunIdentityAndReuse,test_missing_identity_field_causes_fail_closed,,PASS
+Group B: Run Identity & Strict Reuse Verification,TestGroupBRunIdentityAndReuse,test_parameter_change_rejects_reuse,,PASS
+Group B: Run Identity & Strict Reuse Verification,TestGroupBRunIdentityAndReuse,test_partial_run_rejected_for_reuse,,PASS
+Group B: Run Identity & Strict Reuse Verification,TestGroupBRunIdentityAndReuse,test_validation_content_change_rejects_reuse,,PASS
+Group C: Dataset Integrity Preflight Validation,TestGroupCDatasetIntegrity,test_empty_split_rejected,,PASS
+Group C: Dataset Integrity Preflight Validation,TestGroupCDatasetIntegrity,test_fingerprint_detects_same_size_byte_modification,,PASS
+Group C: Dataset Integrity Preflight Validation,TestGroupCDatasetIntegrity,test_invalid_class_id_rejected,,PASS
+Group C: Dataset Integrity Preflight Validation,TestGroupCDatasetIntegrity,test_missing_label_file_rejected,,PASS
+Group C: Dataset Integrity Preflight Validation,TestGroupCDatasetIntegrity,test_orphan_label_file_rejected,,PASS
+Group C: Dataset Integrity Preflight Validation,TestGroupCDatasetIntegrity,test_txt_subset_resolution_preserves_exact_list,,PASS
+Group C: Dataset Integrity Preflight Validation,TestGroupCDatasetIntegrity,test_valid_dataset_passes_integrity,,PASS
+Group C: Dataset Integrity Preflight Validation,TestGroupCDatasetIntegrity,test_validator_called_by_stage_8_4_preflight,,PASS
+Group C: Dataset Integrity Preflight Validation,TestGroupCDatasetIntegrity,test_zero_dimension_bbox_rejected,,PASS
+Group D: Ablation Configuration Consistency & Mock Orchestration,TestGroupDAblationConfiguration,test_ablation_orchestrator_exp_all_mock_execution,,PASS
+Group D: Ablation Configuration Consistency & Mock Orchestration,TestGroupDAblationConfiguration,test_experiment_spec_toggles,,PASS
+Group D: Ablation Configuration Consistency & Mock Orchestration,TestGroupDAblationConfiguration,test_single_experiment_failure_halts_pipeline,,PASS
+"Group E: Data Loading, Augmentation Mechanics & Pretrained Resolution",TestGroupEDataLoadingAndAugmentation,test_collate_fn_with_mixed_cropped_and_uncropped_items,,PASS
+"Group E: Data Loading, Augmentation Mechanics & Pretrained Resolution",TestGroupEDataLoadingAndAugmentation,test_context_crop_target_imgsz_fallback,,PASS
+"Group E: Data Loading, Augmentation Mechanics & Pretrained Resolution",TestGroupEDataLoadingAndAugmentation,test_nonexistent_weights_raises_file_not_found,,PASS
+"Group E: Data Loading, Augmentation Mechanics & Pretrained Resolution",TestGroupEDataLoadingAndAugmentation,test_pretrained_weights_resolution,,PASS
+"Group F: Output Safety, Historical Protection & Zero Dataset Mutation",TestGroupFOutputSafetyAndZeroMutation,test_all_forbidden_historical_directories_rejected,,PASS
+"Group F: Output Safety, Historical Protection & Zero Dataset Mutation",TestGroupFOutputSafetyAndZeroMutation,test_clean_output_directory_permitted,,PASS
+"Group F: Output Safety, Historical Protection & Zero Dataset Mutation",TestGroupFOutputSafetyAndZeroMutation,test_verify_dataset_files_and_checksums_unmutated_before_after,,PASS
+"Group F: Output Safety, Historical Protection & Zero Dataset Mutation",TestGroupFOutputSafetyAndZeroMutation,test_zero_mutation_dataset_verification,,PASS

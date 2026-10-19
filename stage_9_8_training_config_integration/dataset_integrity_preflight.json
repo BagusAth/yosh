@@ -1,0 +1,42 @@
+{
+  "dataset_yaml": "cassava-v7-standardized/data.yaml",
+  "dataset_yaml_sha256": "e40454b874596ad6f0275ae489a44eca51b2350540c16e50e4b489f479e9ed84",
+  "preflight_status": "PASSED",
+  "splits": {
+    "train": {
+      "images_dir": "D:/UNDIP/SKRIPSI/cassava-v7-standardized/train/images",
+      "labels_dir": "D:/UNDIP/SKRIPSI/cassava-v7-standardized/train/labels",
+      "total_images": 8980,
+      "total_labels": 8980,
+      "background_images": 66,
+      "total_objects": 34219,
+      "orphan_labels": 0,
+      "class_distribution": {
+        "0": 2534,
+        "1": 2307,
+        "2": 6747,
+        "4": 13223,
+        "3": 9408
+      },
+      "inventory_fingerprint_sha256": "1a1aec23d71789a5c5cf435389bc4bb5a9b6a30e24e2e97de0c010554e4c4f6f"
+    },
+    "val": {
+      "images_dir": "D:/UNDIP/SKRIPSI/cassava-v7-standardized/valid/images",
+      "labels_dir": "D:/UNDIP/SKRIPSI/cassava-v7-standardized/valid/labels",
+      "total_images": 2567,
+      "total_labels": 2567,
+      "background_images": 18,
+      "total_objects": 9649,
+      "orphan_labels": 0,
+      "class_distribution": {
+        "0": 661,
+        "2": 2032,
+        "1": 690,
+        "4": 3440,
+        "3": 2826
+      },
+      "inventory_fingerprint_sha256": "e0204a1b351514c27f572d58641bf26df3462f636d3d821c45789644559616e8"
+    }
+  },
+  "verification_notes": "Dataset content and integrity verified. Zero orphan labels. Zero bounding box out-of-bounds errors. Fingerprints established."
+}
