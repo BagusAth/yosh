@@ -23,6 +23,7 @@ import argparse
 import csv
 import hashlib
 import json
+import math
 import os
 import shutil
 import sys
@@ -43,6 +44,7 @@ from research_utils.detection_metrics import (
     extract_canonical_metrics,
     resolve_data_yaml_split,
     validate_output_directory_safety,
+    FORBIDDEN_HISTORICAL_DIRS,
 )
 from stage_8_3_adaptive_pipeline import AdaptiveDetectionTrainer
 
@@ -182,11 +184,14 @@ def verify_manifest_provenance_and_coverage(
     """
     Memverifikasi keabsahan manifest dari clean Stage 8.2 run:
     1. Keberadaan manifest CSV dan sidecar provenance JSON
-    2. Checksum CSV cocok dengan provenance
-    3. Run identity bukan historical (bukan stage_8_1_oof tanpa clean)
-    4. Dataset inventory fingerprint cocok 100%
-    5. Source data.yaml sha256 cocok 100%
-    6. Cakupan citra 100% terhadap train split (tanpa ID duplikat, citra hilang, atau citra ekstra)
+    2. Skema provenance berversi (provenance_schema_version) dengan seluruh field wajib ada dan non-empty
+    3. Checksum CSV cocok dengan provenance
+    4. Run identity bukan historical (memeriksa semua ancestor, bukan hanya substring)
+    5. Dataset inventory fingerprint cocok 100%
+    6. Source data.yaml sha256 cocok 100%
+    7. Raw OOF predictions hash valid dan cocok dengan file sumber aktual jika ada
+    8. Validasi baris manifest lengkap: image_id unik non-empty, d_image in [0,1], p_sampling > 0, sum(p_sampling) ~= 1.0
+    9. Cakupan citra 100% terhadap train split (tanpa ID duplikat, citra hilang, atau citra ekstra)
     """
     p_manifest = Path(manifest_path).resolve()
     if not p_manifest.exists():
@@ -212,27 +217,64 @@ def verify_manifest_provenance_and_coverage(
     except Exception as e:
         return False, f"Failed to parse provenance JSON '{prov_path}': {e}", {}
 
-    actual_csv_sha = compute_file_sha256(p_manifest)
-    if prov.get("manifest_csv_sha256") and prov["manifest_csv_sha256"] != actual_csv_sha:
-        return False, f"Manifest CSV SHA-256 mismatch: recorded={prov.get('manifest_csv_sha256')[:8]} vs actual={actual_csv_sha[:8]}", prov
+    if not isinstance(prov, dict):
+        return False, f"Provenance content in '{prov_path}' is not a valid JSON dictionary", {}
 
+    actual_csv_sha = compute_file_sha256(p_manifest)
+    prov_csv_sha = prov.get("manifest_csv_sha256", "")
+    if not prov_csv_sha or prov_csv_sha != actual_csv_sha:
+        return False, f"Manifest CSV SHA-256 mismatch: recorded={prov_csv_sha[:8]} vs actual={actual_csv_sha[:8]}", prov
+
+    # Clean OOF run verification (ancestor check against forbidden historical dirs)
     clean_oof_id = prov.get("clean_oof_run_id", "")
+    if not clean_oof_id:
+        return False, "Provenance clean_oof_run_id is missing or empty", prov
+    p_oof = Path(clean_oof_id).resolve()
+    parts_oof = [part.lower() for part in p_oof.parts]
+    for forb in FORBIDDEN_HISTORICAL_DIRS:
+        if forb.lower() in parts_oof or forb.lower() in clean_oof_id.lower().replace("\\", "/").split("/"):
+            return False, f"Provenance references historical unverified OOF run: '{clean_oof_id}'", prov
     if "stage_8_1_oof" in clean_oof_id and "clean" not in clean_oof_id:
         return False, f"Provenance references historical unverified OOF run: '{clean_oof_id}'", prov
 
     if expected_dataset_fingerprint:
         prov_ds_fp = prov.get("dataset_inventory_fingerprint", "")
-        if prov_ds_fp != expected_dataset_fingerprint:
+        if not prov_ds_fp or prov_ds_fp != expected_dataset_fingerprint:
             return False, f"Dataset inventory fingerprint mismatch in provenance: recorded={prov_ds_fp[:8]} vs expected={expected_dataset_fingerprint[:8]}", prov
 
     if expected_data_yaml_sha256:
         prov_yaml_sha = prov.get("data_yaml_sha256", "")
-        if prov_yaml_sha != expected_data_yaml_sha256:
+        if not prov_yaml_sha or prov_yaml_sha != expected_data_yaml_sha256:
             return False, f"Data YAML SHA-256 mismatch in provenance: recorded={prov_yaml_sha[:8]} vs expected={expected_data_yaml_sha256[:8]}", prov
 
+    # Versioned schema check for Stage 9.7+ manifests
+    raw_oof_sha = prov.get("raw_oof_sha256") or prov.get("oof_predictions_raw_sha256") or prov.get("raw_oof_predictions_sha256")
+    if prov.get("provenance_schema_version") or raw_oof_sha is not None:
+        if not raw_oof_sha or not isinstance(raw_oof_sha, str) or len(raw_oof_sha.strip()) != 64:
+            return False, f"Mandatory raw OOF predictions SHA-256 is missing or invalid in provenance: '{raw_oof_sha}'", prov
+
+        # Verify actual raw OOF file if it exists at raw_oof_path or clean_oof_id
+        raw_oof_candidates = []
+        raw_oof_ptr = prov.get("raw_oof_path") or prov.get("raw_oof_predictions_path")
+        if raw_oof_ptr:
+            raw_oof_candidates.append(Path(raw_oof_ptr).resolve())
+        raw_oof_candidates.append(p_oof / "oof_predictions_raw.csv")
+
+        for raw_cand in raw_oof_candidates:
+            if raw_cand.exists() and raw_cand.is_file():
+                actual_raw_sha = compute_file_sha256(raw_cand)
+                if actual_raw_sha != raw_oof_sha:
+                    return False, f"Raw OOF predictions file hash mismatch at '{raw_cand}': recorded={raw_oof_sha[:8]} vs actual={actual_raw_sha[:8]}", prov
+                break
+
     manifest_image_ids = set()
+    total_p = 0.0
+
     with open(p_manifest, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f)
+        if not reader.fieldnames or not {"image_id", "d_image", "p_sampling"}.issubset(set(reader.fieldnames)):
+            return False, f"Manifest CSV missing required columns: {reader.fieldnames}", prov
+
         for row_idx, row in enumerate(reader, start=1):
             img_id = row.get("image_id", "").strip()
             if not img_id:
@@ -240,26 +282,49 @@ def verify_manifest_provenance_and_coverage(
             if img_id in manifest_image_ids:
                 return False, f"Duplicate image_id '{img_id}' found in manifest row {row_idx}", prov
             manifest_image_ids.add(img_id)
+
             try:
-                float(row.get("p_sampling", 0.0))
-                float(row.get("d_image", 0.0))
+                p_samp = float(row.get("p_sampling", "nan"))
+                d_img = float(row.get("d_image", "nan"))
             except ValueError:
-                return False, f"Manifest row {row_idx} contains invalid numerical values", prov
+                return False, f"Manifest row {row_idx} contains invalid non-numeric values", prov
+
+            if not math.isfinite(p_samp) or not math.isfinite(d_img):
+                return False, f"Manifest row {row_idx} contains non-finite values (p={p_samp}, d={d_img})", prov
+            if not (0.0 <= d_img <= 1.0):
+                return False, f"Manifest row {row_idx} d_image={d_img} outside valid range [0.0, 1.0]", prov
+            if p_samp <= 0.0:
+                return False, f"Manifest row {row_idx} p_sampling={p_samp} must be strictly positive", prov
+
+            total_p += p_samp
+
+    if not manifest_image_ids:
+        return False, "Manifest contains zero rows", prov
+
+    if abs(total_p - 1.0) > 1e-4:
+        return False, f"Sampling probabilities do not sum to 1.0 (sum={total_p:.6f})", prov
 
     if expected_image_files:
-        sample_id = next(iter(manifest_image_ids)) if manifest_image_ids else ""
-        if "." in sample_id:
-            expected_set = {p.name for p in expected_image_files}
+        canonical_names = {p.name for p in expected_image_files}
+        canonical_stems = {p.stem for p in expected_image_files}
+
+        if manifest_image_ids == canonical_names:
+            pass
+        elif manifest_image_ids == canonical_stems:
+            pass
         else:
-            expected_set = {p.stem for p in expected_image_files}
-
-        missing_images = expected_set - manifest_image_ids
-        if missing_images:
-            return False, f"Manifest coverage incomplete: {len(missing_images)} training images missing (e.g. {sorted(list(missing_images))[:3]})", prov
-
-        extra_images = manifest_image_ids - expected_set
-        if extra_images:
-            return False, f"Manifest contains {len(extra_images)} extraneous images not in train split (e.g. {sorted(list(extra_images))[:3]})", prov
+            diff_names_missing = canonical_names - manifest_image_ids
+            diff_names_extra = manifest_image_ids - canonical_names
+            diff_stems_missing = canonical_stems - manifest_image_ids
+            diff_stems_extra = manifest_image_ids - canonical_stems
+            if len(diff_names_missing) + len(diff_names_extra) <= len(diff_stems_missing) + len(diff_stems_extra):
+                missing, extra = diff_names_missing, diff_names_extra
+            else:
+                missing, extra = diff_stems_missing, diff_stems_extra
+            if missing:
+                return False, f"Manifest coverage incomplete: {len(missing)} training images missing (e.g. {sorted(list(missing))[:3]})", prov
+            if extra:
+                return False, f"Manifest contains {len(extra)} extraneous images not in train split (e.g. {sorted(list(extra))[:3]})", prov
 
     return True, "Manifest provenance and 100% coverage verified successfully", prov
 
@@ -353,19 +418,16 @@ def verify_ablation_reuse_safety(
     return True, "Ablation run verified and safe for reuse"
 
 
-def run_single_experiment(exp_idx: int, args) -> dict[str, Any]:
+def run_single_experiment(
+    exp_idx: int,
+    args,
+    trainer_cls: Any = None,
+    model_eval_fn: Any = None,
+) -> dict[str, Any]:
     """Menjalankan satu eksperimen ablasi (EXP-0, EXP-1, EXP-2, atau EXP-3)."""
     spec = EXPERIMENT_SPECS[exp_idx]
     output_dir = Path(args.output_dir).resolve()
     is_dry_run = getattr(args, "dry_run", False)
-
-    # 1. Output safety check on root and exp_dir
-    validate_output_directory_safety(
-        output_dir,
-        stage_name="stage_8_4",
-        allow_reuse=getattr(args, "skip_if_done", False),
-        is_dry_run=is_dry_run,
-    )
 
     exp_dir = output_dir / spec["name"]
     summary_json_path = exp_dir / "metrics_summary.json"
@@ -380,21 +442,17 @@ def run_single_experiment(exp_idx: int, args) -> dict[str, Any]:
         )
     if best_weight_path.exists() and not summary_json_path.exists():
         raise PermissionError(
-            f"[{spec['id']}] SAFETY VIOLATION: Direktori '{exp_dir}' berisi checkpoint best.pt tanpa metrics_summary.json metadata!\n"
             "Kondisi ini mengindikasikan run lama yang belum terverifikasi secara penuh.\n"
             "Harap gunakan direktori baru yang bersih (--output-dir)."
         )
 
-    # Validate exp_dir safety
+    # Early historical directory protection check
     validate_output_directory_safety(
         exp_dir,
         stage_name=f"stage_8_4_{spec['id']}",
-        allow_reuse=getattr(args, "skip_if_done", False),
-        is_dry_run=is_dry_run,
+        allow_reuse=True,
+        is_root=True,
     )
-
-    if not is_dry_run:
-        exp_dir.mkdir(parents=True, exist_ok=True)
 
     # 2. Dataset inventory fingerprint and split resolution
     train_images_dir, train_labels_dir, train_image_files = resolve_data_yaml_split(args.data_yaml, "train")
@@ -442,6 +500,20 @@ def run_single_experiment(exp_idx: int, args) -> dict[str, Any]:
         seed=args.seed,
         device=str(args.device),
     )
+
+    # Validate exp_dir safety with full expected_identity
+    validate_output_directory_safety(
+        exp_dir,
+        stage_name=f"stage_8_4_{spec['id']}",
+        allow_reuse=getattr(args, "skip_if_done", False),
+        expected_identity=expected_identity,
+        metadata_filename="metrics_summary.json",
+        is_dry_run=is_dry_run,
+        is_root=False,
+    )
+
+    if not is_dry_run:
+        exp_dir.mkdir(parents=True, exist_ok=True)
 
     # Strict Fingerprint and Artifact Verification for --skip-if-done
     if getattr(args, "skip_if_done", False) and summary_json_path.exists() and best_weight_path.exists():
@@ -494,7 +566,8 @@ def run_single_experiment(exp_idx: int, args) -> dict[str, Any]:
 
     t_start = time.time()
 
-    trainer = AdaptiveDetectionTrainer(
+    active_trainer_cls = trainer_cls if trainer_cls is not None else AdaptiveDetectionTrainer
+    trainer = active_trainer_cls(
         overrides={
             "model": "yolo11n.pt",
             "data": str(Path(args.data_yaml).resolve()),
@@ -513,7 +586,7 @@ def run_single_experiment(exp_idx: int, args) -> dict[str, Any]:
         },
         enable_mixture_sampling=spec["enable_mixture_sampling"],
         enable_targeted_aug=spec["enable_targeted_aug"],
-        manifest_path=args.manifest_path,
+        manifest_path=manifest_to_use,
         aug_prob=0.50,
     )
 
@@ -529,18 +602,27 @@ def run_single_experiment(exp_idx: int, args) -> dict[str, Any]:
             shutil.copy2(candidate_best, best_weight_path)
 
     print(f"\n[{spec['id']}] Mengevaluasi model terbaik (best.pt) pada Validation Set...")
-    eval_model = YOLO(str(best_weight_path if best_weight_path.exists() else trained_best))
-    val_metrics = eval_model.val(
-        data=str(Path(args.data_yaml).resolve()),
-        split="val",
-        batch=args.batch,
-        imgsz=args.imgsz,
-        device=args.device,
-        plots=False,
-    )
-
-    # Use canonical extract_canonical_metrics from research_utils
-    canonical_m = extract_canonical_metrics(val_metrics, CLASS_NAMES)
+    best_target = best_weight_path if best_weight_path.exists() else trained_best
+    if model_eval_fn is not None:
+        canonical_m = model_eval_fn(
+            best_target,
+            data_yaml_path=args.data_yaml,
+            batch=args.batch,
+            imgsz=args.imgsz,
+            device=args.device,
+        )
+    else:
+        eval_model = YOLO(str(best_target))
+        val_metrics = eval_model.val(
+            data=str(Path(args.data_yaml).resolve()),
+            split="val",
+            batch=args.batch,
+            imgsz=args.imgsz,
+            device=args.device,
+            plots=False,
+        )
+        canonical_m = extract_canonical_metrics(val_metrics, CLASS_NAMES)
+        del eval_model
 
     best_weight_sha256 = compute_file_sha256(best_weight_path)
 
@@ -578,7 +660,6 @@ def run_single_experiment(exp_idx: int, args) -> dict[str, Any]:
           f"mAP@50 = {canonical_m['map50'] * 100:.2f}%, mAP@50-95 = {canonical_m['map50_95'] * 100:.2f}%, "
           f"P = {canonical_m['precision'] * 100:.2f}%, R = {canonical_m['recall'] * 100:.2f}%")
 
-    del eval_model
     if torch.cuda.is_available():
         torch.cuda.empty_cache()
 
@@ -653,8 +734,69 @@ def generate_ablation_report(summaries: list[dict[str, Any]], output_dir: Path):
     print(f"\n[REPORT] Laporan komparasi tersimpan di: {report_path}")
 
 
-def main():
-    args = parse_args()
+def run_ablation_pipeline(
+    args,
+    trainer_cls: Any = None,
+    model_eval_fn: Any = None,
+) -> list[dict[str, Any]]:
+    """
+    Orkestrator utama ablasi yang mengeksekusi urutan EXP-0 s.d. EXP-3:
+    1. Memvalidasi output root tepat SATU KALI di tingkat orkestrator (is_root=True).
+    2. Menjalankan sub-eksperimen secara berurutan.
+    3. Memastikan artefak antar-eksperimen tidak saling menolak di tingkat root.
+    4. Menghasilkan laporan komparatif hanya jika seluruh eksperimen yang diminta selesai.
+    """
+    if args.exp == "all":
+        exp_indices = [0, 1, 2, 3]
+    else:
+        exp_indices = [int(args.exp)]
+
+    summaries = []
+    output_dir = Path(args.output_dir).resolve()
+    is_dry_run = getattr(args, "dry_run", False)
+
+    # Validate output root safety ONCE at orchestrator level
+    validate_output_directory_safety(
+        output_dir,
+        stage_name="stage_8_4",
+        allow_reuse=args.skip_if_done,
+        is_dry_run=is_dry_run,
+        is_root=True,
+    )
+
+    if not is_dry_run:
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+    for idx in exp_indices:
+        summary = run_single_experiment(idx, args, trainer_cls=trainer_cls, model_eval_fn=model_eval_fn)
+        summaries.append(summary)
+
+    if is_dry_run:
+        print("\n" + "=" * 80)
+        print("STAGE 8.4 DRY-RUN SELESAI: Seluruh eksperimen lolos validasi preflight!")
+        print("=" * 80)
+        return summaries
+
+    if len(summaries) > 1:
+        generate_ablation_report(summaries, output_dir)
+
+    print("\n" + "=" * 80)
+    print("SELURUH EKSPERIMEN ABLASI STAGE 8.4 SELESAI!")
+    print("=" * 80)
+    return summaries
+
+
+def main(argv=None):
+    if argv is not None:
+        orig_argv = sys.argv
+        sys.argv = [sys.argv[0]] + list(argv)
+        try:
+            args = parse_args()
+        finally:
+            sys.argv = orig_argv
+    else:
+        args = parse_args()
+
     print("=" * 80)
     print("STAGE 8.4 — ABLATION STUDY EXPERIMENTS (EXP-0 .. EXP-3) (HARDENED)")
     print("=" * 80)
@@ -669,41 +811,7 @@ def main():
     print(f"Skip if Done       : {args.skip_if_done}")
     print("=" * 80)
 
-    if args.exp == "all":
-        exp_indices = [0, 1, 2, 3]
-    else:
-        exp_indices = [int(args.exp)]
-
-    summaries = []
-    output_dir = Path(args.output_dir).resolve()
-    is_dry_run = getattr(args, "dry_run", False)
-
-    validate_output_directory_safety(
-        output_dir,
-        stage_name="stage_8_4",
-        allow_reuse=args.skip_if_done,
-        is_dry_run=is_dry_run,
-    )
-
-    if not is_dry_run:
-        output_dir.mkdir(parents=True, exist_ok=True)
-
-    for idx in exp_indices:
-        summary = run_single_experiment(idx, args)
-        summaries.append(summary)
-
-    if is_dry_run:
-        print("\n" + "=" * 80)
-        print("STAGE 8.4 DRY-RUN SELESAI: Seluruh eksperimen lolos validasi preflight!")
-        print("=" * 80)
-        return
-
-    if len(summaries) > 1:
-        generate_ablation_report(summaries, output_dir)
-
-    print("\n" + "=" * 80)
-    print("SELURUH EKSPERIMEN ABLASI STAGE 8.4 SELESAI!")
-    print("=" * 80)
+    run_ablation_pipeline(args)
 
 
 if __name__ == "__main__":

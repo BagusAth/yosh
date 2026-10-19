@@ -47,6 +47,7 @@ from research_utils.detection_metrics import (
     compute_file_sha256,
     compute_dataset_inventory_fingerprint,
     compute_pretrained_weights_sha256,
+    derive_yolo_label_path,
     resolve_data_yaml_split,
     validate_output_directory_safety,
     CLASS_NAMES,
@@ -296,7 +297,9 @@ def main():
     # Inference in batches or single image loop
     t0_eval = time.time()
     for idx, img_path in enumerate(val_images):
-        lbl_path = val_lbl_dir / f"{img_path.stem}.txt"
+        lbl_path = (val_lbl_dir / f"{img_path.stem}.txt") if val_lbl_dir else derive_yolo_label_path(img_path)
+        if not lbl_path.exists():
+            lbl_path = derive_yolo_label_path(img_path)
         img_w, img_h = get_image_dimensions(img_path)
         gt_objects = parse_yolo_labels(lbl_path, img_width=img_w, img_height=img_h)
 

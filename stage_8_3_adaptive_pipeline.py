@@ -342,7 +342,7 @@ class AdaptiveYOLODataset(YOLODataset):
             return label
 
         hyp_obj = getattr(self, "hyp", None)
-        target_imgsz = getattr(hyp_obj, "imgsz", 640) if hyp_obj else 640
+        target_imgsz = getattr(hyp_obj, "imgsz", None) or getattr(self, "imgsz", 640)
         resized_crop = cv2.resize(cropped_img, (target_imgsz, target_imgsz), interpolation=cv2.INTER_LINEAR)
         scale_x = float(target_imgsz) / (x_max - x_min)
         scale_y = float(target_imgsz) / (y_max - y_min)

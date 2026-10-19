@@ -1,0 +1,231 @@
+================================================================================
+STAGE 9.7 — COMPREHENSIVE REGRESSION TEST SUITE EXECUTION REPORT
+================================================================================
+Date/Time          : 2026-10-19 21:21:11
+Python Version     : 3.13.7
+PyTorch Version    : 2.9.1+cpu
+CUDA Available     : False
+================================================================================
+
+--------------------------------------------------------------------------------
+RUNNING: Stage 9.3 Regression Suite (test_stage_9_3_regression)
+--------------------------------------------------------------------------------
+test_component_toggles_matrix (test_stage_9_3_regression.TestComponentIntegrationAndSmoke.test_component_toggles_matrix) ... ok
+test_smoke_dataloader_and_runtime_crop (test_stage_9_3_regression.TestComponentIntegrationAndSmoke.test_smoke_dataloader_and_runtime_crop)
+Smoke test loading 1 batch from standardized dataset and recording crop diagnostics. ... ok
+test_case_1_center_target (test_stage_9_3_regression.TestCritical01ContextCrop.test_case_1_center_target)
+1. Objek target berada di tengah gambar. ... ok
+test_case_2_edges_and_corners (test_stage_9_3_regression.TestCritical01ContextCrop.test_case_2_edges_and_corners)
+2. Objek target berada dekat masing-masing tepi gambar. ... ok
+test_case_3_no_target_objects (test_stage_9_3_regression.TestCritical01ContextCrop.test_case_3_no_target_objects)
+3. Tidak ada objek target. ... ok
+test_case_4_multiple_objects_and_visibility_threshold (test_stage_9_3_regression.TestCritical01ContextCrop.test_case_4_multiple_objects_and_visibility_threshold)
+4. Beberapa objek dalam satu gambar dengan filtering visibilitas sekunder. ... ok
+test_case_5_invalid_boxes (test_stage_9_3_regression.TestCritical01ContextCrop.test_case_5_invalid_boxes)
+5. Ada kotak yang tidak valid. ... ok
+test_case_6_empty_labels (test_stage_9_3_regression.TestCritical01ContextCrop.test_case_6_empty_labels)
+6. Label kosong atau struktur label tidak sesuai. ... ok
+test_case_7_manual_calculation_verification (test_stage_9_3_regression.TestCritical01ContextCrop.test_case_7_manual_calculation_verification)
+7. Crop berhasil menghasilkan gambar dan kotak yang sesuai perhitungan manual. ... ok
+test_case_8_original_label_immutability (test_stage_9_3_regression.TestCritical01ContextCrop.test_case_8_original_label_immutability)
+8. Tidak memutasi label asli secara in-place. ... ok
+test_reconciliation_synthetic_metrics (test_stage_9_3_regression.TestHigh01CanonicalMetrics.test_reconciliation_synthetic_metrics) ... ok
+test_higher_map50_95_always_wins (test_stage_9_3_regression.TestHigh02SelectionProtocol.test_higher_map50_95_always_wins)
+Model with higher mAP@50-95 must win even if competitor has higher Recall Small. ... ok
+test_strict_tie_break_hierarchy (test_stage_9_3_regression.TestHigh02SelectionProtocol.test_strict_tie_break_hierarchy)
+Exact numerical tie evaluates mAP50 -> Recall_Small -> lowest fn_missed. ... ok
+test_adjacent_gts_single_prediction_no_reuse (test_stage_9_3_regression.TestMed01BipartiteMatching.test_adjacent_gts_single_prediction_no_reuse) ... ok
+test_backward_compat_default_640 (test_stage_9_3_regression.TestMed02CoordinateParser.test_backward_compat_default_640) ... ok
+test_dynamic_dimensions (test_stage_9_3_regression.TestMed02CoordinateParser.test_dynamic_dimensions) ... ok
+
+----------------------------------------------------------------------
+Ran 16 tests in 0.698s
+
+OK
+Result: PASS (Ran: 16, Failures: 0, Errors: 0)
+
+--------------------------------------------------------------------------------
+RUNNING: Stage 9.4 Regression Suite (test_stage_9_4_regression)
+--------------------------------------------------------------------------------
+test_image_difficulty_aggregation (test_stage_9_4_regression.TestDifficultyFormulaAndBounds.test_image_difficulty_aggregation) ... ok
+test_matched_correct_class_formula (test_stage_9_4_regression.TestDifficultyFormulaAndBounds.test_matched_correct_class_formula) ... ok
+test_matched_wrong_class_penalty_and_clipping (test_stage_9_4_regression.TestDifficultyFormulaAndBounds.test_matched_wrong_class_penalty_and_clipping) ... ok
+test_unmatched_fn_formula (test_stage_9_4_regression.TestDifficultyFormulaAndBounds.test_unmatched_fn_formula) ... ok
+test_resolve_paths_from_yaml (test_stage_9_4_regression.TestEvaluatorDataSourceSSOT.test_resolve_paths_from_yaml) ... ok
+test_experiment_spec_toggles (test_stage_9_4_regression.TestExperimentComponentToggles.test_experiment_spec_toggles) ... ok
+test_canonical_metric_extraction (test_stage_9_4_regression.TestFullPrecisionMetricSerialization.test_canonical_metric_extraction) ... ok
+test_global_descending_iou_sorting (test_stage_9_4_regression.TestGlobalOneToOneMatching.test_global_descending_iou_sorting) ... ok
+test_multiple_predictions_for_single_gt (test_stage_9_4_regression.TestGlobalOneToOneMatching.test_multiple_predictions_for_single_gt) ... ok
+test_single_prediction_between_two_gt (test_stage_9_4_regression.TestGlobalOneToOneMatching.test_single_prediction_between_two_gt) ... ok
+test_historic_stage_8_ablation_overwrite_blocked (test_stage_9_4_regression.TestIsolatedPathsAndAntiOverwrite.test_historic_stage_8_ablation_overwrite_blocked) ... ok
+test_dataset_coverage_fail_fast_on_missing_images (test_stage_9_4_regression.TestManifestFailFastAndCoverage.test_dataset_coverage_fail_fast_on_missing_images) ... ok
+test_duplicate_image_id_rejection (test_stage_9_4_regression.TestManifestFailFastAndCoverage.test_duplicate_image_id_rejection) ... ok
+test_invalid_d_image_bounds_rejection (test_stage_9_4_regression.TestManifestFailFastAndCoverage.test_invalid_d_image_bounds_rejection) ... ok
+test_primary_criterion_map50_95_strictly_wins (test_stage_9_4_regression.TestModelSelectionHierarchy.test_primary_criterion_map50_95_strictly_wins) ... ok
+test_tie_break_1_recall_small (test_stage_9_4_regression.TestModelSelectionHierarchy.test_tie_break_1_recall_small) ... ok
+test_tie_break_2_map50 (test_stage_9_4_regression.TestModelSelectionHierarchy.test_tie_break_2_map50) ... ok
+test_tie_break_3_lowest_fn (test_stage_9_4_regression.TestModelSelectionHierarchy.test_tie_break_3_lowest_fn) ... ok
+test_nested_fold_zero_leakage_and_isolation (test_stage_9_4_regression.TestNestedOOFGroupIsolation.test_nested_fold_zero_leakage_and_isolation) ... ok
+test_dynamic_coordinate_scaling_1920x1080 (test_stage_9_4_regression.TestNonSquareDynamicDimensionParser.test_dynamic_coordinate_scaling_1920x1080) ... ok
+test_mixture_weights_formula_and_normalization (test_stage_9_4_regression.TestSamplingWeightsAndMixtureFormula.test_mixture_weights_formula_and_normalization) ... ok
+test_reject_invalid_class_id (test_stage_9_4_regression.TestStandardizedFiveColumnLabels.test_reject_invalid_class_id) ... ok
+test_reject_polygon_in_standardized_label (test_stage_9_4_regression.TestStandardizedFiveColumnLabels.test_reject_polygon_in_standardized_label) ... ok
+test_valid_five_column_detection (test_stage_9_4_regression.TestStandardizedFiveColumnLabels.test_valid_five_column_detection) ... ok
+test_crop_expansion_and_centering (test_stage_9_4_regression.TestTargetedContextCropGeometry.test_crop_expansion_and_centering) ... ok
+test_original_label_not_mutated (test_stage_9_4_regression.TestTargetedContextCropGeometry.test_original_label_not_mutated) ... ok
+
+----------------------------------------------------------------------
+Ran 26 tests in 0.145s
+
+OK
+Result: PASS (Ran: 26, Failures: 0, Errors: 0)
+
+--------------------------------------------------------------------------------
+RUNNING: Stage 9.5 Regression Suite (test_stage_9_5_regression)
+--------------------------------------------------------------------------------
+test_class_id_out_of_range_rejected (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_class_id_out_of_range_rejected) ... ok
+test_invalid_column_count_rejected (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_invalid_column_count_rejected) ... ok
+test_non_finite_coordinate_strictly_rejected (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_non_finite_coordinate_strictly_rejected) ... ok
+test_out_of_range_coordinate_strictly_rejected (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_out_of_range_coordinate_strictly_rejected) ... ok
+test_valid_box_preservation_with_exact_geometry (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_valid_box_preservation_with_exact_geometry) ... ok
+test_valid_polygon_converted_to_bounding_box (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_valid_polygon_converted_to_bounding_box) ... ok
+test_verify_only_detects_geometric_coordinate_mismatch (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_verify_only_detects_geometric_coordinate_mismatch) ... ok
+test_verify_only_detects_image_checksum_mismatch (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_verify_only_detects_image_checksum_mismatch) ... ok
+test_verify_only_detects_missing_destination_label (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_verify_only_detects_missing_destination_label) ... ok
+test_verify_only_detects_orphan_destination_label (test_stage_9_5_regression.TestAnnotationStandardizationAndIntegrity.test_verify_only_detects_orphan_destination_label) ... ok
+test_image_without_gt_and_with_false_positives (test_stage_9_5_regression.TestCanonicalMatchingEquivalence.test_image_without_gt_and_with_false_positives) ... ok
+test_iou_above_50_wrong_class (test_stage_9_5_regression.TestCanonicalMatchingEquivalence.test_iou_above_50_wrong_class) ... ok
+test_iou_below_association_threshold (test_stage_9_5_regression.TestCanonicalMatchingEquivalence.test_iou_below_association_threshold) ... ok
+test_iou_between_association_and_localization_threshold (test_stage_9_5_regression.TestCanonicalMatchingEquivalence.test_iou_between_association_and_localization_threshold) ... ok
+test_object_size_classification_thresholds (test_stage_9_5_regression.TestCanonicalMatchingEquivalence.test_object_size_classification_thresholds) ... ok
+test_one_pred_competing_with_two_gt (test_stage_9_5_regression.TestCanonicalMatchingEquivalence.test_one_pred_competing_with_two_gt) ... ok
+test_one_tp_and_one_unmatched_pred (test_stage_9_5_regression.TestCanonicalMatchingEquivalence.test_one_tp_and_one_unmatched_pred) ... ok
+test_pairing_order_invariance (test_stage_9_5_regression.TestCanonicalMatchingEquivalence.test_pairing_order_invariance) ... ok
+test_two_preds_competing_with_one_gt (test_stage_9_5_regression.TestCanonicalMatchingEquivalence.test_two_preds_competing_with_one_gt) ... ok
+test_dynamic_parsing_and_area_calculation (test_stage_9_5_regression.TestDynamicDimensionsAndGeometry.test_dynamic_parsing_and_area_calculation) ... ok
+test_get_image_dimensions_dynamic (test_stage_9_5_regression.TestDynamicDimensionsAndGeometry.test_get_image_dimensions_dynamic) ... ok
+test_hardcoded_640_fallback_is_eliminated_when_dimensions_provided (test_stage_9_5_regression.TestDynamicDimensionsAndGeometry.test_hardcoded_640_fallback_is_eliminated_when_dimensions_provided) ... ok
+test_non_square_context_crop_transformation (test_stage_9_5_regression.TestDynamicDimensionsAndGeometry.test_non_square_context_crop_transformation) ... ok
+test_formula_matches_exact_analytical_values (test_stage_9_5_regression.TestMixtureSamplingFormulaAndRobustness.test_formula_matches_exact_analytical_values) ... ok
+test_invalid_lambda_raises_value_error (test_stage_9_5_regression.TestMixtureSamplingFormulaAndRobustness.test_invalid_lambda_raises_value_error) ... ok
+test_negative_or_nan_difficulty_raises_value_error (test_stage_9_5_regression.TestMixtureSamplingFormulaAndRobustness.test_negative_or_nan_difficulty_raises_value_error) ... ok
+test_probabilities_are_strictly_positive (test_stage_9_5_regression.TestMixtureSamplingFormulaAndRobustness.test_probabilities_are_strictly_positive) ... ok
+test_sum_d_equals_zero_explicit_uniform_fallback (test_stage_9_5_regression.TestMixtureSamplingFormulaAndRobustness.test_sum_d_equals_zero_explicit_uniform_fallback) ... ok
+test_checkpoint_hash_change_detected_and_rejected (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_checkpoint_hash_change_detected_and_rejected) ... ok
+test_identical_metadata_and_checkpoint_allows_reuse (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_identical_metadata_and_checkpoint_allows_reuse) ... ok
+test_inner_train_hash_change_rejects_reuse (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_inner_train_hash_change_rejects_reuse) ... ok
+test_inner_val_hash_change_rejects_reuse (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_inner_val_hash_change_rejects_reuse) ... ok
+test_metadata_exists_but_checkpoint_missing_rejected (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_metadata_exists_but_checkpoint_missing_rejected) ... ok
+test_outer_holdout_hash_change_rejects_reuse (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_outer_holdout_hash_change_rejects_reuse) ... ok
+test_predictions_exist_but_metadata_missing_rejected (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_predictions_exist_but_metadata_missing_rejected) ... ok
+test_safety_guard_rejects_reuse_when_metadata_mismatches_even_if_checkpoint_exists (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_safety_guard_rejects_reuse_when_metadata_mismatches_even_if_checkpoint_exists)
+P0 Requirement: Old checkpoint must never be silently reused if metadata mismatches. ... ok
+test_script_hash_change_rejects_reuse (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_script_hash_change_rejects_reuse) ... ok
+test_yaml_hash_change_rejects_reuse (test_stage_9_5_regression.TestStage81RunIdentityAndReuseSafety.test_yaml_hash_change_rejects_reuse) ... ok
+test_data_yaml_hash_change_rejects_ablation_reuse (test_stage_9_5_regression.TestStage84AblationFingerprintSafety.test_data_yaml_hash_change_rejects_ablation_reuse) ... ok
+test_epochs_batch_imgsz_seed_mismatch_rejects_reuse (test_stage_9_5_regression.TestStage84AblationFingerprintSafety.test_epochs_batch_imgsz_seed_mismatch_rejects_reuse) ... ok
+test_identical_metadata_allows_reuse (test_stage_9_5_regression.TestStage84AblationFingerprintSafety.test_identical_metadata_allows_reuse) ... ok
+test_manifest_hash_change_rejects_exp1_reuse (test_stage_9_5_regression.TestStage84AblationFingerprintSafety.test_manifest_hash_change_rejects_exp1_reuse) ... ok
+test_missing_metadata_treated_as_unverified (test_stage_9_5_regression.TestStage84AblationFingerprintSafety.test_missing_metadata_treated_as_unverified) ... ok
+test_pretrained_weight_hash_change_rejects_reuse (test_stage_9_5_regression.TestStage84AblationFingerprintSafety.test_pretrained_weight_hash_change_rejects_reuse) ... ok
+test_script_hash_change_rejects_ablation_reuse (test_stage_9_5_regression.TestStage84AblationFingerprintSafety.test_script_hash_change_rejects_ablation_reuse) ... ok
+test_original_labels_preserved_when_conditions_not_met (test_stage_9_5_regression.TestUltralyticsDatasetIntegration.test_original_labels_preserved_when_conditions_not_met) ... ok
+test_targeted_augmentation_applied_when_conditions_met (test_stage_9_5_regression.TestUltralyticsDatasetIntegration.test_targeted_augmentation_applied_when_conditions_met) ... ok
+test_ultralytics_dataset_item_retrieval_and_collate (test_stage_9_5_regression.TestUltralyticsDatasetIntegration.test_ultralytics_dataset_item_retrieval_and_collate) ... ok
+
+----------------------------------------------------------------------
+Ran 48 tests in 0.537s
+
+OK
+Result: PASS (Ran: 48, Failures: 0, Errors: 0)
+
+--------------------------------------------------------------------------------
+RUNNING: Stage 9.6 Regression Suite (test_stage_9_6_regression)
+--------------------------------------------------------------------------------
+test_fingerprint_detects_byte_modification_same_size (test_stage_9_6_regression.TestContentAwareSHA256Integrity.test_fingerprint_detects_byte_modification_same_size) ... ok
+test_fingerprint_detects_label_modification (test_stage_9_6_regression.TestContentAwareSHA256Integrity.test_fingerprint_detects_label_modification) ... ok
+test_fingerprint_fails_on_empty_dir (test_stage_9_6_regression.TestContentAwareSHA256Integrity.test_fingerprint_fails_on_empty_dir) ... ok
+test_manifest_csv_tamper_rejected (test_stage_9_6_regression.TestManifestProvenanceAndCoverage.test_manifest_csv_tamper_rejected) ... ok
+test_manifest_dataset_fingerprint_mismatch_rejected (test_stage_9_6_regression.TestManifestProvenanceAndCoverage.test_manifest_dataset_fingerprint_mismatch_rejected) ... ok
+test_manifest_duplicate_image_id_rejected (test_stage_9_6_regression.TestManifestProvenanceAndCoverage.test_manifest_duplicate_image_id_rejected) ... ok
+test_manifest_extra_images_rejected (test_stage_9_6_regression.TestManifestProvenanceAndCoverage.test_manifest_extra_images_rejected) ... ok
+test_manifest_historical_oof_rejected (test_stage_9_6_regression.TestManifestProvenanceAndCoverage.test_manifest_historical_oof_rejected) ... ok
+test_manifest_incomplete_coverage_rejected (test_stage_9_6_regression.TestManifestProvenanceAndCoverage.test_manifest_incomplete_coverage_rejected) ... ok
+test_missing_provenance_sidecar_rejected (test_stage_9_6_regression.TestManifestProvenanceAndCoverage.test_missing_provenance_sidecar_rejected) ... ok
+test_valid_manifest_and_provenance_passes (test_stage_9_6_regression.TestManifestProvenanceAndCoverage.test_valid_manifest_and_provenance_passes) ... ok
+test_dry_run_does_not_mutate_directory (test_stage_9_6_regression.TestOutputDirectorySafety.test_dry_run_does_not_mutate_directory) ... ok
+test_empty_output_directory_passes (test_stage_9_6_regression.TestOutputDirectorySafety.test_empty_output_directory_passes) ... ok
+test_historical_output_directory_forbidden (test_stage_9_6_regression.TestOutputDirectorySafety.test_historical_output_directory_forbidden) ... ok
+test_metadata_mismatch_rejected (test_stage_9_6_regression.TestOutputDirectorySafety.test_metadata_mismatch_rejected) ... ok
+test_unverified_partial_output_rejected (test_stage_9_6_regression.TestOutputDirectorySafety.test_unverified_partial_output_rejected) ... ok
+test_valid_verified_reuse_passes (test_stage_9_6_regression.TestOutputDirectorySafety.test_valid_verified_reuse_passes) ... ok
+test_pretrained_weights_sha256_computation (test_stage_9_6_regression.TestPretrainedWeightsSHA256.test_pretrained_weights_sha256_computation) ... ok
+test_collate_fn_with_mixed_cropped_and_uncropped_items (test_stage_9_6_regression.TestRealAdaptiveYOLODatasetTargetedAugmentation.test_collate_fn_with_mixed_cropped_and_uncropped_items) ... ok
+test_real_getitem_augment_applies_context_crop (test_stage_9_6_regression.TestRealAdaptiveYOLODatasetTargetedAugmentation.test_real_getitem_augment_applies_context_crop) ... ok
+test_missing_split_key_raises (test_stage_9_6_regression.TestSingleSourceOfTruthPathResolution.test_missing_split_key_raises) ... ok
+test_resolve_relative_path (test_stage_9_6_regression.TestSingleSourceOfTruthPathResolution.test_resolve_relative_path) ... ok
+test_resolve_txt_file_split (test_stage_9_6_regression.TestSingleSourceOfTruthPathResolution.test_resolve_txt_file_split) ... ok
+
+----------------------------------------------------------------------
+Ran 23 tests in 0.435s
+
+OK
+Result: PASS (Ran: 23, Failures: 0, Errors: 0)
+
+--------------------------------------------------------------------------------
+RUNNING: Stage 9.7 Comprehensive Gate Hardening Suite (test_stage_9_7_regression)
+--------------------------------------------------------------------------------
+test_case_insensitivity_rejected (test_stage_9_7_regression.TestGroupAOutputDirectorySafety.test_case_insensitivity_rejected) ... ok
+test_clean_directory_passes (test_stage_9_7_regression.TestGroupAOutputDirectorySafety.test_clean_directory_passes) ... ok
+test_clean_sibling_permitted (test_stage_9_7_regression.TestGroupAOutputDirectorySafety.test_clean_sibling_permitted) ... ok
+test_historical_target_rejected (test_stage_9_7_regression.TestGroupAOutputDirectorySafety.test_historical_target_rejected) ... ok
+test_identity_mismatch_rejected (test_stage_9_7_regression.TestGroupAOutputDirectorySafety.test_identity_mismatch_rejected) ... ok
+test_nested_subdirectories_rejected (test_stage_9_7_regression.TestGroupAOutputDirectorySafety.test_nested_subdirectories_rejected) ... ok
+test_partial_output_rejected (test_stage_9_7_regression.TestGroupAOutputDirectorySafety.test_partial_output_rejected) ... ok
+test_path_traversal_dotdot_rejected (test_stage_9_7_regression.TestGroupAOutputDirectorySafety.test_path_traversal_dotdot_rejected) ... ok
+test_valid_reuse_passes (test_stage_9_7_regression.TestGroupAOutputDirectorySafety.test_valid_reuse_passes) ... ok
+test_identity_detects_data_yaml_modification (test_stage_9_7_regression.TestGroupBRunIdentityVerification.test_identity_detects_data_yaml_modification) ... ok
+test_identity_detects_pretrained_weights_modification (test_stage_9_7_regression.TestGroupBRunIdentityVerification.test_identity_detects_pretrained_weights_modification) ... ok
+test_identity_detects_script_modification (test_stage_9_7_regression.TestGroupBRunIdentityVerification.test_identity_detects_script_modification) ... ok
+test_identity_exact_match_passes (test_stage_9_7_regression.TestGroupBRunIdentityVerification.test_identity_exact_match_passes) ... ok
+test_manifest_duplicate_image_ids_rejected (test_stage_9_7_regression.TestGroupCManifestProvenanceAndCoverage.test_manifest_duplicate_image_ids_rejected) ... ok
+test_manifest_historical_oof_id_rejected (test_stage_9_7_regression.TestGroupCManifestProvenanceAndCoverage.test_manifest_historical_oof_id_rejected) ... ok
+test_manifest_invalid_sampling_probs_rejected (test_stage_9_7_regression.TestGroupCManifestProvenanceAndCoverage.test_manifest_invalid_sampling_probs_rejected) ... ok
+test_manifest_missing_or_extra_coverage_rejected (test_stage_9_7_regression.TestGroupCManifestProvenanceAndCoverage.test_manifest_missing_or_extra_coverage_rejected) ... ok
+test_manifest_tampered_csv_rejected (test_stage_9_7_regression.TestGroupCManifestProvenanceAndCoverage.test_manifest_tampered_csv_rejected) ... ok
+test_manifest_tampered_raw_oof_rejected (test_stage_9_7_regression.TestGroupCManifestProvenanceAndCoverage.test_manifest_tampered_raw_oof_rejected) ... ok
+test_valid_manifest_and_provenance_passes (test_stage_9_7_regression.TestGroupCManifestProvenanceAndCoverage.test_valid_manifest_and_provenance_passes) ... ok
+test_image_byte_modification_same_size_detected (test_stage_9_7_regression.TestGroupDDatasetInventoryAndIntegrity.test_image_byte_modification_same_size_detected) ... ok
+test_label_byte_modification_detected (test_stage_9_7_regression.TestGroupDDatasetInventoryAndIntegrity.test_label_byte_modification_detected) ... ok
+test_validate_yolo_dataset_integrity_empty_label_treated_as_background (test_stage_9_7_regression.TestGroupDDatasetInventoryAndIntegrity.test_validate_yolo_dataset_integrity_empty_label_treated_as_background) ... ok
+test_validate_yolo_dataset_integrity_invalid_coordinates_rejected (test_stage_9_7_regression.TestGroupDDatasetInventoryAndIntegrity.test_validate_yolo_dataset_integrity_invalid_coordinates_rejected) ... ok
+test_validate_yolo_dataset_integrity_missing_label_rejected (test_stage_9_7_regression.TestGroupDDatasetInventoryAndIntegrity.test_validate_yolo_dataset_integrity_missing_label_rejected) ... ok
+test_validate_yolo_dataset_integrity_orphan_label_rejected (test_stage_9_7_regression.TestGroupDDatasetInventoryAndIntegrity.test_validate_yolo_dataset_integrity_orphan_label_rejected) ... ok
+test_validation_split_content_change_detected (test_stage_9_7_regression.TestGroupDDatasetInventoryAndIntegrity.test_validation_split_content_change_detected) ... ok
+test_resolver_empty_split_raises (test_stage_9_7_regression.TestGroupEDataYamlResolver.test_resolver_empty_split_raises) ... ok
+test_resolver_missing_image_file_in_txt_raises (test_stage_9_7_regression.TestGroupEDataYamlResolver.test_resolver_missing_image_file_in_txt_raises) ... ok
+test_resolver_multi_directory_list (test_stage_9_7_regression.TestGroupEDataYamlResolver.test_resolver_multi_directory_list) ... ok
+test_resolver_relative_and_absolute_paths (test_stage_9_7_regression.TestGroupEDataYamlResolver.test_resolver_relative_and_absolute_paths) ... ok
+test_resolver_txt_file_subset (test_stage_9_7_regression.TestGroupEDataYamlResolver.test_resolver_txt_file_subset) ... ok
+test_ablation_orchestrator_exp_all_mock_execution (test_stage_9_7_regression.TestGroupFAblationOrchestratorMockIntegration.test_ablation_orchestrator_exp_all_mock_execution) ... ok
+test_single_experiment_failure_halts_pipeline (test_stage_9_7_regression.TestGroupFAblationOrchestratorMockIntegration.test_single_experiment_failure_halts_pipeline) ... ok
+test_skip_if_done_reuses_completed_experiments (test_stage_9_7_regression.TestGroupFAblationOrchestratorMockIntegration.test_skip_if_done_reuses_completed_experiments) ... ok
+test_adaptive_yolo_dataset_collate_fn (test_stage_9_7_regression.TestGroupGPretrainedAugmentationMechanics.test_adaptive_yolo_dataset_collate_fn) ... ok
+test_adaptive_yolo_dataset_getitem_augment_true (test_stage_9_7_regression.TestGroupGPretrainedAugmentationMechanics.test_adaptive_yolo_dataset_getitem_augment_true) ... ok
+test_experiment_mechanism_toggles (test_stage_9_7_regression.TestGroupGPretrainedAugmentationMechanics.test_experiment_mechanism_toggles) ... ok
+test_pretrained_weights_sha256_fixture_computation (test_stage_9_7_regression.TestGroupGPretrainedAugmentationMechanics.test_pretrained_weights_sha256_fixture_computation) ... ok
+
+----------------------------------------------------------------------
+Ran 39 tests in 1.183s
+
+OK
+Result: PASS (Ran: 39, Failures: 0, Errors: 0)
+
+================================================================================
+CUMULATIVE TEST SUITE SUMMARY (STAGES 9.3 — 9.7)
+================================================================================
+Total Tests Executed : 152
+Total Failures       : 0
+Total Errors         : 0
+Overall Status       : PASS
+================================================================================

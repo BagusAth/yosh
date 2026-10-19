@@ -102,39 +102,48 @@ def parse_args():
     return parser.parse_args()
 
 
-def resolve_train_paths(args) -> tuple[Path, Path]:
-    """Menentukan path direktori train/images dan train/labels secara Single Source of Truth."""
+def resolve_train_paths(args) -> tuple[Path, Path, list[Path]]:
+    """Menentukan path direktori train/images dan train/labels serta daftar citra secara Single Source of Truth."""
     if args.data_yaml:
-        split_info = resolve_data_yaml_split(args.data_yaml, split="train")
+        split_info = resolve_data_yaml_split(args.data_yaml, split="train", allow_empty=False)
         images_dir = split_info["images_dir"]
         labels_dir = split_info["labels_dir"]
+        train_images = split_info["images"]
     elif args.dataset_dir:
         ds_p = Path(args.dataset_dir).resolve()
         images_dir = ds_p / "train" / "images"
         labels_dir = ds_p / "train" / "labels"
+        train_images = sorted([f for f in images_dir.iterdir() if f.is_file() and f.suffix.lower() in {".jpg", ".jpeg", ".png"}], key=lambda p: p.name) if images_dir.exists() else []
     else:
         r_p = Path(args.research_dir).resolve()
         images_dir = r_p / "train" / "images"
         labels_dir = r_p / "train" / "labels"
+        train_images = sorted([f for f in images_dir.iterdir() if f.is_file() and f.suffix.lower() in {".jpg", ".jpeg", ".png"}], key=lambda p: p.name) if images_dir.exists() else []
 
     if not images_dir.exists():
         raise FileNotFoundError(f"Direktori citra latih tidak ditemukan: {images_dir}")
     if not labels_dir.exists():
         raise FileNotFoundError(f"Direktori label latih tidak ditemukan: {labels_dir}")
 
-    return images_dir, labels_dir
+    return images_dir, labels_dir, train_images
 
 
-def load_ground_truth(images_dir: Path, labels_dir: Path) -> dict[str, list[dict]]:
+def load_ground_truth(images_dir: Path, labels_dir: Path, train_images: list[Path] | None = None) -> dict[str, list[dict]]:
     """Membaca seluruh ground truth objek menggunakan parse_yolo_labels kanonis dengan dimensi citra aktual."""
-    image_files = sorted(os.listdir(images_dir))
+    if train_images is not None:
+        images_to_load = train_images
+    else:
+        images_to_load = sorted([images_dir / f for f in os.listdir(images_dir) if f.lower().endswith((".jpg", ".jpeg", ".png"))])
+
     gt_by_image = {}
     total_gt_objects = 0
 
-    for fname in image_files:
-        stem = Path(fname).stem
-        lbl_file = labels_dir / f"{stem}.txt"
-        img_file = images_dir / fname
+    for img_file in images_to_load:
+        fname = img_file.name
+        stem = img_file.stem
+        lbl_file = labels_dir / f"{stem}.txt" if labels_dir else derive_yolo_label_path(img_file)
+        if not lbl_file.exists():
+            lbl_file = derive_yolo_label_path(img_file)
 
         img_w, img_h = get_image_dimensions(img_file)
         parsed_objs = parse_yolo_labels(lbl_file, img_width=img_w, img_height=img_h)
@@ -414,18 +423,21 @@ def process_difficulty_manifest(
     data_yaml_sha = compute_file_sha256(args.data_yaml) if args.data_yaml and Path(args.data_yaml).exists() else ""
 
     provenance_data = {
+        "provenance_schema_version": "2.0",
         "manifest_file": img_csv_path.name,
         "manifest_csv_sha256": manifest_csv_sha256,
         "dataset_inventory_fingerprint": dataset_inv_sha,
         "data_yaml_path": str(Path(args.data_yaml).resolve()) if args.data_yaml else "",
         "data_yaml_sha256": data_yaml_sha,
+        "raw_oof_path": str(raw_oof_path.resolve()) if raw_oof_path and raw_oof_path.exists() else "",
+        "raw_oof_sha256": raw_oof_sha,
         "oof_predictions_raw_sha256": raw_oof_sha,
         "clean_oof_run_id": str(Path(args.oof_dir).resolve()) if args.oof_dir else "",
         "iou_match_thresh": float(args.iou_match_thresh),
         "confusion_penalty": float(args.confusion_penalty),
         "mixture_lambda": float(args.mixture_lambda),
         "script_sha256": compute_file_sha256(__file__),
-        "evaluator_version": "Stage-9.6-Canonical-v1",
+        "evaluator_version": "Stage-9.7-Canonical-v2",
         "image_count": len(image_rows),
         "unique_image_count": len(set(r["image_id"] for r in image_rows)),
         "timestamp": datetime.now().isoformat(),
@@ -582,8 +594,8 @@ def main():
     if not raw_pred_file or not raw_pred_file.exists():
         raise FileNotFoundError(f"ERROR: File raw OOF predictions tidak ditemukan di {raw_pred_file}. Pastikan Stage 8.1 telah selesai!")
 
-    images_dir, labels_dir = resolve_train_paths(args)
-    gt_by_image = load_ground_truth(images_dir, labels_dir)
+    images_dir, labels_dir, train_images = resolve_train_paths(args)
+    gt_by_image = load_ground_truth(images_dir, labels_dir, train_images=train_images)
     preds_by_image = load_oof_predictions(raw_pred_file)
 
     process_difficulty_manifest(

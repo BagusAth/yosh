@@ -1,0 +1,40 @@
+test_group,test_id,tested_property_or_failure_mode,execution_status,evidence_summary
+Group A: Output Safety,test_clean_directory_passes,Clean/empty directory passes validate_output_directory_safety,PASS,Returns (True 'clean target')
+Group A: Output Safety,test_historical_target_rejected,Targeting exact historical directory raises PermissionError,PASS,Protected against stage_8_1_oof write
+Group A: Output Safety,test_nested_subdirectories_rejected,Targeting nested child directory in historical root raises PermissionError,PASS,Protected against stage_8_ablation/exp0/nested
+Group A: Output Safety,test_path_traversal_dotdot_rejected,Path with relative '..' resolving to historical root raises PermissionError,PASS,Protected against relative traversal
+Group A: Output Safety,test_case_insensitivity_rejected,Case variations of historical directory names raise PermissionError,PASS,Protected against STAGE_8_1_OOF
+Group A: Output Safety,test_clean_sibling_permitted,Clean sibling directory with similar prefix is permitted,PASS,Allowed stage_8_ablation_clean
+Group A: Output Safety,test_partial_output_rejected,Non-empty directory without allow_reuse raises FileExistsError,PASS,Protected against overwriting unverified partial outputs
+Group A: Output Safety,test_valid_reuse_passes,Complete directory with matching run identity allows reuse,PASS,Returns (True 'REUSE')
+Group A: Output Safety,test_identity_mismatch_rejected,Complete directory with mismatched run identity raises PermissionError,PASS,Rejected reuse on mismatched run_id
+Group B: Run Identity,test_identity_exact_match_passes,Matching run metadata and weights SHA-256 verifies 100%,PASS,Returns (True 'verified')
+Group B: Run Identity,test_identity_detects_script_modification,Modified script SHA-256 in run metadata causes rejection,PASS,Detected script_sha256 mismatch
+Group B: Run Identity,test_identity_detects_data_yaml_modification,Modified data.yaml SHA-256 in run metadata causes rejection,PASS,Detected data_yaml_sha256 mismatch
+Group B: Run Identity,test_identity_detects_pretrained_weights_modification,Modified pretrained weights SHA-256 causes rejection,PASS,Detected pretrained_weights_sha256 mismatch
+Group C: Manifest Provenance,test_valid_manifest_and_provenance_passes,Valid manifest CSV with 100% split coverage and valid sidecar passes,PASS,Returns (True '100% split cakupan')
+Group C: Manifest Provenance,test_manifest_tampered_csv_rejected,Tampered manifest CSV byte causes SHA-256 rejection,PASS,Detected manifest_csv_sha256 mismatch
+Group C: Manifest Provenance,test_manifest_tampered_raw_oof_rejected,Tampered raw OOF predictions file causes SHA-256 rejection,PASS,Detected raw OOF predictions file hash mismatch
+Group C: Manifest Provenance,test_manifest_historical_oof_id_rejected,clean_oof_run_id pointing to historical directory causes rejection,PASS,Rejected historical unverified OOF run
+Group C: Manifest Provenance,test_manifest_missing_or_extra_coverage_rejected,Missing image rows in manifest compared to train split causes rejection,PASS,Detected missing image coverage
+Group C: Manifest Provenance,test_manifest_duplicate_image_ids_rejected,Duplicate image IDs in manifest causes rejection,PASS,Detected duplicate image_id
+Group C: Manifest Provenance,test_manifest_invalid_sampling_probs_rejected,Non-positive p_sampling values cause rejection,PASS,Detected non-positive p_sampling
+Group D: Dataset Integrity,test_image_byte_modification_same_size_detected,Modifying image bytes with identical file size changes fingerprint,PASS,Full content hashing detected modification
+Group D: Dataset Integrity,test_label_byte_modification_detected,Modifying label content changes dataset fingerprint,PASS,Full label hashing detected modification
+Group D: Dataset Integrity,test_validation_split_content_change_detected,Modifying validation split images changes dataset fingerprint,PASS,Validation split hashing detected modification
+Group D: Dataset Integrity,test_validate_yolo_dataset_integrity_missing_label_rejected,Image without label file raises FileNotFoundError,PASS,Strict 1:1 image-label pairing enforced
+Group D: Dataset Integrity,test_validate_yolo_dataset_integrity_orphan_label_rejected,Label without image file raises ValueError,PASS,Orphan labels rejected
+Group D: Dataset Integrity,test_validate_yolo_dataset_integrity_empty_label_treated_as_background,0-byte label files treated as valid background images without error,PASS,Counted 1 background image without objects
+Group D: Dataset Integrity,test_validate_yolo_dataset_integrity_invalid_coordinates_rejected,Normalized bbox coordinates outside [0.0, 1.0] raise ValueError,PASS,Detected out-of-bounds coordinates
+Group E: Data YAML Resolver,test_resolver_relative_and_absolute_paths,Relative and absolute paths in data.yaml resolve identically,PASS,Resolved 3/3 image paths
+Group E: Data YAML Resolver,test_resolver_txt_file_subset,Split defined as .txt file list resolves to exact subset,PASS,Resolved 2/2 listed image paths
+Group E: Data YAML Resolver,test_resolver_multi_directory_list,Split defined as list of directories resolves cleanly,PASS,Resolved 4/4 image paths across multiple directories
+Group E: Data YAML Resolver,test_resolver_empty_split_raises,Empty image split directory raises ValueError when allow_empty=False,PASS,Rejected empty image directory
+Group E: Data YAML Resolver,test_resolver_missing_image_file_in_txt_raises,Missing image file referenced in .txt raises FileNotFoundError,PASS,Enforced file existence contract
+Group F: Ablation Orchestrator,test_ablation_orchestrator_exp_all_mock_execution,End-to-end execution of EXP-0..EXP-3 using mock trainer/evaluator,PASS,All 4 experiments completed; report generated
+Group F: Ablation Orchestrator,test_single_experiment_failure_halts_pipeline,Mock failure in EXP-1 halts pipeline and suppresses false report,PASS,Pipeline halted; no complete report generated
+Group F: Ablation Orchestrator,test_skip_if_done_reuses_completed_experiments,Rerunning with skip_if_done=True skips training and reuses artifacts,PASS,Mock trainer was not recalled (0 invocations)
+Group G: Pipeline Mechanics,test_pretrained_weights_sha256_fixture_computation,Deterministic SHA-256 computation on pretrained weights fixture,PASS,Computed valid 64-character SHA-256
+Group G: Pipeline Mechanics,test_adaptive_yolo_dataset_getitem_augment_true,AdaptiveYOLODataset.__getitem__() executes real context crop,PASS,crop_attempts and crops_applied > 0
+Group G: Pipeline Mechanics,test_adaptive_yolo_dataset_collate_fn,collate_fn stacks augmented batches without shape mismatch,PASS,Batched tensor shape [2, 3, 128, 128]
+Group G: Pipeline Mechanics,test_experiment_mechanism_toggles,EXPERIMENT_SPECS toggles sampling and targeted aug correctly across EXP-0..3,PASS,All 4 experiment mechanisms verified

@@ -65,6 +65,249 @@ def compute_pretrained_weights_sha256(weights_path: str | Path) -> str:
     return sha
 
 
+def derive_yolo_label_path(image_path: Path | str) -> Path:
+    """
+    Derives the canonical YOLO label path for a given image path.
+    Replaces '/images/' with '/labels/' (or case-insensitive component 'images' -> 'labels'),
+    and extension with '.txt'.
+    """
+    p = Path(image_path).resolve()
+    parts = list(p.parts)
+    replaced = False
+    for i in range(len(parts) - 1, -1, -1):
+        if parts[i].lower() == "images":
+            parts[i] = "labels"
+            replaced = True
+            break
+    if replaced:
+        return Path(*parts).with_suffix(".txt")
+    if (p.parent.parent / "labels").exists():
+        return (p.parent.parent / "labels" / f"{p.stem}.txt").resolve()
+    return (p.parent / f"{p.stem}.txt").resolve()
+
+
+def validate_yolo_dataset_integrity(
+    images_dir: str | Path | None = None,
+    labels_dir: str | Path | None = None,
+    image_files: list[Path] | None = None,
+    label_files: list[Path] | None = None,
+    data_yaml_path: str | Path | None = None,
+    num_classes: int | None = None,
+    class_names: list[str] | None = None,
+    check_image_decode: bool = False,
+    allow_empty_labels: bool = True,
+) -> dict[str, Any]:
+    """
+    Centralized, fail-closed YOLO dataset integrity validator:
+    - Verifies strict 1:1 image-label pairing without orphan labels.
+    - Prevents ambiguous stem collisions across multiple image extensions.
+    - Ensures image files exist, are non-empty, and decodable (if requested).
+    - Validates YOLO label syntax, class IDs against data.yaml mapping.
+    - Checks finite coordinates, normalized ranges [0.0, 1.0], and positive non-zero bbox dimensions.
+    - Handles empty label files as valid background images without objects (when allow_empty_labels=True).
+    - Fails fast with descriptive errors including file path and line numbers.
+    """
+    if data_yaml_path:
+        yaml_p = Path(data_yaml_path).resolve()
+        if not yaml_p.exists():
+            raise FileNotFoundError(f"data.yaml not found: {yaml_p}")
+        with open(yaml_p, "r", encoding="utf-8") as f:
+            ycfg = yaml.safe_load(f)
+        if isinstance(ycfg, dict):
+            if num_classes is None and "nc" in ycfg:
+                num_classes = int(ycfg["nc"])
+            if class_names is None and "names" in ycfg:
+                class_names = list(ycfg["names"]) if isinstance(ycfg["names"], (list, dict)) else class_names
+
+    # 1. Resolve image list
+    if image_files is not None:
+        resolved_images = [Path(im).resolve() for im in image_files]
+    elif images_dir is not None:
+        img_p = Path(images_dir).resolve()
+        if not img_p.exists():
+            raise FileNotFoundError(f"Images directory not found: {images_dir}")
+        if not img_p.is_dir():
+            raise ValueError(f"Images path is not a directory: {images_dir}")
+        resolved_images = sorted(
+            [f for f in img_p.iterdir() if f.is_file() and f.suffix.lower() in {".jpg", ".jpeg", ".png"}],
+            key=lambda p: p.name,
+        )
+    else:
+        raise ValueError("Either images_dir or image_files must be provided to validate_yolo_dataset_integrity.")
+
+    if not resolved_images:
+        raise ValueError(f"No image files (.jpg, .jpeg, .png) found for validation in: {images_dir or image_files}")
+
+    # Check for stem collisions among images
+    stems_seen: dict[str, Path] = {}
+    for im in resolved_images:
+        stem = im.stem
+        if stem in stems_seen:
+            raise ValueError(
+                f"Ambiguous stem collision in dataset: multiple images share stem '{stem}': "
+                f"'{stems_seen[stem]}' and '{im}'"
+            )
+        stems_seen[stem] = im
+
+    # 2. Check image files existence and size
+    for im in resolved_images:
+        if not im.exists():
+            raise FileNotFoundError(f"Image file does not exist: {im}")
+        if not im.is_file():
+            raise ValueError(f"Image path is not a file: {im}")
+        if im.stat().st_size == 0:
+            raise ValueError(f"Image file is empty (0 bytes): {im}")
+        if check_image_decode:
+            try:
+                with Image.open(im) as img:
+                    img.verify()
+            except Exception as e:
+                raise ValueError(f"Corrupt image file failed decode: {im} ({e})")
+
+    # 3. Resolve label directory and verify pairing
+    if labels_dir is not None:
+        lbl_p = Path(labels_dir).resolve()
+        if not lbl_p.exists():
+            raise FileNotFoundError(f"Labels directory not found: {lbl_p}")
+        if not lbl_p.is_dir():
+            raise ValueError(f"Labels path is not a directory: {lbl_p}")
+    else:
+        lbl_p = None
+
+    resolved_labels: list[Path] = []
+    if label_files is not None:
+        resolved_labels = [Path(lf).resolve() for lf in label_files]
+        if len(resolved_labels) != len(resolved_images):
+            raise ValueError(
+                f"Count mismatch between image files ({len(resolved_images)}) and label files ({len(resolved_labels)})"
+            )
+    else:
+        for im in resolved_images:
+            if lbl_p is not None:
+                expected_lbl = lbl_p / f"{im.stem}.txt"
+            else:
+                expected_lbl = derive_yolo_label_path(im)
+            if not expected_lbl.exists():
+                raise FileNotFoundError(
+                    f"Missing label file for image '{im.name}': expected at '{expected_lbl}'"
+                )
+            resolved_labels.append(expected_lbl)
+
+    # 4. Check orphan labels if labels_dir was provided
+    if lbl_p is not None:
+        disk_label_files = [f for f in lbl_p.iterdir() if f.is_file() and f.suffix.lower() == ".txt"]
+        img_stems_set = set(stems_seen.keys())
+        for dlf in disk_label_files:
+            if dlf.stem not in img_stems_set:
+                raise ValueError(
+                    f"Orphan label file found without corresponding image in '{lbl_p}': '{dlf.name}'"
+                )
+
+    # 5. Validate label content line by line
+    total_objects = 0
+    background_images = 0
+    class_counter: Counter = Counter()
+
+    for lbl_file in resolved_labels:
+        if not lbl_file.exists():
+            raise FileNotFoundError(f"Label file not found: {lbl_file}")
+        if lbl_file.stat().st_size == 0:
+            if not allow_empty_labels:
+                raise ValueError(f"Empty label file not allowed: {lbl_file}")
+            background_images += 1
+            continue
+
+        text = lbl_file.read_text(encoding="utf-8")
+        lines = text.splitlines()
+        file_obj_count = 0
+
+        for line_no, raw_line in enumerate(lines, start=1):
+            line = raw_line.strip()
+            if not line:
+                continue
+
+            parts = line.split()
+            if len(parts) < 5:
+                raise ValueError(
+                    f"Malformed YOLO label format in '{lbl_file}' line {line_no}: "
+                    f"expected at least 5 values, got {len(parts)} ('{line}')"
+                )
+
+            # Validate Class ID
+            try:
+                cid = int(parts[0])
+            except ValueError:
+                raise ValueError(
+                    f"Invalid non-integer class ID in '{lbl_file}' line {line_no}: '{parts[0]}'"
+                )
+            if cid < 0:
+                raise ValueError(
+                    f"Negative class ID ({cid}) in '{lbl_file}' line {line_no}"
+                )
+            if num_classes is not None and cid >= num_classes:
+                raise ValueError(
+                    f"Class ID {cid} in '{lbl_file}' line {line_no} exceeds valid range (nc={num_classes})"
+                )
+
+            # Validate Coordinates
+            try:
+                coords = [float(x) for x in parts[1:]]
+            except ValueError as e:
+                raise ValueError(
+                    f"Non-numeric coordinate in '{lbl_file}' line {line_no}: {e}"
+                )
+
+            for c_idx, c_val in enumerate(coords):
+                if not math.isfinite(c_val):
+                    raise ValueError(
+                        f"Non-finite coordinate value ({c_val}) in '{lbl_file}' line {line_no} coord index {c_idx+1}"
+                    )
+
+            if len(coords) == 4:
+                # Standard Bounding Box: xc, yc, w, h
+                xc, yc, w, h = coords
+                if not (0.0 <= xc <= 1.0 and 0.0 <= yc <= 1.0):
+                    raise ValueError(
+                        f"Bbox center coordinates ({xc}, {yc}) outside [0.0, 1.0] range in '{lbl_file}' line {line_no}"
+                    )
+                if w <= 0.0 or w > 1.0:
+                    raise ValueError(
+                        f"Invalid bbox width {w} (must be > 0.0 and <= 1.0) in '{lbl_file}' line {line_no}"
+                    )
+                if h <= 0.0 or h > 1.0:
+                    raise ValueError(
+                        f"Invalid bbox height {h} (must be > 0.0 and <= 1.0) in '{lbl_file}' line {line_no}"
+                    )
+            else:
+                # Polygon segmentation
+                if len(coords) % 2 != 0:
+                    raise ValueError(
+                        f"Odd number of polygon coordinates ({len(coords)}) in '{lbl_file}' line {line_no}"
+                    )
+                for pt_idx, coord_val in enumerate(coords):
+                    if not (0.0 <= coord_val <= 1.0):
+                        raise ValueError(
+                            f"Polygon coordinate {coord_val} outside [0.0, 1.0] in '{lbl_file}' line {line_no} point {pt_idx+1}"
+                        )
+
+            class_counter[cid] += 1
+            file_obj_count += 1
+
+        if file_obj_count == 0:
+            background_images += 1
+        total_objects += file_obj_count
+
+    return {
+        "status": "VALID",
+        "total_images": len(resolved_images),
+        "total_labels": len(resolved_labels),
+        "background_images": background_images,
+        "total_objects": total_objects,
+        "class_distribution": dict(class_counter),
+        "num_classes": num_classes,
+    }
+
+
 def compute_dataset_inventory_fingerprint(
     images_dir: str | Path,
     labels_dir: str | Path | None = None,
@@ -78,6 +321,7 @@ def compute_dataset_inventory_fingerprint(
     - Label completeness and strict pairing verification.
     - Object count and class breakdown per file.
     - Source data.yaml content hash and class mappings if provided or resolvable.
+    - If data_yaml_path has a validation split, hashes validation content into the fingerprint.
     Raises FileNotFoundError or ValueError on missing directories, empty files, or corrupt data.
     Never returns an empty string for valid datasets.
     """
@@ -139,7 +383,7 @@ def compute_dataset_inventory_fingerprint(
                         cid = int(parts[0])
                         class_counter[cid] += 1
                     except ValueError:
-                        pass
+                        raise ValueError(f"Malformed label in '{lf.name}': non-integer class ID '{parts[0]}'")
 
             h.update(f"LBL:{lf.name}:{len(text)}:{lbl_sha}:{num_objs}\n".encode("utf-8"))
 
@@ -170,14 +414,31 @@ def compute_dataset_inventory_fingerprint(
         yaml_text = yaml_p.read_text(encoding="utf-8")
         yaml_sha = hashlib.sha256(yaml_text.encode("utf-8")).hexdigest()
         h.update(f"DATA_YAML:{yaml_p.name}:{yaml_sha}\n".encode("utf-8"))
-        try:
-            yd = yaml.safe_load(yaml_text)
-            if isinstance(yd, dict):
-                h.update(f"NC:{yd.get('nc', '')}\n".encode("utf-8"))
-                names = yd.get("names", [])
-                h.update(f"NAMES:{names}\n".encode("utf-8"))
-        except Exception:
-            pass
+        yd = yaml.safe_load(yaml_text)
+        if isinstance(yd, dict):
+            h.update(f"NC:{yd.get('nc', '')}\n".encode("utf-8"))
+            names = yd.get("names", [])
+            h.update(f"NAMES:{names}\n".encode("utf-8"))
+
+            # If validation split is defined, include validation split contents
+            val_key = None
+            for vk in ("val", "valid"):
+                if vk in yd:
+                    val_key = vk
+                    break
+            if val_key:
+                val_res = resolve_data_yaml_split(yaml_p, split=val_key, allow_empty=True)
+                val_imgs = val_res.get("images", [])
+                h.update(f"VAL_NUM_IMAGES:{len(val_imgs)}\n".encode("utf-8"))
+                for vf in val_imgs:
+                    v_bytes = vf.read_bytes()
+                    vf_sha = hashlib.sha256(v_bytes).hexdigest()
+                    h.update(f"VAL_IMG:{vf.name}:{len(v_bytes)}:{vf_sha}\n".encode("utf-8"))
+                for vl in val_res.get("labels", []):
+                    if vl.exists():
+                        vl_bytes = vl.read_bytes()
+                        vl_sha = hashlib.sha256(vl_bytes).hexdigest()
+                        h.update(f"VAL_LBL:{vl.name}:{len(vl_bytes)}:{vl_sha}\n".encode("utf-8"))
 
     fingerprint = h.hexdigest()
     if not fingerprint:
@@ -251,18 +512,81 @@ def resolve_data_yaml_split(
 
         lines = [l.strip() for l in txt_path.read_text(encoding="utf-8").splitlines() if l.strip()]
         for l in lines:
-            im_p = Path(l)
+            line_str = l.strip()
+            if not line_str or line_str.startswith("#"):
+                continue
+            im_p = Path(line_str)
             if not im_p.is_absolute():
-                im_p = (base_path / im_p).resolve()
+                cand1 = (base_path / im_p).resolve()
+                cand2 = (txt_path.parent / im_p).resolve()
+                if cand1.exists():
+                    im_p = cand1
+                elif cand2.exists():
+                    im_p = cand2
+                else:
+                    im_p = cand1
+            else:
+                im_p = im_p.resolve()
+
             if not im_p.exists():
                 raise FileNotFoundError(f"Image from split file list not found: {im_p}")
             images.append(im_p)
 
-            # Derive label path
-            lbl_str = str(im_p).replace("/images/", "/labels/").replace("\\images\\", "\\labels\\")
-            lbl_p = Path(lbl_str).with_suffix(".txt")
+            # Derive label path strictly via SSOT helper
+            lbl_p = derive_yolo_label_path(im_p)
             labels.append(lbl_p)
 
+        if images:
+            images_dir = images[0].parent
+            labels_dir = labels[0].parent
+    elif isinstance(split_entry, list):
+        for item in split_entry:
+            if isinstance(item, str) and item.strip().endswith(".txt"):
+                txt_path = Path(item)
+                if not txt_path.is_absolute():
+                    txt_path = (base_path / txt_path).resolve()
+                if not txt_path.exists():
+                    raise FileNotFoundError(f"Split file list not found for '{split}': {txt_path}")
+                lines = [l.strip() for l in txt_path.read_text(encoding="utf-8").splitlines() if l.strip()]
+                for l in lines:
+                    line_str = l.strip()
+                    if not line_str or line_str.startswith("#"):
+                        continue
+                    im_p = Path(line_str)
+                    if not im_p.is_absolute():
+                        cand1 = (base_path / im_p).resolve()
+                        cand2 = (txt_path.parent / im_p).resolve()
+                        im_p = cand1 if cand1.exists() else (cand2 if cand2.exists() else cand1)
+                    else:
+                        im_p = im_p.resolve()
+                    if not im_p.exists():
+                        raise FileNotFoundError(f"Image from split file list not found: {im_p}")
+                    images.append(im_p)
+                    labels.append(derive_yolo_label_path(im_p))
+            else:
+                sub_p = Path(item)
+                if not sub_p.is_absolute():
+                    sub_p = (base_path / sub_p).resolve()
+                if sub_p.name == "images":
+                    sub_im_dir = sub_p
+                    sub_lb_dir = sub_p.parent / "labels"
+                else:
+                    if (sub_p / "images").exists():
+                        sub_im_dir = sub_p / "images"
+                        sub_lb_dir = sub_p / "labels"
+                    else:
+                        sub_im_dir = sub_p
+                        sub_lb_dir = sub_p.parent / "labels" if (sub_p.parent / "labels").exists() else sub_p / "labels"
+                if not sub_im_dir.exists():
+                    raise FileNotFoundError(f"Resolved images directory does not exist for split '{split}': {sub_im_dir}")
+                if not sub_lb_dir.exists():
+                    raise FileNotFoundError(f"Resolved labels directory does not exist for split '{split}': {sub_lb_dir}")
+                sub_imgs = sorted(
+                    [f for f in sub_im_dir.iterdir() if f.is_file() and f.suffix.lower() in {".jpg", ".jpeg", ".png"}],
+                    key=lambda p: p.name,
+                )
+                images.extend(sub_imgs)
+                labels.extend([sub_lb_dir / f"{im.stem}.txt" for im in sub_imgs])
         if images:
             images_dir = images[0].parent
             labels_dir = labels[0].parent
@@ -331,22 +655,38 @@ def validate_output_directory_safety(
     expected_identity: dict[str, Any] | None = None,
     metadata_filename: str | None = None,
     is_dry_run: bool = False,
+    is_root: bool = False,
 ) -> tuple[bool, str]:
     """
     Validates that an output directory is safe for writing and does not overwrite
     historical research artifacts or unverified partial results.
+    Checks all ancestors and normalized path components to close nested historical loopholes.
     """
     p = Path(output_dir).resolve()
+    p_raw = Path(output_dir)
 
-    # 1. Guard against writing to historical research directories
-    p_norm = str(p).replace("\\", "/").lower()
+    # 1. Guard against writing to historical research directories or ANY of their subdirectories
+    parts_lower = [part.lower() for part in p.parts]
+    raw_parts_lower = [part.lower() for part in p_raw.parts]
+
     for forb in FORBIDDEN_HISTORICAL_DIRS:
-        if p_norm.endswith(f"/{forb}") or p.name.lower() == forb:
+        forb_lower = forb.lower()
+        if forb_lower in parts_lower or forb_lower in raw_parts_lower:
             raise PermissionError(
-                f"CRITICAL SAFETY ERROR / VIOLATION [{stage_name}]: Target directory '{p}' matches historical "
-                f"artifact directory '{forb}'! Modifying or writing into historical directories is strictly forbidden.\n"
+                f"CRITICAL SAFETY ERROR / VIOLATION [{stage_name}]: Target directory '{p}' matches or is nested within "
+                f"historical artifact directory '{forb}'! Modifying or writing into historical directories is strictly forbidden.\n"
                 f"Please provide an explicit clean output directory (e.g. stage_{stage_name.lower()}_clean)."
             )
+        try:
+            cwd_forb = (Path.cwd() / forb).resolve()
+            if p == cwd_forb or p.is_relative_to(cwd_forb):
+                raise PermissionError(
+                    f"CRITICAL SAFETY ERROR / VIOLATION [{stage_name}]: Target directory '{p}' is inside historical "
+                    f"artifact directory '{forb}'! Modifying or writing into historical directories is strictly forbidden.\n"
+                    f"Please provide an explicit clean output directory."
+                )
+        except Exception:
+            pass
 
     # 2. If directory does not exist, it is completely clean and safe
     if not p.exists():
@@ -370,6 +710,9 @@ def validate_output_directory_safety(
         )
 
     # 5. If reuse IS requested: verify identity and metadata
+    if is_root:
+        return True, "Root output directory allows child experiment reuse"
+
     if expected_identity is None:
         raise PermissionError(
             f"SAFETY VIOLATION [{stage_name}]: Reuse was requested for '{p}', but expected_identity was not provided!"
@@ -410,7 +753,7 @@ def validate_output_directory_safety(
     meta_dict = saved_meta.get("run_metadata", saved_meta) if isinstance(saved_meta, dict) else {}
 
     for k, exp_val in expected_identity.items():
-        if k in ("timestamp", "checkpoint_sha256", "pred_csv_sha256", "best_weight_sha256"):
+        if k in ("timestamp", "checkpoint_sha256", "pred_csv_sha256", "best_weight_sha256", "duration_minutes"):
             continue
         saved_val = meta_dict.get(k)
         if saved_val != exp_val:

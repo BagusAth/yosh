@@ -1,0 +1,72 @@
+{
+  "research_utils/detection_metrics.py": {
+    "sha256": "7cdfa4b568508131212a892a85e49949988476437dfcc085df766a33158b27de",
+    "size_bytes": 34370,
+    "line_count": 942
+  },
+  "execute_phase_b_standardization.py": {
+    "sha256": "8d3e7dfc8c28f93f30e8e03ec7b471752fc197da069fc48f5dda947cf6df966f",
+    "size_bytes": 17481,
+    "line_count": 420
+  },
+  "stage_7_baseline_and_error_analysis.py": {
+    "sha256": "61315aa736f077ab74e40300406a796e7ab0bf087149d27463e321feb8f7bd21",
+    "size_bytes": 22054,
+    "line_count": 530
+  },
+  "stage_8_1_group_oof_profiling.py": {
+    "sha256": "da50286cbc3d74ecb448f883eb91a643f965a82ce27b617db2205ad40ddfb31b",
+    "size_bytes": 46467,
+    "line_count": 1106
+  },
+  "stage_8_2_build_difficulty_manifest.py": {
+    "sha256": "044f75b1d2e5187d58910a7190dc86a1d304d46af0127cca988bc6544dfb8620",
+    "size_bytes": 23671,
+    "line_count": 600
+  },
+  "stage_8_3_adaptive_pipeline.py": {
+    "sha256": "82ebac97c7f8d4af9214f973e939029e3040b7302500a53fb3d3abbeec99b111",
+    "size_bytes": 25720,
+    "line_count": 624
+  },
+  "stage_8_4_run_ablation_experiments.py": {
+    "sha256": "6285bf1e5b68ff92192a6a2f3995adcf50ce7477a7c180ec4f32fbcb94317522",
+    "size_bytes": 28549,
+    "line_count": 710
+  },
+  "stage_8_5_model_selection_and_validation.py": {
+    "sha256": "9bddc9291f6bf4a743eb6251b86583d31700565420b6769335564972e89b1683",
+    "size_bytes": 14847,
+    "line_count": 348
+  },
+  "stage_8_6_final_test_benchmark.py": {
+    "sha256": "3f4f9c0cab92f607fe810be36e83a487e03fe19a9b261cce0fc7a50663d49644",
+    "size_bytes": 9973,
+    "line_count": 252
+  },
+  "run_stage_8_profiling.py": {
+    "sha256": "83313a51ac83d18b78cb3cdb906d5dbcfc5ecee08e63d65d357ea3dd498fe489",
+    "size_bytes": 5820,
+    "line_count": 136
+  },
+  "test_stage_9_3_regression.py": {
+    "sha256": "972a149e6f6b804d5a7eb4eaec30560422d5d761503c8bd5301f9fea64ef8bd0",
+    "size_bytes": 23114,
+    "line_count": 555
+  },
+  "test_stage_9_4_regression.py": {
+    "sha256": "4cb04025d67e733e4904db3c97dfacf9a32aabe5a332fa0fad6d15f0b54ce9ff",
+    "size_bytes": 27367,
+    "line_count": 648
+  },
+  "test_stage_9_5_regression.py": {
+    "sha256": "17840e47009581df46f1ee9a5cbdd02e9597e2cc583e0de0165ad182b5b636be",
+    "size_bytes": 34135,
+    "line_count": 802
+  },
+  "test_stage_9_6_regression.py": {
+    "sha256": "82f43f6933d83db4dc87b42ae819307fc28114768e2a4793b16b42895d140bc7",
+    "size_bytes": 23001,
+    "line_count": 593
+  }
+}

@@ -151,43 +151,50 @@ def parse_args():
     return parser.parse_args()
 
 
-def resolve_train_paths(args) -> tuple[Path, Path]:
+def resolve_train_paths(args) -> tuple[Path, Path, list[Path]]:
     """
-    Menentukan path direktori train/images dan train/labels secara Single Source of Truth (SSOT).
+    Menentukan path direktori train/images dan train/labels serta daftar citra secara Single Source of Truth (SSOT).
     Prioritas:
     1. --data-yaml jika diberikan.
     2. --dataset-dir jika diberikan.
     3. --research-dir sebagai fallback.
     """
     if args.data_yaml:
-        split_info = resolve_data_yaml_split(args.data_yaml, split="train")
+        split_info = resolve_data_yaml_split(args.data_yaml, split="train", allow_empty=False)
         images_dir = split_info["images_dir"]
         labels_dir = split_info["labels_dir"]
+        train_images = split_info["images"]
     elif args.dataset_dir:
         ds_p = Path(args.dataset_dir).resolve()
         images_dir = ds_p / "train" / "images"
         labels_dir = ds_p / "train" / "labels"
+        train_images = sorted([f for f in images_dir.iterdir() if f.is_file() and f.suffix.lower() in {".jpg", ".jpeg", ".png"}], key=lambda p: p.name) if images_dir.exists() else []
     else:
         r_p = Path(args.research_dir).resolve()
         images_dir = r_p / "train" / "images"
         labels_dir = r_p / "train" / "labels"
+        train_images = sorted([f for f in images_dir.iterdir() if f.is_file() and f.suffix.lower() in {".jpg", ".jpeg", ".png"}], key=lambda p: p.name) if images_dir.exists() else []
 
     if not images_dir.exists():
         raise FileNotFoundError(f"Direktori citra latih tidak ditemukan: {images_dir}")
     if not labels_dir.exists():
         raise FileNotFoundError(f"Direktori label latih tidak ditemukan: {labels_dir}")
 
-    return images_dir, labels_dir
+    return images_dir, labels_dir, train_images
 
 
-def load_annotations(images_dir: Path, labels_dir: Path, expected_count: int | None = 8980):
+def load_annotations(images_dir: Path, labels_dir: Path, expected_count: int | None = 8980, train_images: list[Path] | None = None):
     """
     Membaca label YOLO langsung dari file .txt untuk menentukan:
     - n_objects
     - class distribution
     - empty label status
     """
-    image_files = sorted(os.listdir(images_dir))
+    if train_images is not None:
+        images_to_load = train_images
+    else:
+        images_to_load = sorted([images_dir / f for f in os.listdir(images_dir) if f.lower().endswith((".jpg", ".jpeg", ".png"))])
+
     annotation_data = {}
 
     empty_count = 0
@@ -195,9 +202,12 @@ def load_annotations(images_dir: Path, labels_dir: Path, expected_count: int | N
     pure_disease_count = 0
     mixed_count = 0
 
-    for fname in image_files:
-        stem = Path(fname).stem
-        lbl_file = labels_dir / f"{stem}.txt"
+    for img_file in images_to_load:
+        fname = img_file.name
+        stem = img_file.stem
+        lbl_file = labels_dir / f"{stem}.txt" if labels_dir else derive_yolo_label_path(img_file)
+        if not lbl_file.exists():
+            lbl_file = derive_yolo_label_path(img_file)
 
         boxes = []
         classes = []
@@ -242,7 +252,7 @@ def load_annotations(images_dir: Path, labels_dir: Path, expected_count: int | N
     total_with_healthy = pure_healthy_count + mixed_count
     total_with_disease = pure_disease_count + mixed_count
 
-    actual_count = len(image_files)
+    actual_count = len(images_to_load)
     print(f"[AUDIT LABEL] Total citra latih aktual: {actual_count:,}")
     if expected_count is not None:
         print(f"              Expected citra latih      : {expected_count:,}")
@@ -593,6 +603,13 @@ def train_and_predict_fold(
     Menjamin validasi checksum identitas run secara lengkap sebelum mengizinkan reuse checkpoint.
     """
     fold_dir = output_dir / f"fold_{fold_id}"
+    validate_output_directory_safety(
+        output_dir=fold_dir,
+        stage_name=f"8.1_fold_{fold_id}",
+        allow_reuse=args.skip_training_if_done,
+        is_dry_run=args.dry_run,
+        is_root=False,
+    )
     fold_dir.mkdir(parents=True, exist_ok=True)
     pred_csv_path = fold_dir / "predictions.csv"
     weights_dir = fold_dir / "weights"
@@ -606,6 +623,10 @@ def train_and_predict_fold(
     if not pretrained_weights_path.exists():
         raise FileNotFoundError("Pretrained weights 'yolo11n.pt' not found in workspace!")
     pretrained_sha = compute_pretrained_weights_sha256(pretrained_weights_path)
+
+    dataset_inv_sha = compute_dataset_inventory_fingerprint(
+        images_dir, labels_dir, data_yaml_path=args.data_yaml
+    ) if (images_dir and labels_dir) else ""
 
     expected_identity = build_fold_run_identity(
         script_path=__file__,
@@ -818,7 +839,7 @@ def main():
     print(f"CUDA Device         : {args.device} (GPU: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'CPU'})")
     print("=" * 80)
 
-    images_dir, labels_dir = resolve_train_paths(args)
+    images_dir, labels_dir, train_images = resolve_train_paths(args)
     output_dir = Path(args.output_dir).resolve()
     # P0 Safety Guard: Check output directory safety before writing partition files or configs
     validate_output_directory_safety(
@@ -826,11 +847,12 @@ def main():
         stage_name="8.1",
         allow_reuse=args.skip_training_if_done,
         is_dry_run=args.dry_run,
+        is_root=True,
     )
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # 1. Audit Label & Ground Truth dari file label .txt
-    annotation_data = load_annotations(images_dir, labels_dir, expected_count=args.expected_train_images)
+    annotation_data = load_annotations(images_dir, labels_dir, expected_count=args.expected_train_images, train_images=train_images)
 
     # 2. Pemetaan Group
     img_to_group = load_group_mapping(Path(args.image_index).resolve(), set(annotation_data.keys()))

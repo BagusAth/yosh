@@ -1,0 +1,10 @@
+# Ultralytics YOLO OOF Configuration — Fold 1 (Nested Isolated)
+# Outer Holdout: Fold 1 (EXCLUDED FROM TRAINING & CHECKPOINT SELECTION)
+# Inner Train Folds: [3, 4]
+# Inner Val Fold: 2
+
+train: D:/UNDIP/SKRIPSI/stage_9_7_readiness_remediation/dry_run_evidence/oof_dry_run/data_configs/fold_1_inner_train.txt
+val: D:/UNDIP/SKRIPSI/stage_9_7_readiness_remediation/dry_run_evidence/oof_dry_run/data_configs/fold_1_inner_val.txt
+
+nc: 5
+names: ['CBB', 'CBSD', 'CGM', 'CMD', 'HEALTHY']
