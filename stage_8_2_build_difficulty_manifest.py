@@ -42,9 +42,13 @@ from research_utils.detection_metrics import (
     calculate_mixture_weights,
     calculate_object_difficulty,
     classify_object_size,
+    compute_dataset_inventory_fingerprint,
+    compute_file_sha256,
     get_image_dimensions,
     greedy_bipartite_matching,
     parse_yolo_labels,
+    resolve_data_yaml_split,
+    validate_output_directory_safety,
 )
 
 CLASS_NAMES = ["CBB", "CBSD", "CGM", "CMD", "HEALTHY"]
@@ -54,13 +58,13 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Stage 8.2: Build Difficulty Manifest (Hardened)")
     parser.add_argument(
         "--oof-dir",
-        default="d:/UNDIP/SKRIPSI/stage_8_1_oof",
-        help="Folder output dari Stage 8.1",
+        default="d:/UNDIP/SKRIPSI/stage_8_1_oof_clean",
+        help="Folder output dari Stage 8.1 (default: stage_8_1_oof_clean)",
     )
     parser.add_argument(
         "--data-yaml",
-        default=None,
-        help="Path ke data.yaml (Single Source of Truth). Jika diisi, direktori train diturunkan otomatis.",
+        default="d:/UNDIP/SKRIPSI/cassava-v7-standardized/data.yaml",
+        help="Path ke data.yaml (Single Source of Truth, default: standardized).",
     )
     parser.add_argument(
         "--dataset-dir",
@@ -74,8 +78,8 @@ def parse_args():
     )
     parser.add_argument(
         "--output-dir",
-        default="d:/UNDIP/SKRIPSI/stage_8_2_difficulty",
-        help="Folder output artefak manifest kesulitan",
+        default="d:/UNDIP/SKRIPSI/stage_8_2_difficulty_clean",
+        help="Folder output artefak manifest kesulitan (default: stage_8_2_difficulty_clean)",
     )
     parser.add_argument(
         "--iou-match-thresh",
@@ -101,24 +105,9 @@ def parse_args():
 def resolve_train_paths(args) -> tuple[Path, Path]:
     """Menentukan path direktori train/images dan train/labels secara Single Source of Truth."""
     if args.data_yaml:
-        yaml_p = Path(args.data_yaml).resolve()
-        if not yaml_p.exists():
-            raise FileNotFoundError(f"data.yaml tidak ditemukan di {yaml_p}")
-        with open(yaml_p, "r", encoding="utf-8") as f:
-            data_cfg = yaml.safe_load(f)
-        
-        base_path = yaml_p.parent
-        if "path" in data_cfg and data_cfg["path"]:
-            base_path = Path(data_cfg["path"]).resolve()
-
-        train_entry = data_cfg.get("train", "train/images")
-        train_path = (base_path / train_entry).resolve()
-        if train_path.name == "images":
-            images_dir = train_path
-            labels_dir = train_path.parent / "labels"
-        else:
-            images_dir = train_path / "images"
-            labels_dir = train_path / "labels"
+        split_info = resolve_data_yaml_split(args.data_yaml, split="train")
+        images_dir = split_info["images_dir"]
+        labels_dir = split_info["labels_dir"]
     elif args.dataset_dir:
         ds_p = Path(args.dataset_dir).resolve()
         images_dir = ds_p / "train" / "images"
@@ -218,6 +207,8 @@ def process_difficulty_manifest(
     preds_by_image: dict[str, list[dict]],
     output_dir: Path,
     args,
+    images_dir: Path | None = None,
+    labels_dir: Path | None = None,
 ):
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -411,6 +402,40 @@ def process_difficulty_manifest(
         writer.writerows(image_rows)
     print(f"[OUTPUT] Tersimpan: {img_csv_path} ({len(image_rows):,} citra)")
 
+    # Simpan Sidecar Provenance Manifest
+    manifest_csv_sha256 = compute_file_sha256(img_csv_path)
+    raw_oof_path = Path(args.oof_dir) / "oof_predictions_raw.csv" if args.oof_dir else None
+    raw_oof_sha = compute_file_sha256(raw_oof_path) if raw_oof_path and raw_oof_path.exists() else ""
+
+    dataset_inv_sha = ""
+    if images_dir and labels_dir:
+        dataset_inv_sha = compute_dataset_inventory_fingerprint(images_dir, labels_dir, data_yaml_path=args.data_yaml)
+
+    data_yaml_sha = compute_file_sha256(args.data_yaml) if args.data_yaml and Path(args.data_yaml).exists() else ""
+
+    provenance_data = {
+        "manifest_file": img_csv_path.name,
+        "manifest_csv_sha256": manifest_csv_sha256,
+        "dataset_inventory_fingerprint": dataset_inv_sha,
+        "data_yaml_path": str(Path(args.data_yaml).resolve()) if args.data_yaml else "",
+        "data_yaml_sha256": data_yaml_sha,
+        "oof_predictions_raw_sha256": raw_oof_sha,
+        "clean_oof_run_id": str(Path(args.oof_dir).resolve()) if args.oof_dir else "",
+        "iou_match_thresh": float(args.iou_match_thresh),
+        "confusion_penalty": float(args.confusion_penalty),
+        "mixture_lambda": float(args.mixture_lambda),
+        "script_sha256": compute_file_sha256(__file__),
+        "evaluator_version": "Stage-9.6-Canonical-v1",
+        "image_count": len(image_rows),
+        "unique_image_count": len(set(r["image_id"] for r in image_rows)),
+        "timestamp": datetime.now().isoformat(),
+    }
+
+    prov_json_path = output_dir / "train_image_difficulty_manifest.provenance.json"
+    with open(prov_json_path, "w", encoding="utf-8") as f:
+        json.dump(provenance_data, f, indent=2)
+    print(f"[OUTPUT] Tersimpan: {prov_json_path}")
+
     # 5. Hitung Statistik Diagnostik & Sanity Gate
     d_vals = sorted(float(r["d_image"]) for r in image_rows)
     p_vals = [float(r["p_sampling"]) for r in image_rows]
@@ -548,10 +573,14 @@ def main():
     print(f"Mixture Lambda  : {args.mixture_lambda}")
     print("=" * 80)
 
-    raw_pred_file = Path(args.oof_dir) / "oof_predictions_raw.csv"
-    if not raw_pred_file.exists():
-        print(f"ERROR: File {raw_pred_file} belum ditemukan. Pastikan Stage 8.1 telah selesai!")
-        sys.exit(1)
+    output_dir = Path(args.output_dir).resolve()
+    # P0 Safety Guard: Check output directory safety before writing
+    validate_output_directory_safety(output_dir, stage_name="8.2")
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    raw_pred_file = Path(args.oof_dir) / "oof_predictions_raw.csv" if args.oof_dir else None
+    if not raw_pred_file or not raw_pred_file.exists():
+        raise FileNotFoundError(f"ERROR: File raw OOF predictions tidak ditemukan di {raw_pred_file}. Pastikan Stage 8.1 telah selesai!")
 
     images_dir, labels_dir = resolve_train_paths(args)
     gt_by_image = load_ground_truth(images_dir, labels_dir)
@@ -560,8 +589,10 @@ def main():
     process_difficulty_manifest(
         gt_by_image=gt_by_image,
         preds_by_image=preds_by_image,
-        output_dir=Path(args.output_dir).resolve(),
+        output_dir=output_dir,
         args=args,
+        images_dir=images_dir,
+        labels_dir=labels_dir,
     )
 
 

@@ -39,7 +39,10 @@ from ultralytics import YOLO
 from research_utils.detection_metrics import (
     compute_file_sha256,
     compute_dataset_inventory_fingerprint,
+    compute_pretrained_weights_sha256,
     extract_canonical_metrics,
+    resolve_data_yaml_split,
+    validate_output_directory_safety,
 )
 from stage_8_3_adaptive_pipeline import AdaptiveDetectionTrainer
 
@@ -144,13 +147,13 @@ def parse_args():
     )
     parser.add_argument(
         "--manifest-path",
-        default="d:/UNDIP/SKRIPSI/stage_8_2_difficulty/train_image_difficulty_manifest.csv",
-        help="Path ke manifest kesulitan citra dari Stage 8.2",
+        default=None,
+        help="Path ke manifest kesulitan citra dari Stage 8.2 (Wajib untuk EXP-1, EXP-2, EXP-3)",
     )
     parser.add_argument(
         "--output-dir",
-        default="d:/UNDIP/SKRIPSI/stage_10_11_clean_experiments",
-        help="Folder penyimpanan seluruh artefak ablasi baru (default: stage_10_11_clean_experiments)",
+        default="d:/UNDIP/SKRIPSI/stage_8_ablation_clean",
+        help="Folder penyimpanan seluruh artefak ablasi baru (default: stage_8_ablation_clean)",
     )
     parser.add_argument(
         "--allow-historic-overwrite",
@@ -162,7 +165,103 @@ def parse_args():
         action="store_true",
         help="Lewati eksperimen jika model best.pt, metrics_summary.json, dan metadata checksum cocok",
     )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Lakukan validasi seluruh preflight, dataset, manifest provenance, dan konfigurasi tanpa training",
+    )
     return parser.parse_args()
+
+
+def verify_manifest_provenance_and_coverage(
+    manifest_path: str | Path,
+    expected_dataset_fingerprint: str,
+    expected_data_yaml_sha256: str,
+    expected_image_files: list[Path],
+) -> tuple[bool, str, dict[str, Any]]:
+    """
+    Memverifikasi keabsahan manifest dari clean Stage 8.2 run:
+    1. Keberadaan manifest CSV dan sidecar provenance JSON
+    2. Checksum CSV cocok dengan provenance
+    3. Run identity bukan historical (bukan stage_8_1_oof tanpa clean)
+    4. Dataset inventory fingerprint cocok 100%
+    5. Source data.yaml sha256 cocok 100%
+    6. Cakupan citra 100% terhadap train split (tanpa ID duplikat, citra hilang, atau citra ekstra)
+    """
+    p_manifest = Path(manifest_path).resolve()
+    if not p_manifest.exists():
+        return False, f"Manifest file '{p_manifest}' does not exist", {}
+
+    candidate_provs = [
+        p_manifest.with_name(p_manifest.name + ".provenance.json"),
+        p_manifest.parent / (p_manifest.stem + ".provenance.json"),
+        p_manifest.parent / "train_image_difficulty_manifest.provenance.json",
+    ]
+    prov_path = None
+    for cp in candidate_provs:
+        if cp.exists():
+            prov_path = cp
+            break
+
+    if not prov_path:
+        return False, f"Sidecar provenance JSON not found for '{p_manifest}'", {}
+
+    try:
+        with open(prov_path, "r", encoding="utf-8") as f:
+            prov = json.load(f)
+    except Exception as e:
+        return False, f"Failed to parse provenance JSON '{prov_path}': {e}", {}
+
+    actual_csv_sha = compute_file_sha256(p_manifest)
+    if prov.get("manifest_csv_sha256") and prov["manifest_csv_sha256"] != actual_csv_sha:
+        return False, f"Manifest CSV SHA-256 mismatch: recorded={prov.get('manifest_csv_sha256')[:8]} vs actual={actual_csv_sha[:8]}", prov
+
+    clean_oof_id = prov.get("clean_oof_run_id", "")
+    if "stage_8_1_oof" in clean_oof_id and "clean" not in clean_oof_id:
+        return False, f"Provenance references historical unverified OOF run: '{clean_oof_id}'", prov
+
+    if expected_dataset_fingerprint:
+        prov_ds_fp = prov.get("dataset_inventory_fingerprint", "")
+        if prov_ds_fp != expected_dataset_fingerprint:
+            return False, f"Dataset inventory fingerprint mismatch in provenance: recorded={prov_ds_fp[:8]} vs expected={expected_dataset_fingerprint[:8]}", prov
+
+    if expected_data_yaml_sha256:
+        prov_yaml_sha = prov.get("data_yaml_sha256", "")
+        if prov_yaml_sha != expected_data_yaml_sha256:
+            return False, f"Data YAML SHA-256 mismatch in provenance: recorded={prov_yaml_sha[:8]} vs expected={expected_data_yaml_sha256[:8]}", prov
+
+    manifest_image_ids = set()
+    with open(p_manifest, "r", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        for row_idx, row in enumerate(reader, start=1):
+            img_id = row.get("image_id", "").strip()
+            if not img_id:
+                return False, f"Manifest row {row_idx} is missing 'image_id'", prov
+            if img_id in manifest_image_ids:
+                return False, f"Duplicate image_id '{img_id}' found in manifest row {row_idx}", prov
+            manifest_image_ids.add(img_id)
+            try:
+                float(row.get("p_sampling", 0.0))
+                float(row.get("d_image", 0.0))
+            except ValueError:
+                return False, f"Manifest row {row_idx} contains invalid numerical values", prov
+
+    if expected_image_files:
+        sample_id = next(iter(manifest_image_ids)) if manifest_image_ids else ""
+        if "." in sample_id:
+            expected_set = {p.name for p in expected_image_files}
+        else:
+            expected_set = {p.stem for p in expected_image_files}
+
+        missing_images = expected_set - manifest_image_ids
+        if missing_images:
+            return False, f"Manifest coverage incomplete: {len(missing_images)} training images missing (e.g. {sorted(list(missing_images))[:3]})", prov
+
+        extra_images = manifest_image_ids - expected_set
+        if extra_images:
+            return False, f"Manifest contains {len(extra_images)} extraneous images not in train split (e.g. {sorted(list(extra_images))[:3]})", prov
+
+    return True, "Manifest provenance and 100% coverage verified successfully", prov
 
 
 def build_experiment_run_identity(
@@ -170,7 +269,7 @@ def build_experiment_run_identity(
     spec: dict[str, Any],
     script_path: str | Path,
     yaml_path: str | Path,
-    manifest_path: str | Path,
+    manifest_path: str | Path | None,
     dataset_inventory_fingerprint: str,
     pretrained_weights_path: str | Path,
     epochs: int,
@@ -203,8 +302,8 @@ def build_experiment_run_identity(
         "script_sha256": compute_file_sha256(p_script) if p_script and p_script.exists() else str(script_path),
         "data_yaml_sha256": compute_file_sha256(p_yaml) if p_yaml and p_yaml.exists() else str(yaml_path),
         "manifest_sha256": compute_file_sha256(p_manifest) if (p_manifest and p_manifest.exists() and (spec["enable_mixture_sampling"] or spec["enable_targeted_aug"])) else "",
-        "pretrained_weights_sha256": compute_file_sha256(p_pre) if (p_pre and p_pre.exists()) else "",
-        "pretrained_sha256": compute_file_sha256(p_pre) if (p_pre and p_pre.exists()) else "",
+        "pretrained_weights_sha256": compute_pretrained_weights_sha256(p_pre) if (p_pre and p_pre.exists()) else "",
+        "pretrained_sha256": compute_pretrained_weights_sha256(p_pre) if (p_pre and p_pre.exists()) else "",
         "dataset_inventory_fingerprint": dataset_inventory_fingerprint,
         "best_weight_sha256": checkpoint_best_sha256,
         "python_version": sys.version.split()[0],
@@ -258,40 +357,83 @@ def run_single_experiment(exp_idx: int, args) -> dict[str, Any]:
     """Menjalankan satu eksperimen ablasi (EXP-0, EXP-1, EXP-2, atau EXP-3)."""
     spec = EXPERIMENT_SPECS[exp_idx]
     output_dir = Path(args.output_dir).resolve()
+    is_dry_run = getattr(args, "dry_run", False)
 
-    # Safety protection of historical artefacts
-    if "stage_8_ablation" in str(output_dir).lower() and not args.allow_historic_overwrite:
-        raise PermissionError(
-            f"CRITICAL SAFETY ERROR: Menulis ke direktori historis '{output_dir}' dilarang keras!\n"
-            "Gunakan direktori baru (misal stage_10_11_clean_experiments) untuk menjaga integritas data historis."
-        )
+    # 1. Output safety check on root and exp_dir
+    validate_output_directory_safety(
+        output_dir,
+        stage_name="stage_8_4",
+        allow_reuse=getattr(args, "skip_if_done", False),
+        is_dry_run=is_dry_run,
+    )
 
     exp_dir = output_dir / spec["name"]
-    exp_dir.mkdir(parents=True, exist_ok=True)
-
     summary_json_path = exp_dir / "metrics_summary.json"
     best_weight_path = exp_dir / "weights" / "best.pt"
 
-    dataset_inv_sha = ""
-    try:
-        yaml_p = Path(args.data_yaml).resolve()
-        if yaml_p.exists():
-            with open(yaml_p, "r", encoding="utf-8") as f:
-                dy = yaml.safe_load(f)
-            base_p = Path(dy["path"]).resolve() if "path" in dy and dy["path"] else yaml_p.parent
-            tr_p = (base_p / dy.get("train", "train/images")).resolve()
-            im_dir = tr_p if tr_p.name == "images" else tr_p / "images"
-            lbl_dir = im_dir.parent / "labels"
-            dataset_inv_sha = compute_dataset_inventory_fingerprint(im_dir, lbl_dir)
-    except Exception:
-        pass
+    # Detect partial unverified output
+    if summary_json_path.exists() and not best_weight_path.exists():
+        raise PermissionError(
+            f"[{spec['id']}] SAFETY VIOLATION: Direktori '{exp_dir}' berisi metrics_summary.json tanpa checkpoint best.pt!\n"
+            "Kondisi ini mengindikasikan output parsial / rusak dari run sebelumnya.\n"
+            "Harap gunakan direktori baru yang bersih (--output-dir)."
+        )
+    if best_weight_path.exists() and not summary_json_path.exists():
+        raise PermissionError(
+            f"[{spec['id']}] SAFETY VIOLATION: Direktori '{exp_dir}' berisi checkpoint best.pt tanpa metrics_summary.json metadata!\n"
+            "Kondisi ini mengindikasikan run lama yang belum terverifikasi secara penuh.\n"
+            "Harap gunakan direktori baru yang bersih (--output-dir)."
+        )
+
+    # Validate exp_dir safety
+    validate_output_directory_safety(
+        exp_dir,
+        stage_name=f"stage_8_4_{spec['id']}",
+        allow_reuse=getattr(args, "skip_if_done", False),
+        is_dry_run=is_dry_run,
+    )
+
+    if not is_dry_run:
+        exp_dir.mkdir(parents=True, exist_ok=True)
+
+    # 2. Dataset inventory fingerprint and split resolution
+    train_images_dir, train_labels_dir, train_image_files = resolve_data_yaml_split(args.data_yaml, "train")
+    dataset_inv_sha = compute_dataset_inventory_fingerprint(
+        train_images_dir, train_labels_dir, data_yaml_path=args.data_yaml
+    )
+    data_yaml_sha = compute_file_sha256(args.data_yaml)
+
+    # 3. Manifest requirement and provenance verification
+    manifest_to_use = args.manifest_path
+    if spec["enable_mixture_sampling"] or spec["enable_targeted_aug"]:
+        if not manifest_to_use:
+            raise ValueError(
+                f"[{spec['id']}] CRITICAL ERROR: Eksperimen {spec['id']} memerlukan --manifest-path dari clean Stage 8.2 run!\n"
+                "Stage 8.4 dilarang melakukan fallback otomatis ke manifest historis."
+            )
+        is_prov_valid, prov_reason, prov_meta = verify_manifest_provenance_and_coverage(
+            manifest_path=manifest_to_use,
+            expected_dataset_fingerprint=dataset_inv_sha,
+            expected_data_yaml_sha256=data_yaml_sha,
+            expected_image_files=train_image_files,
+        )
+        if not is_prov_valid:
+            raise ValueError(
+                f"[{spec['id']}] MANIFEST PROVENANCE VALIDATION FAILED: {prov_reason}"
+            )
+        print(f"[{spec['id']}] Manifest provenance & coverage verified: {manifest_to_use}")
+    else:
+        # EXP-0 Baseline: do NOT require manifest and do NOT use it
+        if manifest_to_use:
+            print(f"[{spec['id']}] INFO: {spec['id']} adalah kontrol baseline murni; manifest '{manifest_to_use}' diabaikan.")
+        manifest_to_use = None
 
     expected_identity = build_experiment_run_identity(
         exp_id=spec["id"],
         spec=spec,
         script_path=__file__,
         yaml_path=args.data_yaml,
-        manifest_path=args.manifest_path,
+        manifest_path=manifest_to_use,
         dataset_inventory_fingerprint=dataset_inv_sha,
         pretrained_weights_path="yolo11n.pt",
         epochs=args.epochs,
@@ -302,7 +444,7 @@ def run_single_experiment(exp_idx: int, args) -> dict[str, Any]:
     )
 
     # Strict Fingerprint and Artifact Verification for --skip-if-done
-    if args.skip_if_done and summary_json_path.exists() and best_weight_path.exists():
+    if getattr(args, "skip_if_done", False) and summary_json_path.exists() and best_weight_path.exists():
         can_reuse, reason = verify_ablation_reuse_safety(
             meta_path=summary_json_path,
             expected_identity=expected_identity,
@@ -316,12 +458,24 @@ def run_single_experiment(exp_idx: int, args) -> dict[str, Any]:
             print(f"[{spec['id']}] WARNING: Metadata lama tidak cocok dengan parameter saat ini ({reason}). Menolak skip...")
 
     # Guard against overwriting unverified / mismatched existing checkpoint
-    if best_weight_path.exists():
+    if best_weight_path.exists() and not getattr(args, "skip_if_done", False):
         raise PermissionError(
-            f"[{spec['id']}] SAFETY VIOLATION: Checkpoint '{best_weight_path}' sudah ada di folder tujuan tetapi gagal verifikasi metadata/fingerprint!\n"
-            "Penimpaan ke direktori dengan artefak yang tidak cocok dilarang keras.\n"
+            f"[{spec['id']}] SAFETY VIOLATION: Checkpoint '{best_weight_path}' sudah ada di folder tujuan tetapi --skip-if-done tidak diaktifkan!\n"
+            "Penimpaan ke direktori dengan artefak yang ada dilarang keras.\n"
             "Harap gunakan folder --output-dir baru yang bersih."
         )
+
+    # DRY RUN EXIT
+    if is_dry_run:
+        print(f"[{spec['id']}] DRY-RUN PASS: Validasi preflight, dataset fingerprint, dan konfigurasi lolos 100%.")
+        return {
+            "exp_id": spec["id"],
+            "name": spec["name"],
+            "title": spec["title"],
+            "dry_run": True,
+            "status": "VERIFIED_READY",
+            "run_metadata": expected_identity,
+        }
 
     print("\n" + "=" * 80)
     print(f"MEMULAI EKSPERIMEN: {spec['id']} — {spec['title']}")
@@ -522,11 +676,27 @@ def main():
 
     summaries = []
     output_dir = Path(args.output_dir).resolve()
-    output_dir.mkdir(parents=True, exist_ok=True)
+    is_dry_run = getattr(args, "dry_run", False)
+
+    validate_output_directory_safety(
+        output_dir,
+        stage_name="stage_8_4",
+        allow_reuse=args.skip_if_done,
+        is_dry_run=is_dry_run,
+    )
+
+    if not is_dry_run:
+        output_dir.mkdir(parents=True, exist_ok=True)
 
     for idx in exp_indices:
         summary = run_single_experiment(idx, args)
         summaries.append(summary)
+
+    if is_dry_run:
+        print("\n" + "=" * 80)
+        print("STAGE 8.4 DRY-RUN SELESAI: Seluruh eksperimen lolos validasi preflight!")
+        print("=" * 80)
+        return
 
     if len(summaries) > 1:
         generate_ablation_report(summaries, output_dir)

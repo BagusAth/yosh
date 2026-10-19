@@ -157,7 +157,7 @@ class AdaptiveYOLODataset(YOLODataset):
             self.crop_transforms = Compose([
                 RandomHSV(hgain=getattr(hyp, "hsv_h", 0.015), sgain=getattr(hyp, "hsv_s", 0.7), vgain=getattr(hyp, "hsv_v", 0.4)),
                 RandomFlip(direction="horizontal", p=getattr(hyp, "fliplr", 0.5)),
-                self.format_class(
+                Format(
                     bbox_format="xywh",
                     normalize=True,
                     return_mask=self.use_segments,
@@ -169,6 +169,8 @@ class AdaptiveYOLODataset(YOLODataset):
                     bgr=getattr(hyp, "bgr", 0.0),
                 ),
             ])
+        else:
+            self.crop_transforms = None
 
     def validate_manifest_coverage(self):
         """Memverifikasi bahwa setiap file dalam dataset memiliki mapping manifest yang cocok."""
@@ -215,10 +217,15 @@ class AdaptiveYOLODataset(YOLODataset):
                 f"FATAL: Total mixture sampling weights sum(P) = {sum_w:.6f} "
                 f"menyimpang dari 1.0 melebihi batas toleransi 0.005! Manifest tidak valid."
             )
-        elif abs(sum_w - 1.0) > 1e-5:
-            weights_tensor = weights_tensor / sum_w
-
         return weights_tensor
+
+    @property
+    def crop_attempts(self) -> int:
+        return self.crop_diagnostics.get("crop_attempts", 0)
+
+    @property
+    def crops_applied(self) -> int:
+        return self.crop_diagnostics.get("crops_applied", 0)
 
     def apply_context_crop(self, label: dict[str, Any], target_info: dict[str, Any]) -> dict[str, Any]:
         """
@@ -392,12 +399,12 @@ class AdaptiveYOLODataset(YOLODataset):
                 self.crop_diagnostics["visibility_skips"] += 1
 
         if len(new_bboxes) > 0:
-            out_label = copy(label)
+            out_label = deepcopy(label)
             out_label["img"] = resized_crop
             out_label["cls"] = np.array(new_cls, dtype=np.float32).reshape(-1, 1)
             out_label["instances"] = Instances(
                 bboxes=np.array(new_bboxes, dtype=np.float32),
-                segments=None,
+                segments=np.zeros((0, 1000, 2), dtype=np.float32),
                 keypoints=None,
                 bbox_format="xywh",
                 normalized=True,
@@ -405,6 +412,7 @@ class AdaptiveYOLODataset(YOLODataset):
             out_label["ori_shape"] = (target_imgsz, target_imgsz)
             out_label["resized_shape"] = (target_imgsz, target_imgsz)
             out_label["_is_context_cropped"] = True
+            out_label.pop("ratio_pad", None)
             self.crop_diagnostics["crops_applied"] += 1
             return out_label
 
@@ -423,9 +431,10 @@ class AdaptiveYOLODataset(YOLODataset):
             tinfo = self.manifest_data[fname]
             if tinfo.get("has_target_small", False) and random.random() < self.aug_prob:
                 self.crop_diagnostics["crop_attempts"] += 1
-                cropped_label = self.apply_context_crop(label, tinfo)
+                cropped_label = self.apply_context_crop(deepcopy(label), tinfo)
                 if cropped_label.get("_is_context_cropped", False):
                     cropped_label.pop("_is_context_cropped", None)
+                    cropped_label.pop("ratio_pad", None)
                     return self.crop_transforms(cropped_label)
 
         return self.transforms(label)

@@ -427,8 +427,11 @@ class TestComponentIntegrationAndSmoke(unittest.TestCase):
             }
         )
 
+        target_train_img = WORKSPACE_DIR / "cassava-v7-standardized" / "train" / "images"
+        if not target_train_img.exists():
+            target_train_img = WORKSPACE_DIR / "cassava-v7-research" / "train" / "images"
         dataset = AdaptiveYOLODataset(
-            img_path=str(WORKSPACE_DIR / "cassava-v7-research" / "train" / "images"),
+            img_path=str(target_train_img),
             imgsz=640,
             batch_size=4,
             augment=True,

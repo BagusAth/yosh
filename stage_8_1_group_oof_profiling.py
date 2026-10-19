@@ -54,6 +54,9 @@ from ultralytics import YOLO
 from research_utils.detection_metrics import (
     compute_file_sha256,
     compute_dataset_inventory_fingerprint,
+    compute_pretrained_weights_sha256,
+    resolve_data_yaml_split,
+    validate_output_directory_safety,
 )
 
 CLASS_NAMES = ["CBB", "CBSD", "CGM", "CMD", "HEALTHY"]
@@ -65,7 +68,7 @@ def parse_args():
     )
     parser.add_argument(
         "--data-yaml",
-        default=None,
+        default="d:/UNDIP/SKRIPSI/cassava-v7-standardized/data.yaml",
         help="Path ke data.yaml (Single Source of Truth). Jika diisi, direktori train diturunkan otomatis.",
     )
     parser.add_argument(
@@ -85,8 +88,14 @@ def parse_args():
     )
     parser.add_argument(
         "--output-dir",
-        default="d:/UNDIP/SKRIPSI/stage_8_1_oof",
-        help="Folder output untuk artefak Stage 8.1",
+        default="d:/UNDIP/SKRIPSI/stage_8_1_oof_clean",
+        help="Folder output untuk artefak Stage 8.1 (default: stage_8_1_oof_clean)",
+    )
+    parser.add_argument(
+        "--expected-train-images",
+        type=int,
+        default=8980,
+        help="Jumlah citra latih yang diharapkan (default: 8980 untuk dataset riset resmi)",
     )
     parser.add_argument(
         "--epochs",
@@ -151,24 +160,9 @@ def resolve_train_paths(args) -> tuple[Path, Path]:
     3. --research-dir sebagai fallback.
     """
     if args.data_yaml:
-        yaml_p = Path(args.data_yaml).resolve()
-        if not yaml_p.exists():
-            raise FileNotFoundError(f"data.yaml tidak ditemukan di {yaml_p}")
-        with open(yaml_p, "r", encoding="utf-8") as f:
-            data_cfg = yaml.safe_load(f)
-        
-        base_path = yaml_p.parent
-        if "path" in data_cfg and data_cfg["path"]:
-            base_path = Path(data_cfg["path"]).resolve()
-
-        train_entry = data_cfg.get("train", "train/images")
-        train_path = (base_path / train_entry).resolve()
-        if train_path.name == "images":
-            images_dir = train_path
-            labels_dir = train_path.parent / "labels"
-        else:
-            images_dir = train_path / "images"
-            labels_dir = train_path / "labels"
+        split_info = resolve_data_yaml_split(args.data_yaml, split="train")
+        images_dir = split_info["images_dir"]
+        labels_dir = split_info["labels_dir"]
     elif args.dataset_dir:
         ds_p = Path(args.dataset_dir).resolve()
         images_dir = ds_p / "train" / "images"
@@ -186,7 +180,7 @@ def resolve_train_paths(args) -> tuple[Path, Path]:
     return images_dir, labels_dir
 
 
-def load_annotations(images_dir: Path, labels_dir: Path):
+def load_annotations(images_dir: Path, labels_dir: Path, expected_count: int | None = 8980):
     """
     Membaca label YOLO langsung dari file .txt untuk menentukan:
     - n_objects
@@ -248,7 +242,13 @@ def load_annotations(images_dir: Path, labels_dir: Path):
     total_with_healthy = pure_healthy_count + mixed_count
     total_with_disease = pure_disease_count + mixed_count
 
-    print(f"[AUDIT LABEL] Total citra latih: {len(image_files):,}")
+    actual_count = len(image_files)
+    print(f"[AUDIT LABEL] Total citra latih aktual: {actual_count:,}")
+    if expected_count is not None:
+        print(f"              Expected citra latih      : {expected_count:,}")
+        if actual_count != expected_count:
+            raise ValueError(f"Actual image count ({actual_count}) does not match expected count ({expected_count})!")
+
     print(f"              Empty label (0 box)          : {empty_count:,}")
     print(f"              Pure HEALTHY bbox only       : {pure_healthy_count:,}")
     print(f"              Pure Disease bbox (CBB..CMD) : {pure_disease_count:,}")
@@ -256,11 +256,9 @@ def load_annotations(images_dir: Path, labels_dir: Path):
     print(f"              Total citra memuat HEALTHY   : {total_with_healthy:,}")
     print(f"              Total citra memuat Disease   : {total_with_disease:,}")
 
-    if len(image_files) != 8980:
-        raise ValueError(f"Expected 8980 images, got {len(image_files)}")
-    if (empty_count + pure_healthy_count + pure_disease_count + mixed_count) != 8980:
-        raise ValueError("Sum of label categories does not match total images!")
-    print("[AUDIT LABEL] Verifikasi source of truth PASSED (8.980 citra valid).")
+    if (empty_count + pure_healthy_count + pure_disease_count + mixed_count) != actual_count:
+        raise ValueError(f"Sum of label categories does not match total images ({actual_count})!")
+    print(f"[AUDIT LABEL] Verifikasi source of truth PASSED ({actual_count:,} citra valid).")
 
     return annotation_data
 
@@ -335,8 +333,8 @@ def build_group_stratified_folds(
                 image_fold_assignment[fname] = fold_id
 
     print("\n[VERIFIKASI INTEGRITAS 4-FOLD]")
-    if len(image_fold_assignment) != 8980:
-        raise ValueError(f"Total assigned images != 8980 (got {len(image_fold_assignment)})")
+    if len(image_fold_assignment) != len(annotation_data):
+        raise ValueError(f"Total assigned images != actual images ({len(image_fold_assignment)} vs {len(annotation_data)})")
 
     all_assigned_groups = set()
     for fold_id, gids in fold_groups.items():
@@ -487,6 +485,7 @@ def build_fold_run_identity(
     conf_thresh: float,
     model_variant: str = "yolo11n.pt",
     device: str = "",
+    pretrained_weights_sha256: str = "",
     checkpoint_eval_sha256: str = "",
     predictions_sha256: str = "",
     holdout_image_count: int = 0,
@@ -519,6 +518,7 @@ def build_fold_run_identity(
         "inner_val_sha256": compute_file_sha256(p_val) if p_val.exists() else str(inner_val_txt),
         "outer_holdout_sha256": compute_file_sha256(p_holdout) if p_holdout.exists() else str(outer_holdout_txt),
         "dataset_inventory_fingerprint": dataset_inventory_fingerprint,
+        "pretrained_weights_sha256": pretrained_weights_sha256,
         "python_version": sys.version.split()[0],
         "torch_version": torch.__version__,
         "ultralytics_version": getattr(ultralytics, "__version__", ""),
@@ -602,9 +602,10 @@ def train_and_predict_fold(
     last_weight_path = weights_dir / "last.pt"
     eval_weight_path = best_weight_path if args.checkpoint_selection_mode == "nested_inner_val" else last_weight_path
 
-    dataset_inv_sha = ""
-    if images_dir and Path(images_dir).exists():
-        dataset_inv_sha = compute_dataset_inventory_fingerprint(images_dir, labels_dir)
+    pretrained_weights_path = Path("yolo11n.pt")
+    if not pretrained_weights_path.exists():
+        raise FileNotFoundError("Pretrained weights 'yolo11n.pt' not found in workspace!")
+    pretrained_sha = compute_pretrained_weights_sha256(pretrained_weights_path)
 
     expected_identity = build_fold_run_identity(
         script_path=__file__,
@@ -622,6 +623,7 @@ def train_and_predict_fold(
         conf_thresh=args.conf_oof,
         model_variant="yolo11n.pt",
         device=str(args.device),
+        pretrained_weights_sha256=pretrained_sha,
         holdout_image_count=nested_spec["outer_holdout_count"],
         inner_train_count=nested_spec["inner_train_count"],
         inner_val_count=nested_spec["inner_val_count"],
@@ -818,10 +820,17 @@ def main():
 
     images_dir, labels_dir = resolve_train_paths(args)
     output_dir = Path(args.output_dir).resolve()
+    # P0 Safety Guard: Check output directory safety before writing partition files or configs
+    validate_output_directory_safety(
+        output_dir=output_dir,
+        stage_name="8.1",
+        allow_reuse=args.skip_training_if_done,
+        is_dry_run=args.dry_run,
+    )
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # 1. Audit Label & Ground Truth dari file label .txt
-    annotation_data = load_annotations(images_dir, labels_dir)
+    annotation_data = load_annotations(images_dir, labels_dir, expected_count=args.expected_train_images)
 
     # 2. Pemetaan Group
     img_to_group = load_group_mapping(Path(args.image_index).resolve(), set(annotation_data.keys()))

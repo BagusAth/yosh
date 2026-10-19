@@ -16,15 +16,25 @@ Unified, single-source-of-truth mathematical evaluation engine for:
 from __future__ import annotations
 
 import hashlib
+import json
 import math
+import os
 from collections import Counter
 from pathlib import Path
 from typing import Any
 
 import numpy as np
+import yaml
 from PIL import Image
 
 CLASS_NAMES = ["CBB", "CBSD", "CGM", "CMD", "HEALTHY"]
+
+FORBIDDEN_HISTORICAL_DIRS = {
+    "stage_8_1_oof",
+    "stage_8_2_difficulty",
+    "stage_8_ablation",
+    "cassava-v7-stage-7",
+}
 
 
 def compute_file_sha256(filepath: str | Path) -> str:
@@ -39,42 +49,378 @@ def compute_file_sha256(filepath: str | Path) -> str:
     return h.hexdigest()
 
 
+def compute_pretrained_weights_sha256(weights_path: str | Path) -> str:
+    """
+    Computes SHA-256 hash of pretrained model weights (e.g. yolo11n.pt).
+    Raises FileNotFoundError if file is missing, empty, or unreadable.
+    """
+    p = Path(weights_path)
+    if not p.exists() or not p.is_file():
+        raise FileNotFoundError(f"Pretrained weights file not found: {weights_path}")
+    if p.stat().st_size == 0:
+        raise ValueError(f"Pretrained weights file is empty (0 bytes): {weights_path}")
+    sha = compute_file_sha256(p)
+    if not sha:
+        raise RuntimeError(f"Failed to compute SHA-256 for pretrained weights: {weights_path}")
+    return sha
+
+
 def compute_dataset_inventory_fingerprint(
     images_dir: str | Path,
     labels_dir: str | Path | None = None,
+    data_yaml_path: str | Path | None = None,
 ) -> str:
     """
-    Computes a deterministic inventory fingerprint for a dataset directory based on:
-    - Sorted filenames
-    - File sizes
-    - Sampled or label metadata
-    Ensures that any file additions, deletions, or size modifications alter the fingerprint.
+    Computes a deterministic full-content inventory fingerprint for a dataset directory:
+    - Normalizes sorted filenames.
+    - Full SHA-256 content hash of every image file.
+    - Full SHA-256 content hash of every label file.
+    - Label completeness and strict pairing verification.
+    - Object count and class breakdown per file.
+    - Source data.yaml content hash and class mappings if provided or resolvable.
+    Raises FileNotFoundError or ValueError on missing directories, empty files, or corrupt data.
+    Never returns an empty string for valid datasets.
     """
-    img_p = Path(images_dir)
-    if not img_p.exists() or not img_p.is_dir():
-        return ""
+    img_p = Path(images_dir).resolve()
+    if not img_p.exists():
+        raise FileNotFoundError(f"Images directory not found: {images_dir}")
+    if not img_p.is_dir():
+        raise ValueError(f"Images path is not a directory: {images_dir}")
+
+    # Gather image files deterministically
+    img_files = sorted(
+        [f for f in img_p.iterdir() if f.is_file() and f.suffix.lower() in {".jpg", ".jpeg", ".png"}],
+        key=lambda p: p.name,
+    )
+    if not img_files:
+        raise ValueError(f"No image files (.jpg, .jpeg, .png) found in: {images_dir}")
 
     h = hashlib.sha256()
-    # Sort image entries deterministically
-    img_files = sorted(img_p.iterdir(), key=lambda p: p.name)
     h.update(f"NUM_IMAGES:{len(img_files)}\n".encode("utf-8"))
 
     for f in img_files:
-        if f.is_file():
-            stat = f.stat()
-            h.update(f"IMG:{f.name}:{stat.st_size}\n".encode("utf-8"))
+        content = f.read_bytes()
+        file_sha = hashlib.sha256(content).hexdigest()
+        h.update(f"IMG:{f.name}:{len(content)}:{file_sha}\n".encode("utf-8"))
 
+    # Resolve labels directory if not explicitly provided
+    lbl_p = None
     if labels_dir:
-        lbl_p = Path(labels_dir)
-        if lbl_p.exists() and lbl_p.is_dir():
-            lbl_files = sorted(lbl_p.iterdir(), key=lambda p: p.name)
-            h.update(f"NUM_LABELS:{len(lbl_files)}\n".encode("utf-8"))
-            for lf in lbl_files:
-                if lf.is_file():
-                    stat = lf.stat()
-                    h.update(f"LBL:{lf.name}:{stat.st_size}\n".encode("utf-8"))
+        lbl_p = Path(labels_dir).resolve()
+    elif (img_p.parent / "labels").exists():
+        lbl_p = (img_p.parent / "labels").resolve()
 
-    return h.hexdigest()
+    if lbl_p is not None:
+        if not lbl_p.exists():
+            raise FileNotFoundError(f"Labels directory not found: {lbl_p}")
+        if not lbl_p.is_dir():
+            raise ValueError(f"Labels path is not a directory: {lbl_p}")
+
+        lbl_files = sorted(
+            [lf for lf in lbl_p.iterdir() if lf.is_file() and lf.suffix.lower() == ".txt"],
+            key=lambda p: p.name,
+        )
+        h.update(f"NUM_LABELS:{len(lbl_files)}\n".encode("utf-8"))
+
+        total_objects = 0
+        class_counter = Counter()
+
+        for lf in lbl_files:
+            text = lf.read_text(encoding="utf-8")
+            lbl_sha = hashlib.sha256(text.encode("utf-8")).hexdigest()
+            lines = [l.strip() for l in text.splitlines() if l.strip()]
+            num_objs = len(lines)
+            total_objects += num_objs
+
+            for l in lines:
+                parts = l.split()
+                if parts:
+                    try:
+                        cid = int(parts[0])
+                        class_counter[cid] += 1
+                    except ValueError:
+                        pass
+
+            h.update(f"LBL:{lf.name}:{len(text)}:{lbl_sha}:{num_objs}\n".encode("utf-8"))
+
+        h.update(f"TOTAL_OBJECTS:{total_objects}\n".encode("utf-8"))
+        for cid in sorted(class_counter.keys()):
+            h.update(f"CLS_{cid}:{class_counter[cid]}\n".encode("utf-8"))
+
+        # Verify pairing
+        img_stems = {f.stem for f in img_files}
+        lbl_stems = {lf.stem for lf in lbl_files}
+        missing_lbls = sorted(list(img_stems - lbl_stems))
+        orphan_lbls = sorted(list(lbl_stems - img_stems))
+        if missing_lbls:
+            h.update(f"MISSING_LABELS:{len(missing_lbls)}:{','.join(missing_lbls[:10])}\n".encode("utf-8"))
+        if orphan_lbls:
+            h.update(f"ORPHAN_LABELS:{len(orphan_lbls)}:{','.join(orphan_lbls[:10])}\n".encode("utf-8"))
+
+    # Resolve data.yaml if provided
+    yaml_p = None
+    if data_yaml_path:
+        yaml_p = Path(data_yaml_path).resolve()
+    elif (img_p.parent / "data.yaml").exists():
+        yaml_p = (img_p.parent / "data.yaml").resolve()
+    elif (img_p.parent.parent / "data.yaml").exists():
+        yaml_p = (img_p.parent.parent / "data.yaml").resolve()
+
+    if yaml_p and yaml_p.exists():
+        yaml_text = yaml_p.read_text(encoding="utf-8")
+        yaml_sha = hashlib.sha256(yaml_text.encode("utf-8")).hexdigest()
+        h.update(f"DATA_YAML:{yaml_p.name}:{yaml_sha}\n".encode("utf-8"))
+        try:
+            yd = yaml.safe_load(yaml_text)
+            if isinstance(yd, dict):
+                h.update(f"NC:{yd.get('nc', '')}\n".encode("utf-8"))
+                names = yd.get("names", [])
+                h.update(f"NAMES:{names}\n".encode("utf-8"))
+        except Exception:
+            pass
+
+    fingerprint = h.hexdigest()
+    if not fingerprint:
+        raise RuntimeError("Failed to compute valid dataset inventory fingerprint!")
+    return fingerprint
+
+
+def resolve_data_yaml_split(
+    data_yaml_path: str | Path,
+    split: str = "val",
+    allow_empty: bool = True,
+) -> DataYamlSplitResult:
+    """
+    Resolves dataset paths strictly from data.yaml as Single Source of Truth:
+    - Respects 'path' root key (relative to data.yaml or absolute).
+    - Supports split keys: 'train', 'val' (or 'valid'), 'test'.
+    - Handles directory structures (images/, labels/) and .txt file image lists.
+    - Guarantees custom diagnostic evaluation reads the exact split used by YOLO metrics.
+    - Fails closed with descriptive exceptions if data.yaml or splits are missing.
+    """
+    yaml_p = Path(data_yaml_path).resolve()
+    if not yaml_p.exists():
+        raise FileNotFoundError(f"data.yaml not found: {yaml_p}")
+
+    with open(yaml_p, "r", encoding="utf-8") as f:
+        data_cfg = yaml.safe_load(f)
+
+    if not isinstance(data_cfg, dict):
+        raise ValueError(f"Invalid data.yaml content in {yaml_p}: root must be a mapping dictionary")
+
+    # Base path resolution: Ultralytics standard
+    if "path" in data_cfg and data_cfg["path"]:
+        p_cfg = Path(data_cfg["path"])
+        base_path = p_cfg.resolve() if p_cfg.is_absolute() else (yaml_p.parent / p_cfg).resolve()
+    else:
+        base_path = yaml_p.parent.resolve()
+
+    # Split key resolution
+    split_norm = split.strip().lower()
+    possible_keys = [split_norm]
+    if split_norm in ("val", "valid"):
+        possible_keys = ["val", "valid"]
+
+    split_entry = None
+    matched_key = None
+    for k in possible_keys:
+        if k in data_cfg:
+            split_entry = data_cfg[k]
+            matched_key = k
+            break
+
+    if split_entry is None:
+        raise KeyError(
+            f"Split '{split}' not found in data.yaml ({yaml_p}). "
+            f"Available keys: {list(data_cfg.keys())}"
+        )
+
+    images: list[Path] = []
+    labels: list[Path] = []
+    images_dir: Path | None = None
+    labels_dir: Path | None = None
+    is_file_list = False
+
+    if isinstance(split_entry, str) and split_entry.strip().endswith(".txt"):
+        is_file_list = True
+        txt_path = Path(split_entry)
+        if not txt_path.is_absolute():
+            txt_path = (base_path / txt_path).resolve()
+        if not txt_path.exists():
+            raise FileNotFoundError(f"Split file list not found for '{split}': {txt_path}")
+
+        lines = [l.strip() for l in txt_path.read_text(encoding="utf-8").splitlines() if l.strip()]
+        for l in lines:
+            im_p = Path(l)
+            if not im_p.is_absolute():
+                im_p = (base_path / im_p).resolve()
+            if not im_p.exists():
+                raise FileNotFoundError(f"Image from split file list not found: {im_p}")
+            images.append(im_p)
+
+            # Derive label path
+            lbl_str = str(im_p).replace("/images/", "/labels/").replace("\\images\\", "\\labels\\")
+            lbl_p = Path(lbl_str).with_suffix(".txt")
+            labels.append(lbl_p)
+
+        if images:
+            images_dir = images[0].parent
+            labels_dir = labels[0].parent
+    else:
+        # Directory or relative folder
+        split_p = Path(split_entry)
+        if not split_p.is_absolute():
+            split_p = (base_path / split_p).resolve()
+
+        if split_p.name == "images":
+            images_dir = split_p
+            labels_dir = split_p.parent / "labels"
+        else:
+            if (split_p / "images").exists():
+                images_dir = split_p / "images"
+                labels_dir = split_p / "labels"
+            else:
+                images_dir = split_p
+                labels_dir = split_p.parent / "labels" if (split_p.parent / "labels").exists() else split_p / "labels"
+
+        if not images_dir.exists():
+            raise FileNotFoundError(f"Resolved images directory does not exist for split '{split}': {images_dir}")
+        if not labels_dir.exists():
+            raise FileNotFoundError(f"Resolved labels directory does not exist for split '{split}': {labels_dir}")
+
+        images = sorted(
+            [f for f in images_dir.iterdir() if f.is_file() and f.suffix.lower() in {".jpg", ".jpeg", ".png"}],
+            key=lambda p: p.name,
+        )
+        labels = [labels_dir / f"{im.stem}.txt" for im in images]
+
+    if not images and not allow_empty:
+        raise ValueError(f"No valid images found for split '{split}' in {data_yaml_path}")
+
+    yaml_sha = compute_file_sha256(yaml_p)
+
+    return DataYamlSplitResult({
+        "split": split,
+        "matched_key": matched_key,
+        "base_path": base_path,
+        "images": images,
+        "labels": labels,
+        "images_dir": images_dir,
+        "labels_dir": labels_dir,
+        "is_file_list": is_file_list,
+        "total_images": len(images),
+        "data_yaml_path": yaml_p,
+        "data_yaml_sha256": yaml_sha,
+        "class_names": data_cfg.get("names", CLASS_NAMES),
+        "nc": data_cfg.get("nc", len(data_cfg.get("names", CLASS_NAMES))),
+    })
+
+
+class DataYamlSplitResult(dict):
+    """Custom dictionary result for resolve_data_yaml_split supporting 3-tuple unpack."""
+    def __iter__(self):
+        yield self["images_dir"]
+        yield self["labels_dir"]
+        yield self["images"]
+
+
+def validate_output_directory_safety(
+    output_dir: str | Path,
+    stage_name: str,
+    allow_reuse: bool = False,
+    expected_identity: dict[str, Any] | None = None,
+    metadata_filename: str | None = None,
+    is_dry_run: bool = False,
+) -> tuple[bool, str]:
+    """
+    Validates that an output directory is safe for writing and does not overwrite
+    historical research artifacts or unverified partial results.
+    """
+    p = Path(output_dir).resolve()
+
+    # 1. Guard against writing to historical research directories
+    p_norm = str(p).replace("\\", "/").lower()
+    for forb in FORBIDDEN_HISTORICAL_DIRS:
+        if p_norm.endswith(f"/{forb}") or p.name.lower() == forb:
+            raise PermissionError(
+                f"CRITICAL SAFETY ERROR / VIOLATION [{stage_name}]: Target directory '{p}' matches historical "
+                f"artifact directory '{forb}'! Modifying or writing into historical directories is strictly forbidden.\n"
+                f"Please provide an explicit clean output directory (e.g. stage_{stage_name.lower()}_clean)."
+            )
+
+    # 2. If directory does not exist, it is completely clean and safe
+    if not p.exists():
+        return True, "Output directory does not exist yet (clean target)"
+
+    # 3. If directory exists, check contents
+    benign_names = {".gitkeep", ".gitignore", "desktop.ini", "__pycache__"}
+    existing_files = [f for f in p.rglob("*") if f.is_file() and f.name not in benign_names]
+
+    if not existing_files:
+        return True, "Output directory exists and is empty (clean target)"
+
+    # 4. If directory has files and reuse is NOT requested: REJECT immediately
+    if not allow_reuse:
+        sample_files = [f.name for f in existing_files[:5]]
+        raise FileExistsError(
+            f"SAFETY VIOLATION [{stage_name}]: Output directory '{p}' already exists and contains "
+            f"{len(existing_files)} artifact(s) ({sample_files}).\n"
+            f"Overwriting experiment artifacts in clean runs is prohibited. "
+            f"Please specify a new clean directory for --output-dir."
+        )
+
+    # 5. If reuse IS requested: verify identity and metadata
+    if expected_identity is None:
+        raise PermissionError(
+            f"SAFETY VIOLATION [{stage_name}]: Reuse was requested for '{p}', but expected_identity was not provided!"
+        )
+
+    # Find metadata file
+    meta_candidates = []
+    if metadata_filename:
+        meta_candidates.append(p / metadata_filename)
+    meta_candidates.extend([
+        p / "run_metadata.json",
+        p / "fold_metadata.json",
+        p / "metrics_summary.json",
+        p / "difficulty_sanity_gate_report.json",
+    ])
+
+    meta_file = None
+    for cand in meta_candidates:
+        if cand.exists():
+            meta_file = cand
+            break
+
+    if meta_file is None:
+        raise PermissionError(
+            f"SAFETY VIOLATION [{stage_name}]: Output directory '{p}' contains unverified partial artifacts "
+            f"without any valid metadata file! Reusing unverified partial results is prohibited.\n"
+            f"Please specify a new clean directory for --output-dir."
+        )
+
+    try:
+        with open(meta_file, "r", encoding="utf-8") as f:
+            saved_meta = json.load(f)
+    except Exception as e:
+        raise PermissionError(
+            f"SAFETY VIOLATION [{stage_name}]: Failed to read metadata JSON from '{meta_file}': {e}"
+        )
+
+    meta_dict = saved_meta.get("run_metadata", saved_meta) if isinstance(saved_meta, dict) else {}
+
+    for k, exp_val in expected_identity.items():
+        if k in ("timestamp", "checkpoint_sha256", "pred_csv_sha256", "best_weight_sha256"):
+            continue
+        saved_val = meta_dict.get(k)
+        if saved_val != exp_val:
+            raise PermissionError(
+                f"SAFETY VIOLATION [{stage_name}]: Metadata mismatch in '{p}' for key '{k}': "
+                f"saved={saved_val} vs expected={exp_val}. "
+                f"Cannot reuse mismatched artifacts. Please specify a new clean directory."
+            )
+
+    return True, "Artifacts and metadata 100% verified for reuse"
 
 
 def get_image_dimensions(img_path: str | Path) -> tuple[int, int]:

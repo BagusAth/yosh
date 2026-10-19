@@ -39,45 +39,22 @@ from research_utils.detection_metrics import (
     get_image_dimensions,
     greedy_bipartite_matching,
     parse_yolo_labels,
+    resolve_data_yaml_split,
 )
 
 CLASS_NAMES = ["CBB", "CBSD", "CGM", "CMD", "HEALTHY"]
 
 
 def resolve_test_paths(data_yaml_path: str | Path) -> tuple[Path, Path]:
-    """Menentukan direktori test images dan labels secara dinamis dari data.yaml."""
-    yaml_p = Path(data_yaml_path).resolve()
-    if not yaml_p.exists():
-        raise FileNotFoundError(f"data.yaml tidak ditemukan di {yaml_p}")
-
-    with open(yaml_p, "r", encoding="utf-8") as f:
-        data_cfg = yaml.safe_load(f)
-
-    base_path = yaml_p.parent
-    if "path" in data_cfg and data_cfg["path"]:
-        base_path = Path(data_cfg["path"]).resolve()
-
-    test_entry = data_cfg.get("test", "test/images")
-    test_path = (base_path / test_entry).resolve()
-    if test_path.name == "images":
-        test_img_dir = test_path
-        test_lbl_dir = test_path.parent / "labels"
-    else:
-        test_img_dir = test_path / "images"
-        test_lbl_dir = test_path / "labels"
-
-    if not test_img_dir.exists():
-        raise FileNotFoundError(f"Direktori citra test tidak ditemukan: {test_img_dir}")
-    if not test_lbl_dir.exists():
-        raise FileNotFoundError(f"Direktori label test tidak ditemukan: {test_lbl_dir}")
-
-    return test_img_dir, test_lbl_dir
+    """Compatibility wrapper around resolve_data_yaml_split."""
+    im_dir, lb_dir, _ = resolve_data_yaml_split(data_yaml_path, "test")
+    return im_dir, lb_dir
 
 
 def evaluate_test_set(
     model_path: Path,
     data_yaml_path: Path,
-    test_img_dir: Path,
+    test_images: list[Path] | Path,
     test_lbl_dir: Path,
     conf_thresh: float = 0.25,
     iou_thresh: float = 0.45,
@@ -85,6 +62,12 @@ def evaluate_test_set(
 ) -> dict[str, Any]:
     """Mengevaluasi model pada test set via Ultralytics val() kanonis dan greedy bipartite matching."""
     model = YOLO(str(model_path))
+
+    if isinstance(test_images, (str, Path)) and Path(test_images).is_dir():
+        t_img_p = Path(test_images)
+        test_images_list = sorted([f for f in t_img_p.iterdir() if f.is_file() and f.suffix.lower() in {".jpg", ".jpeg", ".png"}])
+    else:
+        test_images_list = list(test_images)
 
     # 1. Ultralytics official test split evaluation
     val_res = model.val(
@@ -101,14 +84,13 @@ def evaluate_test_set(
     canonical_m = extract_canonical_metrics(val_res, CLASS_NAMES)
 
     # 2. Granular error decomposition on Test Set
-    test_images = sorted(list(test_img_dir.glob("*.jpg")))
     total_gt = 0
     gt_by_size = Counter()
     tp_by_size = Counter()
     taxonomy_counts = Counter()
 
     gt_dict = {}
-    for img_path in test_images:
+    for img_path in test_images_list:
         lbl_path = test_lbl_dir / f"{img_path.stem}.txt"
         img_w, img_h = get_image_dimensions(img_path)
         gt_objs = parse_yolo_labels(lbl_path, img_width=img_w, img_height=img_h)
@@ -117,8 +99,8 @@ def evaluate_test_set(
             total_gt += 1
             gt_by_size[gt["size_category"]] += 1
 
-    for i in range(0, len(test_images), chunk_size):
-        chunk = test_images[i : i + chunk_size]
+    for i in range(0, len(test_images_list), chunk_size):
+        chunk = test_images_list[i : i + chunk_size]
         chunk_paths = [str(p) for p in chunk]
 
         preds = model.predict(
@@ -200,7 +182,7 @@ def evaluate_test_set(
 
 def main():
     parser = argparse.ArgumentParser(description="Stage 8.6: One-Door Locked Test Set Benchmark (Hardened)")
-    parser.add_argument("--ablation-dir", default="d:/UNDIP/SKRIPSI/stage_10_11_clean_experiments", help="Folder hasil ablasi")
+    parser.add_argument("--ablation-dir", default="d:/UNDIP/SKRIPSI/stage_8_ablation_clean", help="Folder hasil ablasi (default: stage_8_ablation_clean)")
     parser.add_argument("--data-yaml", default="d:/UNDIP/SKRIPSI/cassava-v7-standardized/data.yaml", help="Path ke data.yaml")
     parser.add_argument(
         "--confirm-final-evaluation",
@@ -225,7 +207,7 @@ def main():
 
     ablation_dir = Path(args.ablation_dir).resolve()
     data_yaml_path = Path(args.data_yaml).resolve()
-    test_img_dir, test_lbl_dir = resolve_test_paths(data_yaml_path)
+    test_img_dir, test_lbl_dir, test_images = resolve_data_yaml_split(data_yaml_path, "test")
 
     experiments = [
         {"id": "EXP-0", "name": "exp_0_baseline", "title": "Baseline (Re-run)"},
@@ -238,7 +220,7 @@ def main():
     print("STAGE 8.6 — ONE-DOOR FINAL BENCHMARK ON LOCKED TEST SET")
     print("=" * 80)
     print(f"Data YAML  : {data_yaml_path}")
-    print(f"Test Images: {test_img_dir}")
+    print(f"Test Images: {test_img_dir} ({len(test_images):,} citra)")
     print(f"Test Labels: {test_lbl_dir}")
     print("=" * 80)
 
@@ -253,7 +235,7 @@ def main():
 
         print(f"\n[{exp['id']}] Mengevaluasi {exp['title']} pada Test Set...")
         t0 = time.time()
-        res = evaluate_test_set(best_pt, data_yaml_path, test_img_dir, test_lbl_dir)
+        res = evaluate_test_set(best_pt, data_yaml_path, test_images, test_lbl_dir)
         duration = round(time.time() - t0, 1)
 
         res["exp_id"] = exp["id"]

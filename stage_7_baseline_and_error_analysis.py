@@ -44,18 +44,23 @@ from research_utils.detection_metrics import (
     greedy_bipartite_matching,
     calculate_object_difficulty,
     get_image_dimensions,
+    compute_file_sha256,
+    compute_dataset_inventory_fingerprint,
+    compute_pretrained_weights_sha256,
+    resolve_data_yaml_split,
+    validate_output_directory_safety,
     CLASS_NAMES,
 )
 
-EVALUATOR_VERSION = "Stage-9.5-Canonical-v1"
+EVALUATOR_VERSION = "Stage-9.6-Canonical-v1"
 
 
 def main():
     parser = argparse.ArgumentParser(description="Stage 7 — Baseline Training & Error Analysis")
     parser.add_argument(
         "--data-yaml",
-        default="d:/UNDIP/SKRIPSI/cassava-v7-research/data.yaml",
-        help="Path ke data.yaml dataset riset",
+        default="d:/UNDIP/SKRIPSI/cassava-v7-standardized/data.yaml",
+        help="Path ke data.yaml dataset riset (default: standardized)",
     )
     parser.add_argument(
         "--epochs",
@@ -88,15 +93,35 @@ def main():
     )
     parser.add_argument(
         "--output-dir",
-        default="d:/UNDIP/SKRIPSI/cassava-v7-stage-7",
-        help="Direktori penyimpanan seluruh artefak Stage 7",
+        default="d:/UNDIP/SKRIPSI/stage_7_baseline_clean",
+        help="Direktori penyimpanan seluruh artefak Stage 7 (default: stage_7_baseline_clean)",
     )
     parser.add_argument("--seed", type=int, default=42, help="Seed reproduktif")
+    parser.add_argument(
+        "--skip-if-done",
+        action="store_true",
+        help="Gunakan checkpoint dan metadata yang sudah ada jika seluruh checksum cocok 100%",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Lakukan validasi seluruh preflight, dataset, dan konfigurasi tanpa training",
+    )
     args = parser.parse_args()
 
     data_yaml_path = Path(args.data_yaml).resolve()
     output_dir = Path(args.output_dir).resolve()
-    output_dir.mkdir(parents=True, exist_ok=True)
+    is_dry_run = getattr(args, "dry_run", False)
+
+    validate_output_directory_safety(
+        output_dir,
+        stage_name="stage_7",
+        allow_reuse=args.skip_if_done,
+        is_dry_run=is_dry_run,
+    )
+
+    if not is_dry_run:
+        output_dir.mkdir(parents=True, exist_ok=True)
 
     print("=" * 80)
     print("STAGE 7 — BASELINE YOLO11n TRAINING & EXHAUSTIVE ERROR ANALYSIS")
@@ -123,12 +148,66 @@ def main():
     # PILAR 1: TRAINING BASELINE YOLO11n
     # -------------------------------------------------------------------------
     runs_dir = output_dir / "runs"
-    runs_dir.mkdir(parents=True, exist_ok=True)
     best_weights = runs_dir / "baseline_yolo11n" / "weights" / "best.pt"
+    meta_path = output_dir / "stage_7_run_metadata.json"
+
+    # Preflight validation & fingerprinting Single Source of Truth
+    train_img_dir, train_lbl_dir, train_imgs = resolve_data_yaml_split(data_yaml_path, "train")
+    val_img_dir, val_lbl_dir, val_images = resolve_data_yaml_split(data_yaml_path, "val")
+
+    dataset_inv_sha = compute_dataset_inventory_fingerprint(train_img_dir, train_lbl_dir, data_yaml_path=data_yaml_path)
+    data_yaml_sha = compute_file_sha256(data_yaml_path)
+    pretrained_sha = compute_pretrained_weights_sha256("yolo11n.pt")
+    script_sha = compute_file_sha256(__file__)
+
+    expected_identity = {
+        "stage": "Stage 7 — Baseline Training & Error Analysis",
+        "model_architecture": "YOLO11n",
+        "epochs": args.epochs,
+        "batch": args.batch,
+        "imgsz": args.imgsz,
+        "seed": args.seed,
+        "data_yaml_sha256": data_yaml_sha,
+        "dataset_inventory_fingerprint": dataset_inv_sha,
+        "pretrained_weights_sha256": pretrained_sha,
+        "script_sha256": script_sha,
+    }
+
+    if is_dry_run:
+        print("[STAGE 7] DRY-RUN PASS: Validasi preflight, dataset fingerprint, data.yaml split, dan konfigurasi sukses.")
+        print(f"          Train images: {len(train_imgs):,}")
+        print(f"          Val images  : {len(val_images):,}")
+        print(f"          Dataset FP  : {dataset_inv_sha[:16]}...")
+        return
+
+    runs_dir.mkdir(parents=True, exist_ok=True)
 
     if best_weights.exists():
-        print(f"[PILAR 1] Ditemukan bobot model terlatih sebelumnya: {best_weights}")
-        print("          Melewati proses training ulang...")
+        if not args.skip_if_done:
+            raise PermissionError(
+                f"[PILAR 1] SAFETY VIOLATION: Checkpoint '{best_weights}' sudah ada di direktori output tetapi --skip-if-done tidak diaktifkan!\n"
+                "Penimpaan ke direktori dengan artefak yang ada dilarang keras.\n"
+                "Harap gunakan folder --output-dir baru yang bersih."
+            )
+        if not meta_path.exists():
+            raise PermissionError(
+                f"[PILAR 1] REUSE REJECTED: Checkpoint '{best_weights}' ada tetapi metadata '{meta_path}' tidak ditemukan!\n"
+                "Harap gunakan folder --output-dir baru yang bersih."
+            )
+        with open(meta_path, "r", encoding="utf-8") as f:
+            saved_meta = json.load(f)
+        for k, exp_val in expected_identity.items():
+            if saved_meta.get(k) != exp_val:
+                raise PermissionError(
+                    f"[PILAR 1] REUSE REJECTED: Mismatch pada '{k}': tersimpan={saved_meta.get(k)} vs diharapkan={exp_val}!\n"
+                    "Harap gunakan folder --output-dir baru yang bersih."
+                )
+        actual_best_sha = compute_file_sha256(best_weights)
+        if saved_meta.get("best_weight_sha256") and saved_meta["best_weight_sha256"] != actual_best_sha:
+            raise PermissionError(
+                "[PILAR 1] REUSE REJECTED: Hash best.pt tidak cocok dengan metadata tersimpan!"
+            )
+        print(f"[PILAR 1] Bobot model dan metadata checksum terverifikasi 100%. Melewati training ulang...")
         model = YOLO(str(best_weights))
     else:
         print("[PILAR 1/4] Memulai Pelatihan Baseline YOLO11n (50 Epochs pada RTX 4060)...")
@@ -201,14 +280,9 @@ def main():
     # -------------------------------------------------------------------------
     print()
     print("[PILAR 3/4] Menjalankan Analisis Dekomposisi Error & Difficulty Profiling...")
-    dataset_root = data_yaml_path.parent
-    val_img_dir = dataset_root / "valid" / "images"
-    val_lbl_dir = dataset_root / "valid" / "labels"
-
     # Bobot rumus Di: Di = w1*(1-C) + w2*(1-IoU) + w3*S
     w1, w2, w3 = 0.40, 0.40, 0.20
 
-    val_images = sorted(list(val_img_dir.glob("*.jpg")))
     print(f"          Memproses {len(val_images):,} citra validasi...")
 
     # Statistics counters
@@ -326,12 +400,12 @@ def main():
     print()
     print("[PILAR 4/4] Menyimpan Artefak dan Membuat Laporan Komprehensif...")
 
-    # 1. Simpan baseline_evaluation_metrics.json
+    # 1. Simpan baseline_evaluation_metrics.json & stage_7_run_metadata.json
     metrics_summary = {
         "stage": "Stage 7 — Baseline Training & Error Analysis",
         "model_architecture": "YOLO11n",
         "parameters": "2.6M",
-        "dataset": "cassava-v7-research",
+        "dataset": "cassava-v7-standardized",
         "epochs_trained": args.epochs,
         "overall_metrics": overall_metrics,
         "per_class_metrics": per_class_metrics,
@@ -339,6 +413,12 @@ def main():
     }
     with (output_dir / "baseline_evaluation_metrics.json").open("w", encoding="utf-8") as f:
         json.dump(metrics_summary, f, indent=2, ensure_ascii=False)
+
+    run_meta = dict(expected_identity)
+    run_meta["best_weight_sha256"] = compute_file_sha256(best_weights)
+    run_meta["overall_metrics"] = overall_metrics
+    with open(meta_path, "w", encoding="utf-8") as f:
+        json.dump(run_meta, f, indent=2)
 
     # 2. Simpan error_decomposition_summary.csv
     total_eval_objects = len(object_records)

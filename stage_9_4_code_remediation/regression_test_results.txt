@@ -1,14 +1,14 @@
 ================================================================================
 STAGE 9.4 — COMPREHENSIVE REGRESSION TEST SUITE EXECUTION REPORT
 ================================================================================
-Date/Time          : 2026-10-17 15:44:23
+Date/Time          : 2026-10-19 11:08:39
 Python Version     : 3.13.7
-PyTorch Version    : 2.6.0+cu124
-CUDA Available     : True
+PyTorch Version    : 2.9.1+cpu
+CUDA Available     : False
 Total Tests Run    : 26
 Failures           : 0
 Errors             : 0
-Execution Duration : 0.13 seconds
+Execution Duration : 0.14 seconds
 Overall Outcome    : PASS (100% SUCCEEDED)
 ================================================================================
 
@@ -71,7 +71,7 @@ test_dynamic_coordinate_scaling_1920x1080 (__main__.TestNonSquareDynamicDimensio
 test_nested_fold_zero_leakage_and_isolation (__main__.TestNestedOOFGroupIsolation.test_nested_fold_zero_leakage_and_isolation) ... ok
 
 ----------------------------------------------------------------------
-Ran 26 tests in 0.135s
+Ran 26 tests in 0.137s
 
 OK
 

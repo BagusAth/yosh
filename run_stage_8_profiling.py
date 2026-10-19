@@ -28,8 +28,8 @@ def parse_args():
     )
     parser.add_argument("--dataset-dir", default=None, help="Path root dataset (misal cassava-v7-standardized)")
     parser.add_argument("--research-dir", default="d:/UNDIP/SKRIPSI/cassava-v7-research", help="Path fallback dataset")
-    parser.add_argument("--output-dir-81", default="d:/UNDIP/SKRIPSI/stage_8_1_oof", help="Folder output Stage 8.1")
-    parser.add_argument("--output-dir-82", default="d:/UNDIP/SKRIPSI/stage_8_2_difficulty", help="Folder output Stage 8.2")
+    parser.add_argument("--output-dir-81", default="d:/UNDIP/SKRIPSI/stage_8_1_oof_clean", help="Folder output Stage 8.1 (default: stage_8_1_oof_clean)")
+    parser.add_argument("--output-dir-82", default="d:/UNDIP/SKRIPSI/stage_8_2_difficulty_clean", help="Folder output Stage 8.2 (default: stage_8_2_difficulty_clean)")
     parser.add_argument(
         "--checkpoint-selection-mode",
         choices=["nested_inner_val", "fixed_epoch_last"],

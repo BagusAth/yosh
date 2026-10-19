@@ -1,14 +1,14 @@
 ================================================================================
 STAGE 9.3 — REGRESSION TEST SUITE EXECUTION REPORT
 ================================================================================
-Date/Time          : 2026-10-16 19:51:05
+Date/Time          : 2026-10-19 11:08:37
 Python Version     : 3.13.7
-PyTorch Version    : 2.6.0+cu124
-CUDA Available     : True
+PyTorch Version    : 2.9.1+cpu
+CUDA Available     : False
 Total Tests Run    : 16
 Failures           : 0
 Errors             : 0
-Execution Duration : 7.37 seconds
+Execution Duration : 0.57 seconds
 Overall Outcome    : PASS
 ================================================================================
 

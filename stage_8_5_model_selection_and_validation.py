@@ -42,6 +42,7 @@ from research_utils.detection_metrics import (
     get_image_dimensions,
     greedy_bipartite_matching,
     parse_yolo_labels,
+    resolve_data_yaml_split,
     select_best_model,
 )
 
@@ -49,38 +50,14 @@ CLASS_NAMES = ["CBB", "CBSD", "CGM", "CMD", "HEALTHY"]
 
 
 def resolve_val_paths(data_yaml_path: str | Path) -> tuple[Path, Path]:
-    """Menentukan direktori validasi images dan labels secara dinamis dari data.yaml."""
-    yaml_p = Path(data_yaml_path).resolve()
-    if not yaml_p.exists():
-        raise FileNotFoundError(f"data.yaml tidak ditemukan di {yaml_p}")
-
-    with open(yaml_p, "r", encoding="utf-8") as f:
-        data_cfg = yaml.safe_load(f)
-
-    base_path = yaml_p.parent
-    if "path" in data_cfg and data_cfg["path"]:
-        base_path = Path(data_cfg["path"]).resolve()
-
-    val_entry = data_cfg.get("val", "valid/images")
-    val_path = (base_path / val_entry).resolve()
-    if val_path.name == "images":
-        val_img_dir = val_path
-        val_lbl_dir = val_path.parent / "labels"
-    else:
-        val_img_dir = val_path / "images"
-        val_lbl_dir = val_path / "labels"
-
-    if not val_img_dir.exists():
-        raise FileNotFoundError(f"Direktori citra validasi tidak ditemukan: {val_img_dir}")
-    if not val_lbl_dir.exists():
-        raise FileNotFoundError(f"Direktori label validasi tidak ditemukan: {val_lbl_dir}")
-
-    return val_img_dir, val_lbl_dir
+    """Compatibility wrapper around resolve_data_yaml_split."""
+    im_dir, lb_dir, _ = resolve_data_yaml_split(data_yaml_path, "val")
+    return im_dir, lb_dir
 
 
 def evaluate_model_on_validation(
     model_path: Path,
-    val_img_dir: Path,
+    val_images: list[Path] | Path,
     val_lbl_dir: Path,
     conf_thresh: float = 0.25,
     iou_thresh: float = 0.45,
@@ -88,7 +65,12 @@ def evaluate_model_on_validation(
 ) -> dict[str, Any]:
     """Menjalankan evaluasi mendalam dan dekomposisi error berstrata ukuran via greedy_bipartite_matching."""
     model = YOLO(str(model_path))
-    val_images = sorted(list(val_img_dir.glob("*.jpg")))
+
+    if isinstance(val_images, (str, Path)) and Path(val_images).is_dir():
+        val_img_p = Path(val_images)
+        val_images_list = sorted([f for f in val_img_p.iterdir() if f.is_file() and f.suffix.lower() in {".jpg", ".jpeg", ".png"}])
+    else:
+        val_images_list = list(val_images)
 
     total_gt = 0
     gt_by_size = Counter()
@@ -98,7 +80,7 @@ def evaluate_model_on_validation(
     class_total_gt = Counter()
 
     gt_dict = {}
-    for img_path in val_images:
+    for img_path in val_images_list:
         lbl_path = val_lbl_dir / f"{img_path.stem}.txt"
         img_w, img_h = get_image_dimensions(img_path)
         gt_objs = parse_yolo_labels(lbl_path, img_width=img_w, img_height=img_h)
@@ -109,8 +91,8 @@ def evaluate_model_on_validation(
             class_total_gt[gt["class_name"]] += 1
 
     t0 = time.time()
-    for i in range(0, len(val_images), chunk_size):
-        chunk = val_images[i : i + chunk_size]
+    for i in range(0, len(val_images_list), chunk_size):
+        chunk = val_images_list[i : i + chunk_size]
         chunk_paths = [str(p) for p in chunk]
 
         preds = model.predict(
@@ -197,12 +179,12 @@ def evaluate_model_on_validation(
 
 def main():
     parser = argparse.ArgumentParser(description="Stage 8.5: Model Selection Hierarchy & Granular Validation Evaluation (Hardened)")
-    parser.add_argument("--ablation-dir", default="d:/UNDIP/SKRIPSI/stage_8_ablation", help="Folder hasil Stage 8.4")
+    parser.add_argument("--ablation-dir", default="d:/UNDIP/SKRIPSI/stage_8_ablation_clean", help="Folder hasil Stage 8.4 (default: stage_8_ablation_clean)")
     parser.add_argument("--data-yaml", default="d:/UNDIP/SKRIPSI/cassava-v7-standardized/data.yaml", help="Path ke data.yaml")
     args = parser.parse_args()
 
     ablation_dir = Path(args.ablation_dir).resolve()
-    val_img_dir, val_lbl_dir = resolve_val_paths(args.data_yaml)
+    val_img_dir, val_lbl_dir, val_images = resolve_data_yaml_split(args.data_yaml, "val")
 
     experiments = [
         {"id": "EXP-0", "name": "exp_0_baseline", "title": "Baseline (Re-run)"},
@@ -215,7 +197,7 @@ def main():
     print("STAGE 8.5 — VALIDATION-BASED MODEL SELECTION & FINE-GRAINED ERROR DECOMPOSITION")
     print("=" * 80)
     print(f"Data YAML        : {args.data_yaml}")
-    print(f"Validation Images: {val_img_dir}")
+    print(f"Validation Images: {val_img_dir} ({len(val_images):,} citra)")
     print(f"Validation Labels: {val_lbl_dir}")
     print(f"Ablation Dir     : {ablation_dir}")
     print("Mengevaluasi 4 model ablasi secara apple-to-apple...")
@@ -238,7 +220,7 @@ def main():
         print(f"\n[{exp['id']}] Menjalankan dekomposisi error berstrata untuk {exp['title']}...")
         fine_eval = evaluate_model_on_validation(
             best_pt,
-            val_img_dir,
+            val_images,
             val_lbl_dir,
             conf_thresh=0.25,
             iou_thresh=0.45,

@@ -347,14 +347,22 @@ def standardize_dataset(
                     except FileExistsError:
                         pass
         else:
-            # Checksum verification for images in verify_only mode
+            # Full content SHA-256 checksum verification for all images in verify_only mode
             for im in src_img_files:
                 dst_im = dst_img_dir / im.name
                 if not dst_im.exists():
-                    raise FileNotFoundError(f"Citra tujuan tidak ditemukan: {dst_im}")
-                # Verify size parity first (instant), followed by sample sha256
+                    err = f"Citra tujuan tidak ditemukan: {dst_im}"
+                    split_audit["missing_images"].append(im.name)
+                    split_audit["checksum_mismatches"].append(err)
+                    raise FileNotFoundError(err)
                 if im.stat().st_size != dst_im.stat().st_size:
                     err = f"Image size mismatch for {im.name}: {im.stat().st_size} vs {dst_im.stat().st_size}"
+                    split_audit["checksum_mismatches"].append(err)
+                    raise ValueError(err)
+                src_sha = sha256_file(im)
+                dst_sha = sha256_file(dst_im)
+                if src_sha != dst_sha:
+                    err = f"Image content SHA-256 mismatch for {im.name}: src={src_sha} vs dst={dst_sha}"
                     split_audit["checksum_mismatches"].append(err)
                     raise ValueError(err)
 
