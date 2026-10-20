@@ -140,6 +140,11 @@ def parse_args():
         help="Perangkat GPU CUDA (default: '0')",
     )
     parser.add_argument(
+        "--pretrained-weights",
+        default="yolo11n.pt",
+        help="Path ke file bobot pretrained lokal YOLO11n (default: 'yolo11n.pt')",
+    )
+    parser.add_argument(
         "--skip-training-if-done",
         action="store_true",
         help="Lewati training fold jika weights, predictions.csv, dan metadata checksum cocok",
@@ -620,9 +625,10 @@ def train_and_predict_fold(
     last_weight_path = weights_dir / "last.pt"
     eval_weight_path = best_weight_path if args.checkpoint_selection_mode == "nested_inner_val" else last_weight_path
 
-    pretrained_weights_path = Path("yolo11n.pt")
+    pw_arg = getattr(args, "pretrained_weights", "yolo11n.pt")
+    pretrained_weights_path = Path(pw_arg).resolve()
     if not pretrained_weights_path.exists():
-        raise FileNotFoundError("Pretrained weights 'yolo11n.pt' not found in workspace!")
+        raise FileNotFoundError(f"Pretrained weights '{pretrained_weights_path}' not found! Dilarang keras mengunduh bobot secara dinamis.")
     pretrained_sha = compute_pretrained_weights_sha256(pretrained_weights_path)
 
     dataset_inv_sha = compute_dataset_inventory_fingerprint(
@@ -687,7 +693,7 @@ def train_and_predict_fold(
     print("=" * 80)
 
     t_start = time.time()
-    model = YOLO("yolo11n.pt")
+    model = YOLO(str(pretrained_weights_path))
 
     train_results = model.train(
         data=str(yaml_path),
@@ -955,7 +961,7 @@ def main():
     print(f"[OUTPUT] Tersimpan: {nested_assign_path}")
 
     # Path integrity verification across generated splits
-    is_standardized = bool(args.data_yaml and "standardized" in str(args.data_yaml).lower())
+    is_standardized = bool(args.data_yaml and any(k in str(args.data_yaml).lower() for k in ("standardized", "runtime-mirror", "mirror")))
     for f_id in range(1, 5):
         spec = nested_specs[f_id]
         for check_key in ["train_txt", "val_txt", "holdout_txt"]:

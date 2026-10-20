@@ -1,0 +1,33 @@
+{
+  "audit_timestamp": "2026-10-20T07:00:20",
+  "audit_stage": "Stage 8.2 Clean Difficulty Manifest Audit",
+  "manifest_path": "stage_8_2_difficulty_clean_20261020/train_image_difficulty_manifest.csv",
+  "manifest_sha256": "4eb899772df8cb253ce3459e18e715202fb7f0b8f4e9c13c25777c9c753a6876",
+  "provenance_path": "stage_8_2_difficulty_clean_20261020/train_image_difficulty_manifest.provenance.json",
+  "sanity_gate_report_path": "stage_8_2_difficulty_clean_20261020/difficulty_sanity_gate_report.json",
+  "oof_source_directory": "stage_8_1_oof_clean_run_20261020",
+  "oof_predictions_raw_sha256": "0e1a89053a4dd1ffc4078b5e5365a777cbef74a991d222072c9eaebf2fbc02b2",
+  "provenance_raw_oof_match": true,
+  "data_yaml_path": "d:/UNDIP/SKRIPSI/cassava-v7-runtime-mirror/data.yaml",
+  "dataset_inventory_fingerprint": "af7dfbc43071fe6af6457d74823b7a46d5424074bb2de8216c55b71215d7c872",
+  "metrics": {
+    "total_images": 8980,
+    "unique_images": 8980,
+    "total_gt_objects": 34219,
+    "gate_status": "PASS",
+    "hard_image_ratio": 0.10612472160356347,
+    "hard_image_count_ge_0_8": 953,
+    "dynamic_range_p90_p10": 0.6105855999999998,
+    "effective_sample_size_ess": 8198.778066550507,
+    "ess_ratio": 0.9130042390368048,
+    "clipping_rate": 0.09282700421940929
+  },
+  "taxonomy_breakdown": {
+    "True_Positive": 26703,
+    "Classification_Confusion": 4985,
+    "Localization_Error": 1184,
+    "False_Negative_Missed": 881,
+    "Localization_and_Class_Error": 466
+  },
+  "readiness_for_stage_8_4": true
+}

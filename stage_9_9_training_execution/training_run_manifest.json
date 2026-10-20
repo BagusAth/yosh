@@ -1,0 +1,219 @@
+{
+  "schema_version": "1.0",
+  "pipeline_title": "YOLO11n Cassava Disease Detection with Error-Driven Adaptive Optimization",
+  "timestamp": "2026-10-20T10:24:00",
+  "git_branch": "stage-9-9-clean-gpu-training-execution",
+  "git_baseline_commit": "4058024d44c0e3390b6c89278f49221bc181abfe",
+  "environment": {
+    "os": "Windows 11",
+    "python_version": "3.13.7",
+    "torch_version": "2.9.1+cu130",
+    "ultralytics_version": "8.3.235",
+    "device": "NVIDIA GeForce RTX 4060 Laptop GPU (8188 MiB VRAM)"
+  },
+  "dataset": {
+    "source_canonical_yaml": "cassava-v7-standardized/data.yaml",
+    "source_yaml_sha256": "e40454b874596ad6f0275ae489a44eca51b2350540c16e50e4b489f479e9ed84",
+    "runtime_mirror_yaml": "cassava-v7-runtime-mirror/data.yaml",
+    "runtime_yaml_sha256": "019ade73a896521b80ef48e38d0e725db4eed98c684907068f8a17318f845a30",
+    "runtime_inventory_fingerprint": "af7dfbc43071fe6af6457d74823b7a46d5424074bb2de8216c55b71215d7c872",
+    "train_images": 8980,
+    "val_images": 2567,
+    "test_images_locked": 1282,
+    "zero_mutation_verified": true
+  },
+  "pretrained_weights": {
+    "path": "D:/UNDIP/SKRIPSI/yolo11n.pt",
+    "sha256": "0ebbc80d4a7680d14987a577cd21342b65ecfd94632bd9a8da63ae6417644ee1"
+  },
+  "stage_8_1_oof_profiling": {
+    "output_dir": "stage_8_1_oof_clean_run_20261020",
+    "folds": 4,
+    "epochs_per_fold": 12,
+    "total_evaluated_images": 8980,
+    "leakage_percentage": 0.0,
+    "raw_oof_predictions_csv": "stage_8_1_oof_clean_run_20261020/oof_predictions_raw.csv",
+    "raw_oof_sha256": "0e1a89053a4dd1ffc4078b5e5365a777cbef74a991d222072c9eaebf2fbc02b2",
+    "safety_gate_passed": true
+  },
+  "stage_8_2_difficulty_manifest": {
+    "output_dir": "stage_8_2_difficulty_clean_20261020",
+    "manifest_csv": "stage_8_2_difficulty_clean_20261020/train_image_difficulty_manifest.csv",
+    "manifest_sha256": "4eb899772df8cb253ce3459e18e715202fb7f0b8f4e9c13c25777c9c753a6876",
+    "provenance_json": "stage_8_2_difficulty_clean_20261020/train_image_difficulty_manifest.provenance.json",
+    "sanity_gate_report": "stage_8_2_difficulty_clean_20261020/difficulty_sanity_gate_report.json",
+    "sanity_gate_status": "PASS",
+    "hard_image_ratio": 0.10612472160356347,
+    "ess_ratio": 0.9130042390368048,
+    "dynamic_range_p90_p10": 0.6105855999999998
+  },
+  "stage_8_4_ablation_experiments": {
+    "output_dir": "stage_8_ablation_clean_20261020",
+    "common_hyperparameters": {
+      "epochs": 30,
+      "patience": 10,
+      "batch": 16,
+      "imgsz": 640,
+      "seed": 42,
+      "workers": 2,
+      "amp": true,
+      "plots": false,
+      "close_mosaic": 6,
+      "optimizer": "auto",
+      "aug_prob": 0.5
+    },
+    "experiments": {
+      "EXP-0": {
+        "name": "exp_0_baseline",
+        "title": "Baseline (Re-run)",
+        "duration_minutes": 42.13,
+        "metrics_validation": {
+          "precision": 0.4037,
+          "recall": 0.4119,
+          "mAP50": 0.3583,
+          "mAP50_95": 0.262,
+          "per_class_ap50": {
+            "CBB": 0.33329010671564757,
+            "CBSD": 0.3918253223097476,
+            "CGM": 0.38481881351559,
+            "CMD": 0.3214391886814439,
+            "HEALTHY": 0.36015263579468115
+          },
+          "per_class_map50_95": {
+            "CBB": 0.23912148790372628,
+            "CBSD": 0.2986448807926231,
+            "CGM": 0.27062121831989605,
+            "CMD": 0.2065121170013952,
+            "HEALTHY": 0.29494370389608776
+          },
+          "per_class_mAP50": {
+            "CBB": 0.33329010671564757,
+            "CBSD": 0.3918253223097476,
+            "CGM": 0.38481881351559,
+            "CMD": 0.3214391886814439,
+            "HEALTHY": 0.36015263579468115
+          }
+        },
+        "best_weight_sha256": "eeb5e7c772dbee094677de1b3b3d5c3bfd0fc1824aa0d18588321247bbb94f07"
+      },
+      "EXP-1": {
+        "name": "exp_1_adaptive_sampling",
+        "title": "Mixture Adaptive Sampling",
+        "duration_minutes": 47.91,
+        "metrics_validation": {
+          "precision": 0.3941,
+          "recall": 0.4237,
+          "mAP50": 0.3453,
+          "mAP50_95": 0.2523,
+          "per_class_ap50": {
+            "CBB": 0.3123683013762739,
+            "CBSD": 0.3910090066855607,
+            "CGM": 0.36411997008174296,
+            "CMD": 0.30583367188657673,
+            "HEALTHY": 0.35295012595434827
+          },
+          "per_class_map50_95": {
+            "CBB": 0.22285935067543475,
+            "CBSD": 0.29713656076628914,
+            "CGM": 0.2552712078332238,
+            "CMD": 0.19640702593501688,
+            "HEALTHY": 0.28963270308485645
+          },
+          "per_class_mAP50": {
+            "CBB": 0.3123683013762739,
+            "CBSD": 0.3910090066855607,
+            "CGM": 0.36411997008174296,
+            "CMD": 0.30583367188657673,
+            "HEALTHY": 0.35295012595434827
+          }
+        },
+        "best_weight_sha256": "5e724c367074cd18ca5b89b8c7c8a83eb50e67050139810a26b7e3ebbefb2192"
+      },
+      "EXP-2": {
+        "name": "exp_2_targeted_aug",
+        "title": "Targeted Context Augmentation",
+        "duration_minutes": 48.02,
+        "metrics_validation": {
+          "precision": 0.4087,
+          "recall": 0.4267,
+          "mAP50": 0.3727,
+          "mAP50_95": 0.2726,
+          "per_class_ap50": {
+            "CBB": 0.3564730673021941,
+            "CBSD": 0.420770583262841,
+            "CGM": 0.3988782827529385,
+            "CMD": 0.3228694737884104,
+            "HEALTHY": 0.36457918290115177
+          },
+          "per_class_map50_95": {
+            "CBB": 0.25236195139087947,
+            "CBSD": 0.32570856467130227,
+            "CGM": 0.27487546533373775,
+            "CMD": 0.2081256392562371,
+            "HEALTHY": 0.3020229860871145
+          },
+          "per_class_mAP50": {
+            "CBB": 0.3564730673021941,
+            "CBSD": 0.420770583262841,
+            "CGM": 0.3988782827529385,
+            "CMD": 0.3228694737884104,
+            "HEALTHY": 0.36457918290115177
+          }
+        },
+        "best_weight_sha256": "5fadb915ff2875d69fd6eb390f2691dca14c0f3a2ec2a3abbb9c627cb362ee9d"
+      },
+      "EXP-3": {
+        "name": "exp_3_full_proposed",
+        "title": "Full Proposed (Sampling + Augmentation)",
+        "duration_minutes": 43.16,
+        "metrics_validation": {
+          "precision": 0.394,
+          "recall": 0.4264,
+          "mAP50": 0.3498,
+          "mAP50_95": 0.2555,
+          "per_class_ap50": {
+            "CBB": 0.32452789280040667,
+            "CBSD": 0.37691173642022585,
+            "CGM": 0.3814129605535229,
+            "CMD": 0.3194038338087178,
+            "HEALTHY": 0.3465128645787177
+          },
+          "per_class_map50_95": {
+            "CBB": 0.2329806760999979,
+            "CBSD": 0.2855397748246078,
+            "CGM": 0.26780003071596453,
+            "CMD": 0.2055359721743825,
+            "HEALTHY": 0.28558377587754624
+          },
+          "per_class_mAP50": {
+            "CBB": 0.32452789280040667,
+            "CBSD": 0.37691173642022585,
+            "CGM": 0.3814129605535229,
+            "CMD": 0.3194038338087178,
+            "HEALTHY": 0.3465128645787177
+          }
+        },
+        "best_weight_sha256": "26fafbe9818f64991b0eb586019fa869ef0cce45acd41e94c53fd5a8c65294c7"
+      }
+    }
+  },
+  "stage_8_5_model_selection": {
+    "ablation_source_dir": "stage_8_ablation_clean_20261020",
+    "validation_set_count": 2567,
+    "selection_decision_rule": "Primary: Max validation mAP@50-95; Tie-Break 1: Max Recall_Small; Tie-Break 2: Max mAP@50; Tie-Break 3: Min Missed FN",
+    "winning_candidate": "EXP-2",
+    "winning_title": "Targeted Context Augmentation",
+    "winning_metrics": {
+      "mAP50": 0.3727,
+      "mAP50_95": 0.2726,
+      "precision": 0.4087,
+      "recall": 0.4267,
+      "fn_missed": 4768,
+      "loc_error": 682,
+      "cls_confusion": 263
+    },
+    "best_checkpoint_path": "stage_8_ablation_clean_20261020/exp_2_targeted_aug/weights/best.pt",
+    "best_checkpoint_sha256": "5fadb915ff2875d69fd6eb390f2691dca14c0f3a2ec2a3abbb9c627cb362ee9d",
+    "report_path": "stage_8_ablation_clean_20261020/STAGE_8_5_MODEL_SELECTION_REPORT.md"
+  }
+}

@@ -1,0 +1,9 @@
+=== STAGE 9.9 GPU SMOKE TEST ===
+PyTorch Version  : 2.9.1+cu130
+CUDA Available   : True
+Device Name      : NVIDIA GeForce RTX 4060 Laptop GPU
+Current Device   : 0
+Base Model       : D:\UNDIP\SKRIPSI\yolo11n.pt
+Training Finished. best.pt exists: True
+best.pt size: 5411738 bytes
+GPU SMOKE TEST RESULT: 100% SUCCESS ON CUDA:0

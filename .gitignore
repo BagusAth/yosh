@@ -72,3 +72,8 @@ weights/
 # ==============================================================================
 runs/
 stage_8_1_oof/
+stage_8_1_oof_clean*/
+stage_8_2_difficulty_clean*/
+stage_8_ablation_clean*/
+.venv-cuda/
+

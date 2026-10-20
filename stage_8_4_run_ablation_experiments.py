@@ -831,6 +831,7 @@ def run_single_experiment(
             imgsz=imgsz,
             device=device,
             plots=False,
+            workers=workers,
         )
         canonical_m = extract_canonical_metrics(val_metrics, CLASS_NAMES)
         del eval_model

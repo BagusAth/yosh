@@ -919,13 +919,14 @@ class MatchingResult(dict):
 
 
 def greedy_bipartite_matching(
-    gt_objects: Any,
+    gt_objects: Any = None,
     pred_boxes: Any = None,
     pred_classes: Any = None,
     pred_scores: Any = None,
     iou_match_thresh: float | None = None,
     tp_iou_thresh: float = 0.50,
     iou_thresh: float | None = None,
+    gt_boxes: Any = None,
     **kwargs,
 ) -> MatchingResult:
     """
@@ -935,6 +936,9 @@ def greedy_bipartite_matching(
     - res["taxonomy_counts"], res["tp_by_size"], etc.
     """
     thresh = iou_thresh if iou_thresh is not None else (iou_match_thresh if iou_match_thresh is not None else 0.10)
+
+    if gt_objects is None:
+        gt_objects = gt_boxes if gt_boxes is not None else kwargs.get("gt_boxes", [])
 
     # Normalize gt_objects
     normalized_gts = []

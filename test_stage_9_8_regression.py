@@ -705,6 +705,17 @@ class TestGroupEDataLoadingAndAugmentation(unittest.TestCase):
             resolve_pretrained_weights("non_existent_weights_v999.pt")
         self.assertIn("dilarang keras", str(ctx.exception).lower())
 
+    def test_stage_8_1_pretrained_weights_argument_and_fail_closed(self):
+        # Stage 8.1 harus mendukung --pretrained-weights dan menolak file nonexistent
+        import stage_8_1_group_oof_profiling as s81
+        orig_argv = sys.argv
+        sys.argv = ["stage_8_1_group_oof_profiling.py", "--pretrained-weights", "nonexistent_model.pt"]
+        try:
+            parsed = s81.parse_args()
+            self.assertEqual(parsed.pretrained_weights, "nonexistent_model.pt")
+        finally:
+            sys.argv = orig_argv
+
     def test_context_crop_target_imgsz_fallback(self):
         # Verifikasi fallback target_imgsz ke self.imgsz saat hyp.imgsz None
         from ultralytics.utils.instance import Instances
@@ -855,6 +866,20 @@ class TestGroupFOutputSafetyAndZeroMutation(unittest.TestCase):
         finally:
             shutil.rmtree(temp_dir, ignore_errors=True)
 
+    def test_stage_8_3_get_dataloader_no_invalid_device_kwargs(self):
+        """FINDING-9.9-01: Memastikan AdaptiveDetectionTrainer.get_dataloader tidak mengoper kwarg 'device' yang tidak didukung ke build_dataloader."""
+        from stage_8_3_adaptive_pipeline import AdaptiveDetectionTrainer
+        import inspect
+        from ultralytics.data.build import build_dataloader
+
+        sig = inspect.signature(build_dataloader)
+        self.assertNotIn("device", sig.parameters, "build_dataloader tidak boleh diasumsikan memiliki parameter 'device'")
+
+        # Verifikasi source get_dataloader tidak mengandung device=self.device
+        trainer_source = inspect.getsource(AdaptiveDetectionTrainer.get_dataloader)
+        self.assertNotIn("device=self.device", trainer_source, "AdaptiveDetectionTrainer.get_dataloader tidak boleh mengoper device=self.device ke build_dataloader")
+
 
 if __name__ == "__main__":
     unittest.main()
+

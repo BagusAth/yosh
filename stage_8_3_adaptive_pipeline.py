@@ -519,6 +519,9 @@ class AdaptiveDetectionTrainer(DetectionTrainer):
             )
         else:
             shuffle = (mode == "train")
+            if getattr(dataset, "rect", False) and shuffle:
+                LOGGER.warning("'rect=True' is incompatible with DataLoader shuffle, setting shuffle=False")
+                shuffle = False
             return build_dataloader(
                 dataset,
                 batch=batch_size,
@@ -526,7 +529,6 @@ class AdaptiveDetectionTrainer(DetectionTrainer):
                 shuffle=shuffle,
                 rank=rank,
                 drop_last=self.args.compile and mode == "train",
-                device=self.device,
             )
 
 

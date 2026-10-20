@@ -1,0 +1,46 @@
+{
+  "stage": "8.1",
+  "status": "PASSED_100_PERCENT",
+  "output_dir": "stage_8_1_oof_clean_run_20261020",
+  "raw_oof_predictions_sha256": "0e1a89053a4dd1ffc4078b5e5365a777cbef74a991d222072c9eaebf2fbc02b2",
+  "total_evaluated_images": 8980,
+  "zero_leakage_verified": true,
+  "folds": {
+    "fold_1": {
+      "best_pt_exists": true,
+      "best_pt_sha256": "e170db48e2c44f76ed0dd053fe70a48462ce804269d9fd29229b802f138eb8c3",
+      "predictions_csv_exists": true,
+      "predictions_sha256": "ce698fd940745235a31d205f536703d825a9891504d2368b5cd9fe277ad3025e",
+      "holdout_image_count": null,
+      "total_predictions": null,
+      "training_duration_seconds": null
+    },
+    "fold_2": {
+      "best_pt_exists": true,
+      "best_pt_sha256": "8d9b6fb652ee0c2e2d60ec1afd5af9a5b084cbb71d5aa37773f124814aac7063",
+      "predictions_csv_exists": true,
+      "predictions_sha256": "2710347a2084fbcdbaec6b7e08aeafaa3f75f0a0bce60cf5494a6a2f5a9b60ee",
+      "holdout_image_count": null,
+      "total_predictions": null,
+      "training_duration_seconds": null
+    },
+    "fold_3": {
+      "best_pt_exists": true,
+      "best_pt_sha256": "04e980e79a4df80ccf1a37f70baa836ac3691273c03187d460a15999cccc2458",
+      "predictions_csv_exists": true,
+      "predictions_sha256": "fb0d5684fb7f8804467b46ae228808a8caaf535db8477857ba025ea6f40ca867",
+      "holdout_image_count": null,
+      "total_predictions": null,
+      "training_duration_seconds": null
+    },
+    "fold_4": {
+      "best_pt_exists": true,
+      "best_pt_sha256": "abb10fa69e1c6067087b0ddaea7cc6bba162d1c87236580ead04a1bbd6a9f695",
+      "predictions_csv_exists": true,
+      "predictions_sha256": "37d818a7021924cf7850eb82092f68e9b3f28b82a9b788793c27f5ea945dbcb3",
+      "holdout_image_count": null,
+      "total_predictions": null,
+      "training_duration_seconds": null
+    }
+  }
+}

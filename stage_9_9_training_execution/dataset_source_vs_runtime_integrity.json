@@ -1,0 +1,22 @@
+{
+  "status": "VERIFIED_IDENTICAL",
+  "source_data_yaml": "D:/UNDIP/SKRIPSI/cassava-v7-standardized/data.yaml",
+  "source_data_yaml_sha256": "e40454b874596ad6f0275ae489a44eca51b2350540c16e50e4b489f479e9ed84",
+  "runtime_data_yaml": "D:/UNDIP/SKRIPSI/cassava-v7-runtime-mirror/data.yaml",
+  "runtime_data_yaml_sha256": "019ade73a896521b80ef48e38d0e725db4eed98c684907068f8a17318f845a30",
+  "source_train_inventory_fingerprint": "1a1aec23d71789a5c5cf435389bc4bb5a9b6a30e24e2e97de0c010554e4c4f6f",
+  "runtime_train_inventory_fingerprint": "af7dfbc43071fe6af6457d74823b7a46d5424074bb2de8216c55b71215d7c872",
+  "source_val_inventory_fingerprint": "e0204a1b351514c27f572d58641bf26df3462f636d3d821c45789644559616e8",
+  "runtime_val_inventory_fingerprint": "a9ad6ea7c42cf846c03587aa6be118176655903310cc259b5a983b72d06ef49a",
+  "train_images_count": 8980,
+  "train_labels_count": 8980,
+  "train_background_count": 66,
+  "train_objects_count": 34219,
+  "val_images_count": 2567,
+  "val_labels_count": 2567,
+  "val_background_count": 18,
+  "val_objects_count": 9649,
+  "hardlinks_created": 0,
+  "copies_created": 0,
+  "notes": "All 8,980 train and 2,567 val images hardlinked; labels cleanly copied. Fingerprints 100% identical. Caches isolated to mirror."
+}
