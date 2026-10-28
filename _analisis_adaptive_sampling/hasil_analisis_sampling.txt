@@ -1,0 +1,68 @@
+N 8980 sum p 1.0000000000065
+N*p quantiles min/p10/p50/p90/max: [0.322 0.567 0.983 1.404 1.671] max/min 5.2
+ESS ratio 0.913
+mass top10%: 0.150  top25%: 0.350
+hard imgs 953 mass 0.159 (uniform would be 0.106 )
+Unique coverage/epoch: weighted-repl 0.614 | uniform-repl 0.632 | shuffle(EXP-0) 1.000
+Images never drawn in 30 epochs (expected): 0.0
+Expected exposures over 30 ep (EXP-1): p10 17.0 p50 29.5 p90 42.1 max 50.1 | EXP-0: 30 each
+easiest 25% imgs mean exposures 18.0; hardest 10% 44.9
+has_gt=0 images: 66 mean D 0.497
+
+== Class distribution (objects) uniform vs EXP-1 effective
+            uniform%  EXP1_eff%  ratio
+class_name                            
+CBB             7.41       7.57   1.02
+CBSD            6.74       6.73   1.00
+CGM            19.72      19.47   0.99
+CMD            27.49      27.62   1.00
+HEALTHY        38.64      38.61   1.00
+
+== Size
+          uniform%  EXP1_eff%  ratio
+size_cat                            
+Large        69.29      65.42   0.94
+Medium       27.35      30.36   1.11
+Small         3.36       4.22   1.26
+
+== Taxonomy
+                              uniform%  EXP1_eff%  ratio
+taxonomy                                                
+Classification_Confusion         14.57      17.95   1.23
+False_Negative_Missed             2.57       3.29   1.28
+Localization_Error                3.46       4.00   1.16
+Localization_and_Class_Error      1.36       1.90   1.40
+True_Positive                    78.04      72.86   0.93
+
+== Mean D_i by class
+             mean  median  count
+class_name                      
+CBB         0.525   0.475   2534
+CBSD        0.525   0.475   2307
+CGM         0.479   0.458   6747
+CMD         0.484   0.465   9408
+HEALTHY     0.457   0.434  13223
+
+== Mean D_i by taxonomy
+                               mean  count
+taxonomy                                  
+Classification_Confusion      0.776   4985
+False_Negative_Missed         0.971    881
+Localization_Error            0.756   1184
+Localization_and_Class_Error  0.993    466
+True_Positive                 0.386  26703
+Spearman D_image vs #objects: 0.401
+mean #obj: all 3.81 | hard 4.73 | easy25 1.68
+            n  meanD   mass  mass_ratio
+maj                                    
+BG         66  0.497  0.007       0.981
+CBB      1095  0.515  0.123       1.007
+CBSD     1207  0.503  0.133       0.989
+CGM      2208  0.466  0.231       0.940
+CMD      2198  0.522  0.249       1.016
+HEALTHY  2206  0.545  0.257       1.047
+
+mapped to group: 8976 groups 5544
+group size dist: {1: 2112, 2: 3432}
+mean within-group std D: 0.039 | overall std D: 0.225
+D correlation between members of same group (pearson): 0.895 (n=3432)

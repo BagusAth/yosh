@@ -1,0 +1,36 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20261028205118
+Username: LAPTOP-P3SG0UKE\LENOVO
+RunAs User: LAPTOP-P3SG0UKE\LENOVO
+Configuration Name: 
+Machine: LAPTOP-P3SG0UKE (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Bypass -File .\jalankan_malam_1_lanjut_eleak.ps1
+Process ID: 556
+PSVersion: 5.1.26100.9711
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9711
+BuildVersion: 10.0.26100.9711
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+
+=== E-LEAK: latih baseline pada split acak per citra (GPU) (20:51) ===
+
+
+=== E-LEAK: evaluasi model split acak (21:36) ===
+
+
+=== E-LEAK: evaluasi model split per grup (EXP-0 seed 42) (21:36) ===
+
+
+=== E-LEAK: laporan selisih (21:37) ===
+
+
+SELESAI. Log: logs_v2\malam_1_lanjut_eleak_20261028_2051.log
+**********************
+Windows PowerShell transcript end
+End time: 20261028213732
+**********************

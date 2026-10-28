@@ -1,0 +1,65 @@
+rows 34219 nan 0
+
+Candidates per GT with IoU>=0.10: median 16, mean 17.5
+Matched confidence by taxonomy (median / share conf<0.05):
+                              median  lt005
+taxonomy                                   
+Classification_Confusion       0.040  0.535
+Localization_Error             0.004  0.892
+Localization_and_Class_Error   0.003  0.910
+True_Positive                  0.150  0.341
+
+== Pipeline taxonomy (rows) vs real status @conf>=0.25, IoU>=0.5 (row %)
+real                          1_Detected_OK  ...      n
+taxonomy                                     ...       
+Classification_Confusion                7.3  ...   4985
+False_Negative_Missed                   0.0  ...    881
+Localization_Error                      1.6  ...   1184
+Localization_and_Class_Error            0.0  ...    466
+True_Positive                          45.0  ...  26703
+
+[5 rows x 5 columns]
+
+Classification_Confusion n=4985: correct-class box IoU>=.5 exists with HIGHER conf than matched wrong box: 28.9%
+  of which the correct box has conf>=0.25: 7.3%
+TP n=26703: matched conf < best same-class conf (D inflated by low-conf duplicate): 58.4%; median matched 0.150 vs median best 0.205
+
+Objects actually detected OK: 12388 (36.2%); of these with D_i>=0.70: 2.1%; mean D_i 0.282
+Real status share overall:
+real
+1_Detected_OK      36.2
+2_Confused_real     3.2
+3_Weak_correct     25.8
+4_Not_found        34.8
+Name: proportion, dtype: float64
+
+In HARD images (D_image>=0.8): objects n=4508, real status:
+real
+1_Detected_OK       5.2
+2_Confused_real     6.0
+3_Weak_correct     12.4
+4_Not_found        76.4
+Name: proportion, dtype: float64
+
+Real confusion pairs (GT -> predicted), top:
+class_name  best_any_cls
+CMD         CGM             173
+CGM         CMD             130
+CBSD        CBB             112
+CMD         CBSD             91
+HEALTHY     CGM              84
+CGM         HEALTHY          75
+CBB         CBSD             61
+CBSD        HEALTHY          58
+            CGM              49
+CGM         CBSD             48
+dtype: int64
+
+Mean D_i by real status:
+                  mean  count
+real                         
+1_Detected_OK    0.282  12388
+2_Confused_real  0.617   1098
+3_Weak_correct   0.470   8823
+4_Not_found      0.677  11910
+corr(D_i, 1-best_same_conf): 0.756 ; corr(D_i, 1-matched_conf): 0.741

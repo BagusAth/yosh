@@ -1,0 +1,22 @@
+{
+  "provenance_schema_version": "2.0",
+  "manifest_file": "train_image_difficulty_manifest.csv",
+  "manifest_csv_sha256": "bdc1362d95eeea5bedc3381543ede0e93402d624d839e7a0a472a8fb5296898b",
+  "dataset_inventory_fingerprint": "af7dfbc43071fe6af6457d74823b7a46d5424074bb2de8216c55b71215d7c872",
+  "data_yaml_path": "D:\\UNDIP\\SKRIPSI\\cassava-v7-runtime-mirror\\data.yaml",
+  "data_yaml_sha256": "019ade73a896521b80ef48e38d0e725db4eed98c684907068f8a17318f845a30",
+  "raw_oof_path": "D:\\UNDIP\\SKRIPSI\\stage_8_1_oof_clean_run_20261020\\oof_predictions_raw.csv",
+  "raw_oof_sha256": "0e1a89053a4dd1ffc4078b5e5365a777cbef74a991d222072c9eaebf2fbc02b2",
+  "oof_predictions_raw_sha256": "0e1a89053a4dd1ffc4078b5e5365a777cbef74a991d222072c9eaebf2fbc02b2",
+  "clean_oof_run_id": "D:\\UNDIP\\SKRIPSI\\stage_8_1_oof_clean_run_20261020",
+  "iou_match_thresh": 0.1,
+  "confusion_penalty": 0.35,
+  "mixture_lambda": 0.7,
+  "script_sha256": "64514b3ccf5a07a9fe92229af1de97389b2936c77b2ccbde2d69d11a4b685d5d",
+  "evaluator_version": "Fase1-Matching-v2",
+  "matching_version": "v2",
+  "tau_conf": 0.25,
+  "image_count": 8980,
+  "unique_image_count": 8980,
+  "timestamp": "2026-10-28T19:19:10.644124"
+}

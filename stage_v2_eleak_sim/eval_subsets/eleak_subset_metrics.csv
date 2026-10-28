@@ -1,0 +1,7 @@
+tag,subset,data_yaml,weights,n_images,precision,recall,map50,map50_95,ap50_95_CBB,ap50_95_CBSD,ap50_95_CGM,ap50_95_CMD,ap50_95_HEALTHY
+sim,val_all,D:\UNDIP\SKRIPSI\eleak_sim_rq1\data_eleak_sim.yaml,D:/UNDIP/SKRIPSI/stage_v2_eleak_sim/exp_0_baseline/weights/best.pt,2567,0.464202,0.463508,0.436866,0.334587,0.274313,0.362405,0.348112,0.295829,0.392274
+sim,val_leaked,D:\UNDIP\SKRIPSI\eleak_sim_rq1\data_eleak_sim_val_leaked.yaml,D:/UNDIP/SKRIPSI/stage_v2_eleak_sim/exp_0_baseline/weights/best.pt,1554,0.480647,0.494547,0.474514,0.383539,0.383539,0.441395,0.362097,0.304620,0.426046
+sim,val_twinval,D:\UNDIP\SKRIPSI\eleak_sim_rq1\data_eleak_sim_val_twinval.yaml,D:/UNDIP/SKRIPSI/stage_v2_eleak_sim/exp_0_baseline/weights/best.pt,432,0.496406,0.474328,0.473381,0.385866,0.385866,0.607497,0.311310,0.275351,0.349306
+sim,val_single,D:\UNDIP\SKRIPSI\eleak_sim_rq1\data_eleak_sim_val_single.yaml,D:/UNDIP/SKRIPSI/stage_v2_eleak_sim/exp_0_baseline/weights/best.pt,581,0.475043,0.460041,0.440823,0.324260,0.306684,0.341837,0.324260,0.324260,0.324260
+group,val_all,D:\UNDIP\SKRIPSI\cassava-v7-runtime-mirror\data.yaml,D:/UNDIP/SKRIPSI/stage_8_ablation_clean_20261020/exp_0_baseline/weights/best.pt,2567,0.403674,0.411944,0.358305,0.261969,0.239121,0.298645,0.270621,0.206512,0.294944
+group,val_twin,D:\UNDIP\SKRIPSI\eleak_sim_rq1\data_clean_val_twin.yaml,D:/UNDIP/SKRIPSI/stage_8_ablation_clean_20261020/exp_0_baseline/weights/best.pt,1972,0.397082,0.406823,0.352421,0.264426,0.264426,0.262992,0.278223,0.207857,0.308635

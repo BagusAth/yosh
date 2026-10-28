@@ -1,0 +1,6 @@
+path: D:/UNDIP/SKRIPSI/eleak_sim_rq1
+train: sim_train.txt
+val: clean_val_twin.txt
+
+nc: 5
+names: ['CBB', 'CBSD', 'CGM', 'CMD', 'HEALTHY']

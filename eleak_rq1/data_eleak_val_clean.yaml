@@ -1,0 +1,6 @@
+path: D:/UNDIP/SKRIPSI/eleak_rq1
+train: eleak_train.txt
+val: eleak_val_clean.txt
+
+nc: 5
+names: ['CBB', 'CBSD', 'CGM', 'CMD', 'HEALTHY']

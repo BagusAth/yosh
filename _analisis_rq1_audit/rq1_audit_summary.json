@@ -1,0 +1,37 @@
+{
+  "created": "2026-10-28T10:25:34",
+  "original_split_images": {
+    "train": 9818,
+    "valid": 1506,
+    "test": 1505
+  },
+  "filename_based": {
+    "base_groups": 5733,
+    "cross_split_groups": 661,
+    "valid_images_sharing_name_with_train": 969,
+    "share_of_valid": 0.6434,
+    "archived_audit_cross_split_groups": 661,
+    "archived_cross_groups_generic_name": 661,
+    "archived_cross_groups_label_conflict": 661,
+    "archived_cross_groups_with_phash_evidence": 34,
+    "archived_visual_validation_counts": {
+      "AUGMENTED_DERIVATIVE_PROVENANCE": 627,
+      "NO_STRONG_PHASH_MATCH": 26,
+      "MODERATE_VISUAL_SIMILARITY": 2,
+      "STRONG_VISUAL_SIMILARITY": 6
+    }
+  },
+  "content_based": {
+    "clean_groups": 7920,
+    "clean_groups_spanning_original_splits": 0,
+    "groups_by_original_split_and_size": {
+      "test|1 citra": 1505,
+      "train|2 citra": 4909,
+      "valid|1 citra": 1506
+    },
+    "cross_base_exact_duplicates": 0,
+    "cross_base_exact_duplicates_cross_split": 0,
+    "cross_base_visual_candidates": 4,
+    "cross_base_visual_candidates_cross_split": 0
+  }
+}

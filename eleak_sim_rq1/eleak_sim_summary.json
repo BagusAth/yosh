@@ -1,0 +1,20 @@
+{
+  "created": "2026-10-28T10:27:14",
+  "seed": 42,
+  "test_split_untouched": true,
+  "pool_images": 11547,
+  "pool_groups": 7127,
+  "pool_groups_2_images": 4420,
+  "sim_train_images": 8980,
+  "sim_val_images": 2567,
+  "sim_val_leaked": 1554,
+  "sim_val_twinval": 432,
+  "sim_val_single": 581,
+  "sim_val_leaked_share": 0.6054,
+  "clean_split_sizes": {
+    "train": 8980,
+    "valid": 2567
+  },
+  "clean_val_twin_images": 1972,
+  "clean_val_twin_all_members_in_val": true
+}

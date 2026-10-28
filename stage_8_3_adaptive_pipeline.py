@@ -22,7 +22,11 @@ Kontrak Metodologis:
    - Mengambil probabilitas terkalibrasi P(k) = (1 - lambda)*(1/N) + lambda*(D_k / sum(D)) (lambda = 0.70).
    - Membangun WeightedRandomSampler dengan penggantian (with replacement).
    - Verifikasi ketat: seluruh bobot bernilai finite, non-negatif, non-zero floor, dan sum(P) = 1.0 +- 1e-4.
-3. AdaptiveDetectionTrainer:
+3. Fase 1 (Pakem v1.2):
+   - EXP-0R: WeightedRandomSampler dengan bobot SERAGAM dan replacement (kontrol mekanisme sampling).
+   - Log crop per worker (crop_logs/crop_events_pid*.csv) berisi ukuran jendela dan faktor zoom,
+     dipetakan ke epoch lewat crop_logs/epoch_marks.csv.
+4. AdaptiveDetectionTrainer:
    - Subclass resmi Ultralytics DetectionTrainer untuk EXP-0 s.d. EXP-3.
 """
 
@@ -108,6 +112,24 @@ def load_difficulty_manifest(manifest_path: str | Path) -> dict[str, dict]:
     return records
 
 
+CROP_LOG_FIELDS = ["time", "image_id", "event", "crop_w", "crop_h", "zoom_x", "zoom_y", "n_boxes_kept"]
+
+
+def _mark_epoch_start(trainer) -> None:
+    """Callback Ultralytics: menandai awal epoch agar log crop per worker bisa dipetakan ke epoch."""
+    try:
+        log_dir = Path(trainer.save_dir) / "crop_logs"
+        log_dir.mkdir(parents=True, exist_ok=True)
+        fpath = log_dir / "epoch_marks.csv"
+        new_file = not fpath.exists()
+        with open(fpath, "a", newline="", encoding="utf-8") as f:
+            if new_file:
+                f.write("epoch,time\n")
+            f.write(f"{int(getattr(trainer, 'epoch', -1)) + 1},{time.time():.3f}\n")
+    except OSError:
+        pass
+
+
 class AdaptiveYOLODataset(YOLODataset):
     """
     YOLODataset kustom dengan kemampuan On-the-Fly Targeted Context Augmentation
@@ -122,10 +144,12 @@ class AdaptiveYOLODataset(YOLODataset):
         aug_prob: float = 0.50,
         context_margin: float = 2.0,
         vis_thresh: float = 0.30,
+        crop_log_dir: str | Path | None = None,
         hyp: Any = DEFAULT_CFG,
         **kwargs,
     ):
         self.hyp = hyp
+        self.crop_log_dir = Path(crop_log_dir) if crop_log_dir else None
         self.enable_targeted_aug = enable_targeted_aug
         self.aug_prob = aug_prob
         self.context_margin = context_margin
@@ -218,6 +242,23 @@ class AdaptiveYOLODataset(YOLODataset):
                 f"menyimpang dari 1.0 melebihi batas toleransi 0.005! Manifest tidak valid."
             )
         return weights_tensor
+
+    def _log_crop_event(self, event: dict[str, Any]) -> None:
+        """Mencatat satu kejadian crop ke CSV per proses (aman untuk DataLoader multi-worker di Windows)."""
+        log_dir = getattr(self, "crop_log_dir", None)
+        if log_dir is None:
+            return
+        try:
+            log_dir.mkdir(parents=True, exist_ok=True)
+            fpath = log_dir / f"crop_events_pid{os.getpid()}.csv"
+            new_file = not fpath.exists()
+            with open(fpath, "a", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=CROP_LOG_FIELDS)
+                if new_file:
+                    writer.writeheader()
+                writer.writerow({k: event.get(k, "") for k in CROP_LOG_FIELDS})
+        except OSError:
+            pass
 
     @property
     def crop_attempts(self) -> int:
@@ -413,6 +454,16 @@ class AdaptiveYOLODataset(YOLODataset):
             out_label["resized_shape"] = (target_imgsz, target_imgsz)
             out_label["_is_context_cropped"] = True
             out_label.pop("ratio_pad", None)
+            self._log_crop_event({
+                "time": f"{time.time():.3f}",
+                "image_id": Path(str(label.get("im_file", ""))).name,
+                "event": "applied",
+                "crop_w": f"{x_max - x_min:.1f}",
+                "crop_h": f"{y_max - y_min:.1f}",
+                "zoom_x": f"{scale_x:.3f}",
+                "zoom_y": f"{scale_y:.3f}",
+                "n_boxes_kept": len(new_bboxes),
+            })
             self.crop_diagnostics["crops_applied"] += 1
             return out_label
 
@@ -432,6 +483,8 @@ class AdaptiveYOLODataset(YOLODataset):
             if tinfo.get("has_target_small", False) and random.random() < self.aug_prob:
                 self.crop_diagnostics["crop_attempts"] += 1
                 cropped_label = self.apply_context_crop(deepcopy(label), tinfo)
+                if not cropped_label.get("_is_context_cropped", False):
+                    self._log_crop_event({"time": f"{time.time():.3f}", "image_id": fname, "event": "skipped"})
                 if cropped_label.get("_is_context_cropped", False):
                     cropped_label.pop("_is_context_cropped", None)
                     cropped_label.pop("ratio_pad", None)
@@ -452,13 +505,17 @@ class AdaptiveDetectionTrainer(DetectionTrainer):
         enable_targeted_aug: bool = False,
         manifest_path: str | Path | None = "d:/UNDIP/SKRIPSI/stage_8_2_difficulty/train_image_difficulty_manifest.csv",
         aug_prob: float = 0.50,
+        enable_uniform_replacement: bool = False,
         **kwargs,
     ):
         self.enable_mixture_sampling = enable_mixture_sampling
+        self.enable_uniform_replacement = enable_uniform_replacement
         self.enable_targeted_aug = enable_targeted_aug
         self.manifest_path = manifest_path
         self.aug_prob = aug_prob
         super().__init__(*args, **kwargs)
+        if self.enable_targeted_aug:
+            self.add_callback("on_train_epoch_start", _mark_epoch_start)
 
     def build_dataset(self, img_path: str, mode: str = "train", batch: int | None = None):
         """Membangun dataset AdaptiveYOLODataset untuk mode train."""
@@ -482,6 +539,7 @@ class AdaptiveDetectionTrainer(DetectionTrainer):
                 manifest_path=self.manifest_path,
                 enable_targeted_aug=self.enable_targeted_aug,
                 aug_prob=self.aug_prob,
+                crop_log_dir=(Path(self.save_dir) / "crop_logs") if self.enable_targeted_aug else None,
             )
         else:
             return super().build_dataset(img_path, mode=mode, batch=batch)
@@ -499,15 +557,21 @@ class AdaptiveDetectionTrainer(DetectionTrainer):
         with torch_distributed_zero_first(rank):
             dataset = self.build_dataset(dataset_path, mode, batch_size)
 
-        if mode == "train" and self.enable_mixture_sampling:
-            weights = dataset.get_sampling_weights()
+        use_uniform_repl = bool(getattr(self, "enable_uniform_replacement", False))
+        if mode == "train" and (self.enable_mixture_sampling or use_uniform_repl):
+            if self.enable_mixture_sampling and use_uniform_repl:
+                raise ValueError("enable_mixture_sampling dan enable_uniform_replacement tidak boleh aktif bersamaan")
+            if use_uniform_repl:
+                weights = torch.full((len(dataset),), 1.0 / len(dataset), dtype=torch.float64)
+            else:
+                weights = dataset.get_sampling_weights()
             sampler = WeightedRandomSampler(
                 weights=weights,
                 num_samples=len(dataset),
                 replacement=True,
             )
             LOGGER.info(
-                f"[ADAPTIVE SAMPLER] Mengaktifkan Mixture WeightedRandomSampler (len={len(dataset):,}, replacement=True)"
+                f"[ADAPTIVE SAMPLER] Mengaktifkan {'Uniform' if use_uniform_repl else 'Mixture'} WeightedRandomSampler (len={len(dataset):,}, replacement=True)"
             )
             return InfiniteDataLoader(
                 dataset=dataset,

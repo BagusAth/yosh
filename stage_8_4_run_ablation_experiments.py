@@ -92,6 +92,17 @@ EXPERIMENT_SPECS = {
         "enable_targeted_aug": True,
         "description": "Menguji integrasi simultan sampling adaptif dan augmentasi konteks skala",
     },
+    4: {
+        "id": "EXP-0R",
+        "name": "exp_0r_uniform_replacement",
+        "title": "Uniform dengan Replacement (Kontrol)",
+        "sampling": "Uniform (1/N) dengan replacement",
+        "augmentation": "Standard YOLO11n",
+        "enable_mixture_sampling": False,
+        "enable_targeted_aug": False,
+        "enable_uniform_replacement": True,
+        "description": "Kontrol Pakem v1.2: memisahkan efek replacement dari efek pembobotan kesulitan (EXP-1 vs EXP-0R)",
+    },
 }
 
 
@@ -151,7 +162,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="Stage 8.4: Run Ablation Experiments (EXP-0 .. EXP-3) (Hardened Stage 9.8)")
     parser.add_argument(
         "--exp",
-        choices=["all", "0", "1", "2", "3"],
+        choices=["all", "0", "1", "2", "3", "4"],
         default="all",
         help="Eksperimen yang akan dijalankan: 'all' untuk 0-3 berurutan, atau pilih 0, 1, 2, 3 (default: 'all')",
     )
@@ -463,7 +474,7 @@ def build_experiment_run_identity(
     p_manifest = Path(manifest_path) if manifest_path else None
     p_pre = Path(pretrained_weights_path) if pretrained_weights_path else None
 
-    return {
+    identity = {
         "exp_id": exp_id,
         "exp_name": spec["name"],
         "sampling": spec["sampling"],
@@ -501,6 +512,9 @@ def build_experiment_run_identity(
         "cuda_available": torch.cuda.is_available(),
         "ultralytics_version": getattr(ultralytics, "__version__", ""),
     }
+    if spec.get("enable_uniform_replacement", False):
+        identity["enable_uniform_replacement"] = True
+    return identity
 
 
 def verify_ablation_reuse_safety(
@@ -799,6 +813,7 @@ def run_single_experiment(
         enable_targeted_aug=spec["enable_targeted_aug"],
         manifest_path=manifest_to_use,
         aug_prob=aug_prob,
+        **({"enable_uniform_replacement": True} if spec.get("enable_uniform_replacement", False) else {}),
     )
 
     trainer.train()

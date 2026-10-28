@@ -15,6 +15,10 @@ from .detection_metrics import (
     calculate_mixture_weights,
     select_best_model,
     extract_canonical_metrics,
+    iou_matrix_xyxy,
+    match_detections_v2,
+    calculate_object_difficulty_v2,
+    compute_image_label_quality,
 )
 
 __all__ = [
@@ -28,4 +32,8 @@ __all__ = [
     "calculate_mixture_weights",
     "select_best_model",
     "extract_canonical_metrics",
+    "iou_matrix_xyxy",
+    "match_detections_v2",
+    "calculate_object_difficulty_v2",
+    "compute_image_label_quality",
 ]

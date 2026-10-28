@@ -546,7 +546,10 @@ def resolve_data_yaml_split(
 
         if images:
             images_dir = images[0].parent
-            labels_dir = labels[0].parent
+            # A file list may span several folders (e.g. a random per-image split drawing from
+            # train/ and valid/); only expose a single labels_dir when every label shares it,
+            # otherwise validators derive each label path per image.
+            labels_dir = labels[0].parent if len({lb.parent for lb in labels}) == 1 else None
     elif isinstance(split_entry, list):
         for item in split_entry:
             if isinstance(item, str) and item.strip().endswith(".txt"):
@@ -597,7 +600,7 @@ def resolve_data_yaml_split(
                 labels.extend([sub_lb_dir / f"{im.stem}.txt" for im in sub_imgs])
         if images:
             images_dir = images[0].parent
-            labels_dir = labels[0].parent
+            labels_dir = labels[0].parent if len({lb.parent for lb in labels}) == 1 else None
     else:
         # Directory or relative folder
         split_p = Path(split_entry)
@@ -1295,3 +1298,274 @@ def extract_canonical_metrics(
             "per_class_map50_95": per_class_map50_95,
         },
     })
+
+
+# =============================================================================
+# FASE 1 (Pakem v1.1, 28 Oktober 2026) — Pencocokan v2 & skor kualitas label
+# =============================================================================
+# Latar belakang: pencocokan v1 (greedy_bipartite_matching) mengurutkan pasangan
+# hanya berdasarkan IoU terhadap SEMUA prediksi conf >= 0.001, tanpa melihat kelas
+# dan confidence. Akibatnya objek yang sebenarnya terdeteksi benar sering dicocokkan
+# dengan kotak "sampah" ber-confidence sangat rendah, sehingga taksonomi error dan
+# penalti salah kelas tidak valid. Fungsi di bawah ini menggantikannya untuk v2.
+
+TAXONOMY_TP = "True_Positive"
+TAXONOMY_LOC = "Localization_Error"
+TAXONOMY_CLS = "Classification_Confusion"
+TAXONOMY_BOTH = "Localization_and_Class_Error"
+TAXONOMY_MISSED = "False_Negative_Missed"
+TAXONOMY_ORDER = [TAXONOMY_TP, TAXONOMY_LOC, TAXONOMY_CLS, TAXONOMY_BOTH, TAXONOMY_MISSED]
+
+
+def _boxes_array(objs: list[dict[str, Any]], key_order: tuple[str, ...] = ("box_xyxy", "box")) -> np.ndarray:
+    rows = []
+    for o in objs:
+        b = None
+        for k in key_order:
+            if k in o and o[k] is not None:
+                b = o[k]
+                break
+        if b is None:
+            b = [0.0, 0.0, 0.0, 0.0]
+        rows.append([float(x) for x in list(b)[:4]])
+    return np.asarray(rows, dtype=np.float64).reshape(-1, 4)
+
+
+def iou_matrix_xyxy(boxes_a: np.ndarray, boxes_b: np.ndarray) -> np.ndarray:
+    """Matriks IoU (len(a) x len(b)) untuk kotak format [x1, y1, x2, y2]."""
+    a = np.asarray(boxes_a, dtype=np.float64).reshape(-1, 4)
+    b = np.asarray(boxes_b, dtype=np.float64).reshape(-1, 4)
+    if len(a) == 0 or len(b) == 0:
+        return np.zeros((len(a), len(b)), dtype=np.float64)
+    ix1 = np.maximum(a[:, None, 0], b[None, :, 0])
+    iy1 = np.maximum(a[:, None, 1], b[None, :, 1])
+    ix2 = np.minimum(a[:, None, 2], b[None, :, 2])
+    iy2 = np.minimum(a[:, None, 3], b[None, :, 3])
+    inter = np.clip(ix2 - ix1, 0.0, None) * np.clip(iy2 - iy1, 0.0, None)
+    area_a = np.clip(a[:, 2] - a[:, 0], 0.0, None) * np.clip(a[:, 3] - a[:, 1], 0.0, None)
+    area_b = np.clip(b[:, 2] - b[:, 0], 0.0, None) * np.clip(b[:, 3] - b[:, 1], 0.0, None)
+    union = area_a[:, None] + area_b[None, :] - inter
+    with np.errstate(divide="ignore", invalid="ignore"):
+        out = np.where(union > 0.0, inter / union, 0.0)
+    return out
+
+
+def match_detections_v2(
+    gt_objects: list[dict[str, Any]],
+    preds: list[dict[str, Any]],
+    tau: float = 0.25,
+    tp_iou: float = 0.50,
+    cand_iou: float = 0.10,
+) -> dict[str, Any]:
+    """
+    Pencocokan kanonis v2 (Pakem v1.1, aturan TERKUNCI):
+
+    1. TP: prediksi dengan conf >= tau diurutkan menurut confidence menurun, lalu
+       dicocokkan satu-satu dengan GT BERKELAS SAMA yang belum terpakai pada IoU >= tp_iou
+       (gaya COCO; bila beberapa GT memenuhi, dipilih IoU tertinggi).
+    2. Taksonomi GT yang belum cocok (mengacu pada TIDE, Bolya dkk. 2020), memakai
+       prediksi conf >= tau yang BELUM dipakai sebagai TP, dengan urutan prioritas:
+         Localization_Error            : kelas sama, cand_iou <= IoU < tp_iou
+         Classification_Confusion      : kelas lain, IoU >= tp_iou
+         Localization_and_Class_Error  : kelas lain, cand_iou <= IoU < tp_iou
+         False_Negative_Missed         : tidak ada kandidat
+    3. Pasangan skor (C*, IoU*): untuk TP diambil dari prediksi TP-nya; selain itu dari
+       prediksi berkelas sama dengan confidence tertinggi (semua confidence) pada IoU >= cand_iou.
+    4. wrong_class (penalti salah kelas) hanya True bila ada prediksi kelas lain dengan
+       conf >= tau, IoU >= tp_iou, dan confidence > C*.
+
+    gt_objects : list dict dengan kunci 'box_xyxy' (atau 'box') dan 'class_id'
+    preds      : list dict dengan kunci 'box_xyxy' (atau 'box'), 'class_id', 'confidence'
+
+    Return dict:
+      per_gt            : list (urutan sama dengan gt_objects) berisi dict
+                          {taxonomy, tp_pred, c_star, iou_star, has_same_class_candidate,
+                           wrong_class, best_other_conf, best_other_iou,
+                           error_pred, error_pred_conf, error_pred_iou}
+      tp_pred_indices   : set indeks prediksi yang menjadi TP
+      unmatched_pred_indices : list indeks prediksi yang bukan TP
+      iou               : matriks IoU (n_gt x n_pred)
+    """
+    if not (0.0 <= tau <= 1.0):
+        raise ValueError(f"tau harus di [0, 1], didapat {tau}")
+    if not (0.0 < cand_iou <= tp_iou <= 1.0):
+        raise ValueError(f"Syarat 0 < cand_iou <= tp_iou <= 1 dilanggar: cand_iou={cand_iou}, tp_iou={tp_iou}")
+
+    n_g = len(gt_objects)
+    n_p = len(preds)
+    g_boxes = _boxes_array(gt_objects)
+    p_boxes = _boxes_array(preds)
+    g_cls = np.asarray([int(g.get("class_id", 0)) for g in gt_objects], dtype=np.int64)
+    p_cls = np.asarray([int(p.get("class_id", 0)) for p in preds], dtype=np.int64)
+    p_conf = np.asarray([float(p.get("confidence", 0.0)) for p in preds], dtype=np.float64)
+    iou = iou_matrix_xyxy(g_boxes, p_boxes)
+
+    gt_tp_pred = np.full(n_g, -1, dtype=np.int64)
+    pred_used = np.zeros(n_p, dtype=bool)
+
+    # Langkah 1: TP per kelas, urut confidence menurun (stabil terhadap indeks)
+    order = sorted([j for j in range(n_p) if p_conf[j] >= tau], key=lambda j: (-p_conf[j], j))
+    for j in order:
+        cand = np.where((g_cls == p_cls[j]) & (gt_tp_pred < 0) & (iou[:, j] >= tp_iou))[0] if n_g else np.array([], dtype=np.int64)
+        if cand.size == 0:
+            continue
+        g_best = int(cand[np.argmax(iou[cand, j])])
+        gt_tp_pred[g_best] = j
+        pred_used[j] = True
+
+    per_gt: list[dict[str, Any]] = []
+    for i in range(n_g):
+        rec: dict[str, Any] = {
+            "taxonomy": TAXONOMY_MISSED,
+            "tp_pred": int(gt_tp_pred[i]),
+            "c_star": 0.0,
+            "iou_star": 0.0,
+            "has_same_class_candidate": False,
+            "wrong_class": False,
+            "best_other_conf": 0.0,
+            "best_other_iou": 0.0,
+            "error_pred": -1,
+            "error_pred_conf": 0.0,
+            "error_pred_iou": 0.0,
+        }
+        row = iou[i] if n_p else np.zeros(0)
+        same = (p_cls == g_cls[i]) if n_p else np.zeros(0, dtype=bool)
+        other = ~same if n_p else np.zeros(0, dtype=bool)
+
+        if gt_tp_pred[i] >= 0:
+            j = int(gt_tp_pred[i])
+            rec["taxonomy"] = TAXONOMY_TP
+            rec["c_star"] = float(p_conf[j])
+            rec["iou_star"] = float(row[j])
+            rec["has_same_class_candidate"] = True
+        else:
+            # Langkah 3 (non-TP): kandidat berkelas sama dengan confidence tertinggi pada IoU >= cand_iou
+            cand_same = np.where(same & (row >= cand_iou))[0] if n_p else np.array([], dtype=np.int64)
+            if cand_same.size > 0:
+                best = sorted(cand_same.tolist(), key=lambda j: (-p_conf[j], -row[j], j))[0]
+                rec["c_star"] = float(p_conf[best])
+                rec["iou_star"] = float(row[best])
+                rec["has_same_class_candidate"] = True
+
+            # Langkah 2: taksonomi memakai prediksi conf >= tau yang belum dipakai sebagai TP
+            eligible = (p_conf >= tau) & (~pred_used) if n_p else np.zeros(0, dtype=bool)
+            loc = np.where(eligible & same & (row >= cand_iou) & (row < tp_iou))[0] if n_p else np.array([], dtype=np.int64)
+            cls_ = np.where(eligible & other & (row >= tp_iou))[0] if n_p else np.array([], dtype=np.int64)
+            both = np.where(eligible & other & (row >= cand_iou) & (row < tp_iou))[0] if n_p else np.array([], dtype=np.int64)
+            chosen = None
+            if loc.size > 0:
+                rec["taxonomy"] = TAXONOMY_LOC
+                chosen = loc
+            elif cls_.size > 0:
+                rec["taxonomy"] = TAXONOMY_CLS
+                chosen = cls_
+            elif both.size > 0:
+                rec["taxonomy"] = TAXONOMY_BOTH
+                chosen = both
+            if chosen is not None:
+                jj = int(sorted(chosen.tolist(), key=lambda j: (-p_conf[j], -row[j], j))[0])
+                rec["error_pred"] = jj
+                rec["error_pred_conf"] = float(p_conf[jj])
+                rec["error_pred_iou"] = float(row[jj])
+
+        # Langkah 4: bukti salah kelas yang riil (berlaku untuk TP maupun non-TP)
+        if n_p:
+            strong_other = np.where(other & (p_conf >= tau) & (row >= tp_iou))[0]
+            if strong_other.size > 0:
+                jo = int(sorted(strong_other.tolist(), key=lambda j: (-p_conf[j], -row[j], j))[0])
+                rec["best_other_conf"] = float(p_conf[jo])
+                rec["best_other_iou"] = float(row[jo])
+                rec["wrong_class"] = bool(p_conf[jo] > rec["c_star"])
+        per_gt.append(rec)
+
+    tp_set = set(int(j) for j in gt_tp_pred if j >= 0)
+    unmatched = [j for j in range(n_p) if j not in tp_set]
+    return {
+        "per_gt": per_gt,
+        "tp_pred_indices": tp_set,
+        "unmatched_pred_indices": unmatched,
+        "iou": iou,
+    }
+
+
+def calculate_object_difficulty_v2(
+    match_record: dict[str, Any],
+    size_score: float,
+    confusion_penalty: float = 0.35,
+) -> float:
+    """
+    Skor kesulitan objek v2 dari satu record per_gt hasil match_detections_v2:
+      - ada kandidat berkelas sama (IoU >= cand_iou): 0.4(1-C*) + 0.4(1-IoU*) + 0.2 S (+ penalti bila wrong_class)
+      - tidak ada kandidat: 0.80 + 0.20 S
+    Rumus identik dengan calculate_object_difficulty; yang berubah hanya asal (C*, IoU*) dan syarat penalti.
+    """
+    if match_record.get("has_same_class_candidate", False):
+        return calculate_object_difficulty(
+            matched=True,
+            conf=float(match_record.get("c_star", 0.0)),
+            iou=float(match_record.get("iou_star", 0.0)),
+            size_score=float(size_score),
+            correct_class=not bool(match_record.get("wrong_class", False)),
+            confusion_penalty=confusion_penalty,
+        )
+    return calculate_object_difficulty(matched=False, size_score=float(size_score))
+
+
+def compute_image_label_quality(
+    gt_objects: list[dict[str, Any]],
+    preds: list[dict[str, Any]],
+    match_result: dict[str, Any],
+    tau: float = 0.25,
+    missing_conf: float = 0.50,
+    cand_iou: float = 0.10,
+) -> dict[str, Any]:
+    """
+    Skor kualitas label per citra, terinspirasi ObjectLab (Tkachenko dkk., 2023) dalam bentuk
+    yang disederhanakan (BUKAN implementasi ObjectLab). Memakai prediksi out-of-fold sehingga
+    model penilai tidak pernah melihat citra tersebut saat dilatih.
+
+    Tiga sinyal masalah (masing-masing di [0, 1], makin tinggi makin mencurigakan):
+      missing_score : confidence tertinggi prediksi non-TP (conf >= tau) yang tidak tumpang tindih
+                      dengan GT mana pun (IoU < cand_iou) -> indikasi anotasi hilang
+      swap_score    : selisih terbesar (conf kelas lain - C*) pada GT ber-wrong_class -> indikasi kelas tertukar
+      badloc_score  : confidence tertinggi prediksi berkelas sama yang hanya mengenai GT dengan
+                      cand_iou <= IoU < 0.5 (taksonomi Localization_Error) -> indikasi kotak label meleset
+    label_quality = 1 - max(missing_score, swap_score, badloc_score)
+    """
+    per_gt = match_result.get("per_gt", [])
+    iou = match_result.get("iou")
+    tp_set = match_result.get("tp_pred_indices", set())
+    n_g = len(gt_objects)
+
+    phantom_confs: list[float] = []
+    for j, p in enumerate(preds):
+        if j in tp_set:
+            continue
+        c = float(p.get("confidence", 0.0))
+        if c < tau:
+            continue
+        max_iou = float(iou[:, j].max()) if (iou is not None and n_g > 0 and iou.shape[1] > j) else 0.0
+        if max_iou < cand_iou:
+            phantom_confs.append(c)
+    missing_score = max(phantom_confs) if phantom_confs else 0.0
+    n_suspect_missing = sum(1 for c in phantom_confs if c >= missing_conf)
+
+    swaps = [max(0.0, r["best_other_conf"] - r["c_star"]) for r in per_gt if r.get("wrong_class")]
+    swap_score = max(swaps) if swaps else 0.0
+    n_suspect_swap = len(swaps)
+
+    badlocs = [r["error_pred_conf"] for r in per_gt if r.get("taxonomy") == TAXONOMY_LOC]
+    badloc_score = max(badlocs) if badlocs else 0.0
+    n_suspect_badloc = len(badlocs)
+
+    worst = max(missing_score, swap_score, badloc_score)
+    return {
+        "n_gt": n_g,
+        "n_suspect_missing": n_suspect_missing,
+        "n_suspect_swap": n_suspect_swap,
+        "n_suspect_badloc": n_suspect_badloc,
+        "missing_score": float(missing_score),
+        "swap_score": float(swap_score),
+        "badloc_score": float(badloc_score),
+        "label_quality": float(max(0.0, min(1.0, 1.0 - worst))),
+    }

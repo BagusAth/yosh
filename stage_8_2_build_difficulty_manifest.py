@@ -40,6 +40,9 @@ from research_utils.detection_metrics import (
     calculate_image_difficulty,
     calculate_iou_xyxy,
     calculate_mixture_weights,
+    calculate_object_difficulty_v2,
+    compute_image_label_quality,
+    match_detections_v2,
     calculate_object_difficulty,
     classify_object_size,
     compute_dataset_inventory_fingerprint,
@@ -98,6 +101,18 @@ def parse_args():
         type=float,
         default=0.70,
         help="Bobot komponen adaptif pada mixture sampling (default: 0.70)",
+    )
+    parser.add_argument(
+        "--matching",
+        choices=["v1", "v2"],
+        default="v2",
+        help="Versi pencocokan: v2 = per kelas, urut confidence, taksonomi gaya TIDE (Pakem v1.1); v1 = historis (default: v2)",
+    )
+    parser.add_argument(
+        "--tau",
+        type=float,
+        default=0.25,
+        help="Ambang confidence tau untuk TP dan taksonomi pada pencocokan v2 (default: 0.25)",
     )
     return parser.parse_args()
 
@@ -230,10 +245,75 @@ def process_difficulty_manifest(
     wrong_class_clipped = 0
 
     all_d_images_raw = []
+    matching = getattr(args, "matching", "v1")
+    tau = float(getattr(args, "tau", 0.25))
+    label_quality_rows = []
 
     for fname, gts in sorted(gt_by_image.items()):
         preds = preds_by_image.get(fname, [])
         n_gt = len(gts)
+
+        if matching == "v2":
+            obj_difficulties = []
+            target_small_candidates = []
+            mres = match_detections_v2(gts, preds, tau=tau, tp_iou=0.50, cand_iou=args.iou_match_thresh)
+            for g_idx, g in enumerate(gts):
+                total_gt += 1
+                rec = mres["per_gt"][g_idx]
+                size_score = g["size_score"]
+                taxonomy = rec["taxonomy"]
+                d_i = calculate_object_difficulty_v2(rec, size_score=size_score, confusion_penalty=args.confusion_penalty)
+                if rec["wrong_class"]:
+                    wrong_class_total += 1
+                    if rec["has_same_class_candidate"] and (
+                        0.40 * (1.0 - rec["c_star"]) + 0.40 * (1.0 - rec["iou_star"]) + 0.20 * size_score + args.confusion_penalty
+                    ) >= 1.0:
+                        wrong_class_clipped += 1
+                taxonomy_counter[taxonomy] += 1
+                obj_difficulties.append(d_i)
+
+                if g["size_cat"] == "Small" and d_i >= 0.70:
+                    target_small_candidates.append({
+                        "gt_id": g["gt_id"],
+                        "d_i": d_i,
+                        "box": g["box_xyxy"],
+                        "class_id": g["class_id"],
+                        "img_width": g.get("img_width", 640.0),
+                        "img_height": g.get("img_height", 640.0),
+                    })
+
+                object_rows.append({
+                    "image_id": fname,
+                    "gt_id": g["gt_id"],
+                    "class_name": g["class_name"],
+                    "size_cat": g["size_cat"],
+                    "match_status": "Matched" if rec["has_same_class_candidate"] else "Unmatched",
+                    "taxonomy": taxonomy,
+                    "confidence": f"{rec['c_star']:.4f}",
+                    "iou": f"{rec['iou_star']:.4f}",
+                    "size_score": f"{size_score:.2f}",
+                    "difficulty_score": f"{d_i:.4f}",
+                    "wrong_class": int(rec["wrong_class"]),
+                    "best_other_conf": f"{rec['best_other_conf']:.4f}",
+                })
+
+            fp_confs = [preds[j]["confidence"] for j in mres["unmatched_pred_indices"]]
+            if n_gt > 0:
+                d_image = calculate_image_difficulty(obj_difficulties=obj_difficulties, fp_confs=fp_confs)
+                has_gt = 1
+            else:
+                d_image = calculate_image_difficulty(obj_difficulties=[], fp_confs=fp_confs)
+                has_gt = 0
+
+            lq = compute_image_label_quality(gts, preds, mres, tau=tau, cand_iou=args.iou_match_thresh)
+            lq_row = {"image_id": fname, "d_image": f"{d_image:.6f}"}
+            for lq_key, lq_val in lq.items():
+                lq_row[lq_key] = f"{lq_val:.4f}" if isinstance(lq_val, float) else lq_val
+            label_quality_rows.append(lq_row)
+
+            all_d_images_raw.append((fname, d_image, has_gt, target_small_candidates))
+            continue
+
 
         # Canonical greedy bipartite matching from research_utils.detection_metrics
         # Prepares candidate pairs with descending IoU
@@ -393,6 +473,8 @@ def process_difficulty_manifest(
             "image_id", "gt_id", "class_name", "size_cat", "match_status",
             "taxonomy", "confidence", "iou", "size_score", "difficulty_score"
         ]
+        if matching == "v2":
+            fieldnames = fieldnames + ["wrong_class", "best_other_conf"]
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         writer.writerows(object_rows)
@@ -410,6 +492,14 @@ def process_difficulty_manifest(
         writer.writeheader()
         writer.writerows(image_rows)
     print(f"[OUTPUT] Tersimpan: {img_csv_path} ({len(image_rows):,} citra)")
+
+    if matching == "v2" and label_quality_rows:
+        lq_csv_path = output_dir / "train_image_label_quality.csv"
+        with open(lq_csv_path, "w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=list(label_quality_rows[0].keys()))
+            writer.writeheader()
+            writer.writerows(label_quality_rows)
+        print(f"[OUTPUT] Tersimpan: {lq_csv_path} ({len(label_quality_rows):,} citra)")
 
     # Simpan Sidecar Provenance Manifest
     manifest_csv_sha256 = compute_file_sha256(img_csv_path)
@@ -437,7 +527,9 @@ def process_difficulty_manifest(
         "confusion_penalty": float(args.confusion_penalty),
         "mixture_lambda": float(args.mixture_lambda),
         "script_sha256": compute_file_sha256(__file__),
-        "evaluator_version": "Stage-9.7-Canonical-v2",
+        "evaluator_version": "Fase1-Matching-v2" if matching == "v2" else "Stage-9.7-Canonical-v2",
+        "matching_version": matching,
+        "tau_conf": float(tau) if matching == "v2" else None,
         "image_count": len(image_rows),
         "unique_image_count": len(set(r["image_id"] for r in image_rows)),
         "timestamp": datetime.now().isoformat(),
@@ -490,6 +582,7 @@ def process_difficulty_manifest(
 
     gate_results = {
         "gate_status": gate_status,
+        "matching_version": matching,
         "n_images": n_images,
         "total_gt_objects": total_gt,
         "taxonomy_breakdown": dict(taxonomy_counter),
@@ -530,6 +623,7 @@ def process_difficulty_manifest(
     report_md_path = output_dir / "DIFFICULTY_PROFILING_REPORT.md"
     report_md = f"""# Laporan Hasil Stage 8.2 — Profil Kesulitan Objek & Citra OOF (Hardened)
 Tanggal: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+Versi pencocokan: {matching} (tau = {tau})
 
 ## 1. Status Sanity Gate
 - **Status Akhir**: **{gate_status}**
@@ -583,6 +677,7 @@ def main():
     print(f"IoU Match Thresh: {args.iou_match_thresh}")
     print(f"Confusion Pen.  : {args.confusion_penalty}")
     print(f"Mixture Lambda  : {args.mixture_lambda}")
+    print(f"Matching        : {args.matching} (tau = {args.tau})")
     print("=" * 80)
 
     output_dir = Path(args.output_dir).resolve()

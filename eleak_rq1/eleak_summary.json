@@ -1,0 +1,18 @@
+{
+  "created": "2026-10-28T10:13:57",
+  "pool_images_train_plus_val_clean": 11547,
+  "test_split_untouched": true,
+  "eleak_train_images": 8840,
+  "eleak_val_images": 1363,
+  "eleak_val_leaked_images": 0,
+  "eleak_val_clean_images": 1363,
+  "eleak_val_without_group": 0,
+  "pool_originally_test_unused": 1344,
+  "pool_without_original_split": 0,
+  "pool_without_group": 0,
+  "leaked_share_of_val": 0.0,
+  "train_groups": 4420,
+  "class_objects": null,
+  "note": "Pasangan kemiripan visual lintas grup (4 kandidat pHash) diabaikan dalam penentuan bocor.",
+  "group_manifest": "cassava-v7-stage-6/resplit_group_manifest.csv"
+}
