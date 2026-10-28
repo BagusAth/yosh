@@ -1,0 +1,4 @@
+tag,subset,data_yaml,weights,n_images,precision,recall,map50,map50_95,ap50_95_CBB,ap50_95_CBSD,ap50_95_CGM,ap50_95_CMD,ap50_95_HEALTHY
+sim,diag_A,D:\UNDIP\SKRIPSI\eleak_sim_rq1\data_diag_A.yaml,D:/UNDIP/SKRIPSI/stage_v2_eleak_sim/exp_0_baseline/weights/best.pt,227,0.419045,0.407151,0.392153,0.290985,0.318382,0.348523,0.259065,0.238438,0.290518
+sim,diag_B,D:\UNDIP\SKRIPSI\eleak_sim_rq1\data_diag_B.yaml,D:/UNDIP/SKRIPSI/stage_v2_eleak_sim/exp_0_baseline/weights/best.pt,786,0.441938,0.445445,0.407529,0.311018,0.291483,0.359581,0.320535,0.282303,0.301186
+group,diag_A,D:\UNDIP\SKRIPSI\eleak_sim_rq1\data_diag_A.yaml,D:/UNDIP/SKRIPSI/stage_8_ablation_clean_20261020/exp_0_baseline/weights/best.pt,227,0.376609,0.484653,0.393341,0.282469,0.302690,0.340653,0.260764,0.256260,0.251980

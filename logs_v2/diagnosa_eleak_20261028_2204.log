@@ -1,0 +1,50 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20261028220408
+Username: LAPTOP-P3SG0UKE\LENOVO
+RunAs User: LAPTOP-P3SG0UKE\LENOVO
+Configuration Name: 
+Machine: LAPTOP-P3SG0UKE (Microsoft Windows NT 10.0.26200.0)
+Host Application: powershell.exe -NoExit -ExecutionPolicy Bypass -File D:\UNDIP\SKRIPSI\jalankan_diagnosa_eleak.ps1
+Process ID: 7544
+PSVersion: 5.1.26100.9711
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9711
+BuildVersion: 10.0.26100.9711
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 42% ━━━━━─────── 21/50 13.0it/
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 46% ━━━━━╸────── 23/50 13.2it/
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 50% ━━━━━━────── 25/50 13.1it/
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 54% ━━━━━━────── 27/50 13.3it/
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 58% ━━━━━━╸───── 29/50 13.3it/
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 62% ━━━━━━━───── 31/50 13.3it/
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 66% ━━━━━━━╸──── 33/50 13.4it/
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 70% ━━━━━━━━──── 35/50 13.3it/
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 74% ━━━━━━━━╸─── 37/50 12.8it/
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 78% ━━━━━━━━━─── 39/50 12.8it/
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 82% ━━━━━━━━━╸── 41/50 13.0it/
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 86% ━━━━━━━━━━── 43/50 13.1it/
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 90% ━━━━━━━━━━╸─ 45/50 13.2it/
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 94% ━━━━━━━━━━━─ 47/50 13.3it/
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 98% ━━━━━━━━━━━╸ 49/50 13.3it/
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 50/50 13.0it
+                 Class     Images  Instances      Box(P          R      mAP50  mAP50-95): 100% ━━━━━━━━━━━━ 50/50 13.0it
+/s 3.8s
+                   all        786       2354      0.442      0.445      0.408      0.311
+                   CBB        226        550      0.491        0.4      0.413      0.291
+                  CBSD        245        488       0.52      0.453      0.465       0.36
+                   CGM         92        268      0.396      0.422      0.404      0.321
+                   CMD        116        430       0.43      0.435      0.392      0.282
+               HEALTHY        102        618      0.373      0.518      0.363      0.301
+Speed: 0.8ms preprocess, 2.4ms inference, 0.0ms loss, 0.6ms postprocess per image
+[sim/diag_B] n=786 mAP50=0.407529 mAP50-95=0.311018
+
+SELESAI. Hasil: D:/UNDIP/SKRIPSI/stage_v2_eleak_sim/eval_diag/eleak_subset_metrics.csv
+**********************
+Windows PowerShell transcript end
+End time: 20261028220437
+**********************
