@@ -1,48 +1,48 @@
-# Runbook GPU (Pakem v1.3)
+# Runbook GPU (Pakem v1.3.1)
 
-Shell Claude di laptop ini berjalan di mesin virtual Linux tanpa akses GPU, jadi training dijalankan dari PowerShell Windows.
+Shell Claude di laptop ini berjalan di mesin virtual Linux tanpa akses GPU, jadi training dijalankan dari Windows dengan klik dua kali file `.bat` (atau perintah PowerShell yang sama).
 
-## Malam 1 — satu perintah
+## Status
+
+- Malam 1 (uji regresi, manifest v2, EXP-0 seed 123/2026, E-LEAK): selesai 28 Oktober.
+- RQ1 A + B: selesai 29 Oktober (`stage_v2_eleak_sim/per_image/analysis/`).
+- Berikutnya: Fase 3, ablasi multi-seed (12 run).
+
+## Fase 3 — tiga file, berurutan
+
+| File | Isi | Perkiraan |
+| --- | --- | --- |
+| `cek_siap_fase3.bat` | Commit skrip baru, cek GPU, dry-run EXP-0R/1/2/3, prediksi per citra EXP-0 tiga seed (tanpa training) | 15–25 menit |
+| `jalankan_malam_A.bat` | Seed 42 dan 123: EXP-0R, EXP-1, EXP-2, EXP-3 (8 run) + prediksi per citra | 6,5–7 jam |
+| `jalankan_malam_B.bat` | Seed 2026: EXP-0R, EXP-1, EXP-2, EXP-3 (4 run) + prediksi per citra | 3,5 jam |
+
+Kalau laptop bisa menyala sekitar 10 jam, malam B boleh langsung dijalankan setelah malam A selesai.
+
+Ketiganya memanggil `jalankan_fase3.ps1`:
 
 ```powershell
 cd D:\UNDIP\SKRIPSI
-powershell -ExecutionPolicy Bypass -File .\jalankan_malam_1.ps1
+powershell -ExecutionPolicy Bypass -File .\jalankan_fase3.ps1 -Seeds 42,123,2026 -CekSaja
+powershell -ExecutionPolicy Bypass -File .\jalankan_fase3.ps1 -Seeds 42,123 -Nama A
+powershell -ExecutionPolicy Bypass -File .\jalankan_fase3.ps1 -Seeds 2026 -Nama B
 ```
 
-Isinya, berurutan (berhenti otomatis bila ada yang gagal):
+Perilaku skrip:
 
-1. Uji regresi Fase 1 dan Stage 9.8 (CPU, sekitar 1–2 menit). Tiga tes Group B yang butuh torch baru berjalan di sini.
-2. Manifest kesulitan v2 (CPU, sekitar 3–5 menit) ke `stage_v2_difficulty_20261028`.
-3. EXP-0 seed 123 dan 2026 (GPU, sekitar 1,5 jam) ke `stage_v2_ablation/seed_123` dan `seed_2026`.
-4. E-LEAK simulasi untuk RQ1 (GPU, sekitar 1 jam): latih baseline pada split acak per citra (`eleak_sim_rq1`), evaluasi subset bocor vs pembanding, lalu laporan `stage_v2_eleak_sim/eval_subsets/ELEAK_REPORT.md`.
+- Preflight gagal (GPU atau dry-run) = training tidak dimulai.
+- Run yang gagal tidak menghentikan run berikutnya. Ringkasan di akhir (dan `logs_v2\fase3_*_ringkasan.csv`) menunjukkan mana yang perlu diulang.
+- Aman diulang: run yang selesai dan cocok checksum-nya dilewati (`--skip-if-done`), prediksi yang sudah ada tidak diulang.
+- Setelah tiap run, prediksi per citra pada 2.567 citra validasi bersih disimpan ke `stage_v2_ablation/per_image/preds_seed<seed>_<eksperimen>.csv` untuk bootstrap berpasangan di Fase 5. Prediksi EXP-0 seed 123/2026 dibuat juga; EXP-0 seed 42 disalin dari E-LEAK.
+- Laptop dicegah tidur selama skrip berjalan (pengaturan Windows tidak diubah). Tetap colok ke listrik dan jangan tutup laptop.
 
-Log tersimpan di `logs_v2\`.
+Nomor eksperimen: 4 = EXP-0R, 1 = EXP-1, 2 = EXP-2, 3 = EXP-3. EXP-0 seed 42 memakai `stage_8_ablation_clean_20261020/exp_0_baseline`.
 
-## Malam 2–3 — ablasi multi-seed (12 run, sekitar 9–10 jam)
+## Tanpa GPU (bisa dikerjakan kapan saja)
 
-Dijalankan setelah manifest v2 dari Malam 1 ada.
-
-```powershell
-foreach ($s in 42, 123, 2026) {
-  foreach ($e in 4, 1, 2, 3) {
-    .\.venv-cuda\Scripts\python.exe stage_8_4_run_ablation_experiments.py --exp $e --seed $s `
-      --data-yaml D:/UNDIP/SKRIPSI/cassava-v7-runtime-mirror/data.yaml `
-      --manifest-path D:/UNDIP/SKRIPSI/stage_v2_difficulty_20261028/train_image_difficulty_manifest.csv `
-      --pretrained-weights D:/UNDIP/SKRIPSI/yolo11n.pt `
-      --output-dir D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_$s
-  }
-}
-```
-
-Nomor eksperimen: 4 = EXP-0R, 1 = EXP-1, 2 = EXP-2, 3 = EXP-3. EXP-0 seed 42 memakai hasil yang sudah ada di `stage_8_ablation_clean_20261020/exp_0_baseline`.
-
-## RQ1 (gabungan A + B)
-
-- Bagian B (tanpa GPU, sudah selesai): `_analisis_rq1_audit/RQ1_AUDIT_FALSE_POSITIVE_REPORT.md` membuktikan audit berbasis nama file menghasilkan positif palsu; split bawaan Roboflow tidak bocor. Folder `eleak_rq1/` adalah pemeriksaan split asli yang sama (0 citra validasi bocor).
-- Bagian A (GPU, langkah 4 Malam 1): simulasi split acak per citra di `eleak_sim_rq1/` (60,5% citra validasi bocor, test tidak disentuh).
+- Audit label 150 citra: buka `audit_label_150/LEMBAR_AUDIT_LABEL.xlsx`, baca sheet Panduan. Jangan buka `audit_label_150/_kunci/` sebelum selesai.
+- Struktur kelas: `_analisis_struktur_kelas/STRUKTUR_KELAS_REPORT.md` (`cek_struktur_kelas.py`).
 
 ## Catatan
 
-- Colok laptop ke listrik dan matikan mode tidur selama training.
-- Kalau sebuah run gagal di tengah, jalankan ulang perintah yang sama dengan `--skip-if-done`.
 - Test set tidak disentuh di langkah mana pun.
+- Bila ada yang gagal dua kali, kirim file log dari `logs_v2\`.
