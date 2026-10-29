@@ -1,0 +1,93 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20261029191913
+Username: LAPTOP-P3SG0UKE\LENOVO
+RunAs User: LAPTOP-P3SG0UKE\LENOVO
+Configuration Name: 
+Machine: LAPTOP-P3SG0UKE (Microsoft Windows NT 10.0.26200.0)
+Host Application: powershell.exe -NoExit -ExecutionPolicy Bypass -File D:\UNDIP\SKRIPSI\jalankan_fase3.ps1 -Seeds 42,123,2026 -CekSaja
+Process ID: 1812
+PSVersion: 5.1.26100.9711
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9711
+BuildVersion: 10.0.26100.9711
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Seed: 42, 123, 2026  |  Mode: cek
+git : warning: in the working copy of 'MALAM_INI.md', LF will be replaced by CRLF the next time Git touches it
+At D:\UNDIP\SKRIPSI\jalankan_fase3.ps1:113 char:9
++         git add -- $files 2>$null
++         ~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning: in the... Git touches it:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+warning: in the working copy of 'analyze_eleak_did.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'analyze_eleak_per_image.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'audit_label_150/README_AUDIT.md', LF will be replaced by CRLF the next time Git 
+touches it
+warning: in the working copy of 'build_label_audit.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'cek_struktur_kelas.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'jalankan_fase3.ps1', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'jalankan_prediksi_eleak.ps1', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'predict_eleak_per_image.py', LF will be replaced by CRLF the next time Git touches it
+
+
+warning: in the working copy of 'MALAM_INI.md', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'analyze_eleak_did.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'analyze_eleak_per_image.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'audit_label_150/README_AUDIT.md', LF will be replaced by CRLF the next time Git touches
+ it
+warning: in the working copy of 'build_label_audit.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'cek_struktur_kelas.py', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'jalankan_fase3.ps1', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'jalankan_prediksi_eleak.ps1', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'predict_eleak_per_image.py', LF will be replaced by CRLF the next time Git touches it
+[fase1-skor-kesulitan-v2 161631d2] Fase 2 selesai, persiapan Fase 3 dan audit label
+ 13 files changed, 1229 insertions(+), 31 deletions(-)
+ create mode 100644 analyze_eleak_did.py
+ create mode 100644 analyze_eleak_per_image.py
+ create mode 100644 audit_label_150/README_AUDIT.md
+ create mode 100644 build_label_audit.py
+ create mode 100644 cek_siap_fase3.bat
+ create mode 100644 cek_struktur_kelas.py
+ create mode 100644 jalankan_fase3.ps1
+ create mode 100644 jalankan_malam_A.bat
+ create mode 100644 jalankan_malam_B.bat
+ create mode 100644 jalankan_prediksi_eleak.bat
+ create mode 100644 jalankan_prediksi_eleak.ps1
+ create mode 100644 predict_eleak_per_image.py
+Skrip baru di-commit ke branch fase1-skor-kesulitan-v2.
+
+=== Preflight: GPU dan dry-run konfigurasi (19:19) ===
+
+
+
+
+
+
+=== Prediksi per citra EXP-0 seed 123 (19:23) ===
+
+
+=== Prediksi per citra EXP-0 seed 2026 (19:29) ===
+
+Preflight lolos. Siap untuk malam A dan B.
+
+=================== RINGKASAN (2026-10-29 19:34) ===================
+
+Tahap     Run              Status              Menit mAP50-95
+-----     ---              ------              ----- --------
+preflight GPU              OK                      0         
+preflight EXP-0R (dry-run) OK                    3.1         
+preflight EXP-1 (dry-run)  OK                    0.2         
+preflight EXP-2 (dry-run)  OK                    0.2         
+preflight EXP-3 (dry-run)  OK                    0.2         
+prediksi  EXP-0 seed 42    disalin dari E-LEAK     0         
+prediksi  EXP-0 seed 123   OK                    6.3         
+prediksi  EXP-0 seed 2026  OK                    4.8
+Semua langkah selesai tanpa kegagalan. Log: logs_v2\fase3_cek_20261029_1919.log
+**********************
+Windows PowerShell transcript end
+End time: 20261029193416
+**********************

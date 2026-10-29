@@ -1,0 +1,1 @@
+Jangan buka audit_key.csv sebelum semua citra selesai dinilai: file ini berisi strata (tinggi/acak) dan skor kesulitan.

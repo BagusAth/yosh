@@ -5,6 +5,11 @@ E-LEAK per citra (RQ1, Pakem v1.3) — simpan prediksi mentah + ground truth per
 Pengaturan prediksi mengikuti validasi Ultralytics (conf 0.001, NMS IoU 0.7, max_det 300, imgsz 640)
 supaya mAP yang dihitung ulang di CPU bisa dicocokkan dengan angka val().
 
+Perbaikan 29 Okt 2026: NMS predict() bawaan berbeda dari val() (multi_label=False) dan memakai batas waktu
+2,0 + 0,05 x batch detik. Pada conf 0.001 batas itu terlampaui ("NMS time limit exceeded") sehingga sisa citra
+dalam batch tidak mendapat prediksi sama sekali (49-179 dari 2.567 citra). Skrip ini kini memakai NMS seperti
+val(): multi_label=True, torchvision.ops.nms, tanpa batas waktu. Opsi --nms-bawaan-predict mengembalikan perilaku lama.
+
 Pemakaian (di .venv-cuda):
   python predict_eleak_per_image.py --weights <best.pt> --source <file .txt | folder images> \
       --out-preds <preds.csv> --out-gt <gt.csv>
@@ -36,6 +41,22 @@ def label_path(img: str) -> Path:
     return Path(*parts).with_suffix(".txt")
 
 
+def pasang_nms_seperti_val() -> None:
+    """Samakan NMS predict() dengan val(): multi_label=True, tanpa batas waktu, torchvision.ops.nms."""
+    import torchvision  # noqa: F401  (Ultralytics memilih torchvision.ops.nms bila modul ini sudah dimuat)
+    from ultralytics.utils import nms as ul_nms
+
+    asli = ul_nms.non_max_suppression
+
+    def nms_seperti_val(*a, **k):
+        k["multi_label"] = True
+        k["max_time_img"] = 1e6
+        return asli(*a, **k)
+
+    ul_nms.non_max_suppression = nms_seperti_val
+    print("NMS: seperti val() (multi_label=True, torchvision, tanpa batas waktu)")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--weights", required=True)
@@ -48,12 +69,15 @@ def main() -> None:
     ap.add_argument("--conf", type=float, default=0.001)
     ap.add_argument("--iou", type=float, default=0.7)
     ap.add_argument("--max-det", type=int, default=300)
+    ap.add_argument("--nms-bawaan-predict", action="store_true", help="Pakai NMS bawaan predict() (perilaku lama, tidak disarankan)")
     args = ap.parse_args()
+    if not args.nms_bawaan_predict:
+        pasang_nms_seperti_val()
 
     paths = read_source(args.source)
     model = YOLO(args.weights)
     Path(args.out_preds).parent.mkdir(parents=True, exist_ok=True)
-    n_pred = n_gt = 0
+    n_pred = n_gt = n_kosong = 0
     with open(args.out_preds, "w", newline="", encoding="utf-8") as fp, open(args.out_gt, "w", newline="", encoding="utf-8") as fg:
         wp = csv.writer(fp)
         wg = csv.writer(fg)
@@ -70,6 +94,7 @@ def main() -> None:
                 xyxy = b.xyxy.cpu().numpy()
                 cls = b.cls.cpu().numpy().astype(int)
                 conf = b.conf.cpu().numpy()
+                n_kosong += int(len(cls) == 0)
                 for k in range(len(cls)):
                     wp.writerow([name, int(cls[k]), f"{conf[k]:.6f}", *(f"{v:.2f}" for v in xyxy[k])])
                     n_pred += 1
@@ -81,7 +106,7 @@ def main() -> None:
                                      f"{(xc + bw / 2) * w:.2f}", f"{(yc + bh / 2) * h:.2f}", w, h])
                         n_gt += 1
             print(f"{min(i + args.batch, len(paths))}/{len(paths)} citra", end="\r")
-    print(f"\nSelesai: {len(paths)} citra, {n_pred:,} prediksi, {n_gt:,} objek GT")
+    print(f"\nSelesai: {len(paths)} citra, {n_pred:,} prediksi, {n_gt:,} objek GT, {n_kosong} citra tanpa prediksi")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,55 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20261029094655
+Username: LAPTOP-P3SG0UKE\LENOVO
+RunAs User: LAPTOP-P3SG0UKE\LENOVO
+Configuration Name: 
+Machine: LAPTOP-P3SG0UKE (Microsoft Windows NT 10.0.26200.0)
+Host Application: powershell.exe -NoExit -ExecutionPolicy Bypass -File D:\UNDIP\SKRIPSI\jalankan_prediksi_eleak.ps1
+Process ID: 23676
+PSVersion: 5.1.26100.9711
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9711
+BuildVersion: 10.0.26100.9711
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+2567/2567 citra
+Selesai: 2567 citra, 386,232 prediksi, 9,944 objek GT
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+WARNING NMS time limit 2.800s exceeded
+2567/2567 citra
+Selesai: 2567 citra, 377,370 prediksi, 9,649 objek GT
+
+
+
+
+
+
+SELESAI. Laporan: D:/UNDIP/SKRIPSI/stage_v2_eleak_sim/per_image/analysis/ELEAK_PER_IMAGE_REPORT.md
+**********************
+Windows PowerShell transcript end
+End time: 20261029100510
+**********************

@@ -1,0 +1,81 @@
+{
+  "kelas_x_ukuran_grup": {
+    "1": {
+      "(tanpa kotak)": 26,
+      "CBB": 1407,
+      "CBSD": 1274,
+      "CGM": 0,
+      "CMD": 0,
+      "HEALTHY": 0,
+      "Total": 2707
+    },
+    "2": {
+      "(tanpa kotak)": 58,
+      "CBB": 0,
+      "CBSD": 288,
+      "CGM": 2838,
+      "CMD": 2822,
+      "HEALTHY": 2834,
+      "Total": 8840
+    },
+    "Total": {
+      "(tanpa kotak)": 84,
+      "CBB": 1407,
+      "CBSD": 1562,
+      "CGM": 2838,
+      "CMD": 2822,
+      "HEALTHY": 2834,
+      "Total": 11547
+    }
+  },
+  "kelas_x_asal": {
+    "test": {
+      "(tanpa kotak)": 15,
+      "CBB": 564,
+      "CBSD": 765,
+      "CGM": 0,
+      "CMD": 0,
+      "HEALTHY": 0,
+      "Total": 1344
+    },
+    "train": {
+      "(tanpa kotak)": 58,
+      "CBB": 0,
+      "CBSD": 288,
+      "CGM": 2838,
+      "CMD": 2822,
+      "HEALTHY": 2834,
+      "Total": 8840
+    },
+    "valid": {
+      "(tanpa kotak)": 11,
+      "CBB": 843,
+      "CBSD": 509,
+      "CGM": 0,
+      "CMD": 0,
+      "HEALTHY": 0,
+      "Total": 1363
+    },
+    "Total": {
+      "(tanpa kotak)": 84,
+      "CBB": 1407,
+      "CBSD": 1562,
+      "CGM": 2838,
+      "CMD": 2822,
+      "HEALTHY": 2834,
+      "Total": 11547
+    }
+  },
+  "baji_hitam": {
+    "asal train": {
+      "n": 400,
+      "baji_hitam_pct": 41.2,
+      "piksel_hitam_murni_pct": 1.5
+    },
+    "asal valid/test": {
+      "n": 400,
+      "baji_hitam_pct": 2.5,
+      "piksel_hitam_murni_pct": 0.13
+    }
+  }
+}

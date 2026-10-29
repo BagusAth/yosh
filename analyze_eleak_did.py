@@ -30,7 +30,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from analyze_eleak_per_image import cluster_weights, load_groups, map_weighted, names_from_list, op_means  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent
-PDIR = ROOT / "stage_v2_eleak_sim" / "per_image"
+PDIR = ROOT / os.environ.get("ELEAK_PER_IMAGE_DIR", "stage_v2_eleak_sim/per_image")  # per_image_v2 = prediksi NMS seperti val
 OUT = PDIR / "analysis"
 
 
