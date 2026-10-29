@@ -3,8 +3,8 @@
 #
 #   Cek siap (tanpa training, 15-25 menit; termasuk prediksi per citra EXP-0 tiga seed):
 #       powershell -ExecutionPolicy Bypass -File .\jalankan_fase3.ps1 -Seeds 42,123,2026 -CekSaja
-#   Malam A (seed 42 dan 123, 8 run, sekitar 6,5-7 jam):
-#       powershell -ExecutionPolicy Bypass -File .\jalankan_fase3.ps1 -Seeds 42,123 -Nama A
+#   Malam A (seed 42 dan 123, 8 run, sekitar 7-7,5 jam; -UlangELeak = prediksi ulang E-LEAK dengan NMS seperti val):
+#       powershell -ExecutionPolicy Bypass -File .\jalankan_fase3.ps1 -Seeds 42,123 -Nama A -UlangELeak
 #   Malam B (seed 2026, 4 run, sekitar 3,5 jam):
 #       powershell -ExecutionPolicy Bypass -File .\jalankan_fase3.ps1 -Seeds 2026 -Nama B
 #
@@ -18,7 +18,8 @@ param(
     [string]$Seeds = "42,123",
     [string]$Nama = "A",
     [switch]$CekSaja,
-    [switch]$TanpaCommit
+    [switch]$TanpaCommit,
+    [switch]$UlangELeak
 )
 $ErrorActionPreference = "Continue"
 Set-Location -Path $PSScriptRoot
@@ -39,6 +40,14 @@ $expNames = @{ 0 = "exp_0_baseline"; 4 = "exp_0r_uniform_replacement"; 1 = "exp_
 $expLabel = @{ 0 = "EXP-0"; 4 = "EXP-0R"; 1 = "EXP-1"; 2 = "EXP-2"; 3 = "EXP-3" }
 $urutan = @(4, 1, 2, 3)
 $hasil = New-Object System.Collections.ArrayList
+# Keluaran Python dialirkan lewat PowerShell agar ikut tercatat di log (transcript)
+$env:PYTHONUNBUFFERED = "1"
+$env:PYTHONIOENCODING = "utf-8"
+try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch {}
+function Invoke-Py([string[]]$argList) {
+    & $py @argList 2>&1 | ForEach-Object { Write-Host "$_" }
+    return $LASTEXITCODE
+}
 # -Seeds diterima sebagai teks ("42,123") karena powershell -File tidak mengurai array
 $SeedList = @(("$Seeds" -split "[,\s]+") | Where-Object { $_ -ne "" } | ForEach-Object { [int]$_ })
 Write-Host "Seed: $($SeedList -join ', ')  |  Mode: $tag"
@@ -73,17 +82,12 @@ function Invoke-Predict([int]$s, [int]$e) {
     $out = "$predDir/preds_seed${s}_$($expNames[$e]).csv"
     if (Test-Path $out) { Add-Hasil "prediksi" $run "sudah ada" 0; return }
     New-Item -ItemType Directory -Force -Path $predDir | Out-Null
-    $old = "$root/stage_v2_eleak_sim/per_image/preds_group_on_cleanval.csv"
-    if ($e -eq 0 -and $s -eq 42 -and (Test-Path $old)) {
-        Copy-Item $old $out; Add-Hasil "prediksi" $run "disalin dari E-LEAK" 0; return
-    }
     $w = Get-Weights $s $e
     if (-not (Test-Path $w)) { Add-Hasil "prediksi" $run "dilewati: bobot tidak ada" 0; return }
     Write-Host ""
     Write-Host "=== Prediksi per citra $run ($(Get-Date -Format HH:mm)) ===" -ForegroundColor Cyan
     $t0 = Get-Date
-    & $py predict_eleak_per_image.py --weights $w --source $valImages --out-preds "$out.tmp" --out-gt "$predDir/gt_cleanval.csv"
-    $code = $LASTEXITCODE
+    $code = Invoke-Py @("predict_eleak_per_image.py", "--weights", $w, "--source", $valImages, "--out-preds", "$out.tmp", "--out-gt", "$predDir/gt_cleanval.csv")
     $menit = [math]::Round(((Get-Date) - $t0).TotalMinutes, 1)
     if ($code -eq 0 -and (Test-Path "$out.tmp")) { Move-Item -Force "$out.tmp" $out; Add-Hasil "prediksi" $run "OK" $menit }
     else { Add-Hasil "prediksi" $run "GAGAL (exit $code)" $menit }
@@ -110,12 +114,12 @@ if (-not $TanpaCommit) {
             "jalankan_prediksi_eleak.ps1", "jalankan_prediksi_eleak.bat", "jalankan_fase3.ps1", "cek_siap_fase3.bat",
             "jalankan_malam_A.bat", "jalankan_malam_B.bat", "build_label_audit.py", "cek_struktur_kelas.py",
             "audit_label_150/README_AUDIT.md", "MALAM_INI.md") | Where-Object { Test-Path $_ }
-        git add -- $files 2>$null
+        git add -- $files 2>&1 | Out-Null
         git diff --cached --quiet -- $files
         if ($LASTEXITCODE -ne 0) {
-            git commit -m "Fase 2 selesai, persiapan Fase 3 dan audit label" `
-                -m "Uji efek kembaran E-LEAK (selisih-dalam-selisih), runner ablasi multi-seed dengan prediksi per citra, pembangun lembar audit label 150 citra, cek struktur kelas." `
-                -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`nClaude-Session: https://claude.ai/code/session_015oXrwUQZdycPnPqBtm95qT" -- $files
+            git commit -m "Prediksi per citra memakai NMS seperti val, log Python di skrip Fase 3" `
+                -m "predict_eleak_per_image.py: multi_label=True dan tanpa batas waktu NMS (sebelumnya 49-179 citra tanpa prediksi). jalankan_fase3.ps1: keluaran Python tercatat di log, opsi -UlangELeak." `
+                -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`nClaude-Session: https://claude.ai/code/session_015oXrwUQZdycPnPqBtm95qT" -- $files 2>&1 | ForEach-Object { Write-Host "$_" }
             if ($LASTEXITCODE -eq 0) { Write-Host "Skrip baru di-commit ke branch $(git branch --show-current)." -ForegroundColor Green }
             else { Write-Host "Commit gagal (tidak menghentikan proses)." -ForegroundColor Yellow }
         }
@@ -125,13 +129,12 @@ if (-not $TanpaCommit) {
 # --- 1. Preflight -------------------------------------------------------------
 Write-Host ""
 Write-Host "=== Preflight: GPU dan dry-run konfigurasi ($(Get-Date -Format HH:mm)) ===" -ForegroundColor Cyan
-& $py -c "import torch; assert torch.cuda.is_available(), 'CUDA tidak tersedia'; print('GPU:', torch.cuda.get_device_name(0))"
-if ($LASTEXITCODE -ne 0) { Add-Hasil "preflight" "GPU" "GAGAL (CUDA tidak tersedia)" 0 } else { Add-Hasil "preflight" "GPU" "OK" 0 }
+$code = Invoke-Py @("-c", "import torch; assert torch.cuda.is_available(), 'CUDA tidak tersedia'; print('GPU:', torch.cuda.get_device_name(0))")
+if ($code -ne 0) { Add-Hasil "preflight" "GPU" "GAGAL (CUDA tidak tersedia)" 0 } else { Add-Hasil "preflight" "GPU" "OK" 0 }
 foreach ($e in $urutan) {
     $s = $SeedList[0]
     $t0 = Get-Date
-    & $py @((Get-TrainArgs $s $e) + @("--dry-run"))
-    $code = $LASTEXITCODE
+    $code = Invoke-Py ((Get-TrainArgs $s $e) + @("--dry-run"))
     $menit = [math]::Round(((Get-Date) - $t0).TotalMinutes, 1)
     if ($code -ne 0) { Add-Hasil "preflight" "$($expLabel[$e]) (dry-run)" "GAGAL (exit $code)" $menit }
     else { Add-Hasil "preflight" "$($expLabel[$e]) (dry-run)" "OK" $menit }
@@ -148,6 +151,31 @@ if ($CekSaja) {
     Show-Ringkasan; Stop-Transcript | Out-Null; exit 0
 }
 
+# --- 2a. Opsional: prediksi ulang E-LEAK dengan NMS seperti val (RQ1) ----------
+if ($UlangELeak) {
+    $ev2 = "$root/stage_v2_eleak_sim/per_image_v2"
+    New-Item -ItemType Directory -Force -Path $ev2 | Out-Null
+    if (Test-Path "$ev2/preds_sim_on_simval.csv") { Add-Hasil "E-LEAK" "model split acak" "sudah ada" 0 }
+    else {
+        Write-Host ""
+        Write-Host "=== E-LEAK: prediksi ulang model split acak ($(Get-Date -Format HH:mm)) ===" -ForegroundColor Cyan
+        $t0 = Get-Date
+        $code = Invoke-Py @("predict_eleak_per_image.py", "--weights", "$root/stage_v2_eleak_sim/exp_0_baseline/weights/best.pt",
+            "--source", "$root/eleak_sim_rq1/sim_val_all.txt", "--out-preds", "$ev2/preds_sim_on_simval.csv.tmp", "--out-gt", "$ev2/gt_simval.csv")
+        $menit = [math]::Round(((Get-Date) - $t0).TotalMinutes, 1)
+        if ($code -eq 0 -and (Test-Path "$ev2/preds_sim_on_simval.csv.tmp")) {
+            Move-Item -Force "$ev2/preds_sim_on_simval.csv.tmp" "$ev2/preds_sim_on_simval.csv"; Add-Hasil "E-LEAK" "model split acak" "OK" $menit
+        } else { Add-Hasil "E-LEAK" "model split acak" "GAGAL (exit $code)" $menit }
+    }
+    Invoke-Predict 42 0
+    $g42 = "$predDir/preds_seed42_exp_0_baseline.csv"
+    if (Test-Path $g42) {
+        Copy-Item -Force $g42 "$ev2/preds_group_on_cleanval.csv"
+        Copy-Item -Force "$predDir/gt_cleanval.csv" "$ev2/gt_cleanval.csv"
+        Add-Hasil "E-LEAK" "model split per grup (EXP-0 seed 42)" "disalin" 0
+    }
+}
+
 # --- 2. Training + prediksi per citra -----------------------------------------
 foreach ($s in $SeedList) {
     Invoke-Predict $s 0
@@ -156,8 +184,7 @@ foreach ($s in $SeedList) {
         Write-Host ""
         Write-Host "=== Training $run ($(Get-Date -Format HH:mm)) ===" -ForegroundColor Cyan
         $t0 = Get-Date
-        & $py @(Get-TrainArgs $s $e)
-        $code = $LASTEXITCODE
+        $code = Invoke-Py (Get-TrainArgs $s $e)
         $menit = [math]::Round(((Get-Date) - $t0).TotalMinutes, 1)
         if ($code -ne 0) { Add-Hasil "training" $run "GAGAL (exit $code)" $menit; continue }
         Add-Hasil "training" $run "OK" $menit (Get-Map $s $e)
