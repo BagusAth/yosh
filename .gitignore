@@ -77,3 +77,13 @@ stage_8_2_difficulty_clean*/
 stage_8_ablation_clean*/
 .venv-cuda/
 
+# ==============================================================================
+# Prediksi per citra (puluhan MB per model; dibuat ulang dari best.pt dalam < 1 menit)
+# Laporan .md/.json dan CSV bootstrap di folder analysis/ tetap dilacak.
+# ==============================================================================
+stage_v2_ablation/per_image/**/preds_*.csv
+stage_v2_ablation/per_image/**/gt_*.csv
+stage_v2_eleak_sim/per_image*/preds_*.csv
+stage_v2_eleak_sim/per_image*/gt_*.csv
+stage_v2_eleak_sim/per_image*/*.npz
+*.csv.tmp
