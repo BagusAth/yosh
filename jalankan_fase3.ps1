@@ -5,8 +5,15 @@
 #       powershell -ExecutionPolicy Bypass -File .\jalankan_fase3.ps1 -Seeds 42,123,2026 -CekSaja
 #   Malam A (seed 42 dan 123, 8 run, sekitar 7-7,5 jam; -UlangELeak = prediksi ulang E-LEAK dengan NMS seperti val):
 #       powershell -ExecutionPolicy Bypass -File .\jalankan_fase3.ps1 -Seeds 42,123 -Nama A -UlangELeak
-#   Malam B (seed 2026, 4 run, sekitar 3,5 jam):
+#   Malam B (seed 2026, 4 run, sekitar 3 jam):
 #       powershell -ExecutionPolicy Bypass -File .\jalankan_fase3.ps1 -Seeds 2026 -Nama B
+#   Malam B lengkap (30 Okt 2026; sekitar 6 jam): uji baji hitam + 4 run seed 2026 + CONV
+#       powershell -ExecutionPolicy Bypass -File .\jalankan_fase3.ps1 -Seeds 2026 -Nama B -UjiBaji -Conv
+#
+# -UjiBaji : uji jalan pintas baji hitam (uji_baji_hitam.py), inferensi saja pada validasi bersih dengan
+#            EXP-0 tiga seed, sekitar 10-15 menit. Dijalankan sebelum training. Keluaran: stage_v2_baji\
+# -Conv    : Fase 4, uji konvergensi EXP-0 dan EXP-1, seed 42, 60 epoch (resep lain sama), sekitar 3 jam.
+#            Dijalankan sesudah training Fase 3. Keluaran: stage_v2_conv60\
 #
 # - Aman dijalankan ulang: run yang sudah selesai dan cocok checksum-nya dilewati (--skip-if-done),
 #   prediksi yang sudah ada tidak diulang.
@@ -19,7 +26,9 @@ param(
     [string]$Nama = "A",
     [switch]$CekSaja,
     [switch]$TanpaCommit,
-    [switch]$UlangELeak
+    [switch]$UlangELeak,
+    [switch]$UjiBaji,
+    [switch]$Conv
 )
 $ErrorActionPreference = "Continue"
 Set-Location -Path $PSScriptRoot
@@ -39,6 +48,12 @@ $predDir = "$root/stage_v2_ablation/per_image"
 $expNames = @{ 0 = "exp_0_baseline"; 4 = "exp_0r_uniform_replacement"; 1 = "exp_1_adaptive_sampling"; 2 = "exp_2_targeted_aug"; 3 = "exp_3_full_proposed" }
 $expLabel = @{ 0 = "EXP-0"; 4 = "EXP-0R"; 1 = "EXP-1"; 2 = "EXP-2"; 3 = "EXP-3" }
 $urutan = @(4, 1, 2, 3)
+# Fase 4 (CONV): resep sama dengan Fase 3 kecuali jumlah epoch
+$convEpochs = 60
+$convSeed = 42
+$convExps = @(0, 1)
+$convRoot = "$root/stage_v2_conv60"
+$bajiDir = "$root/stage_v2_baji"
 $hasil = New-Object System.Collections.ArrayList
 # Keluaran Python dialirkan lewat PowerShell agar ikut tercatat di log (transcript)
 $env:PYTHONUNBUFFERED = "1"
@@ -77,6 +92,32 @@ function Get-TrainArgs([int]$s, [int]$e) {
         "--data-yaml", $data, "--manifest-path", $manifest,
         "--pretrained-weights", $w0, "--output-dir", (Get-OutDir $s), "--skip-if-done")
 }
+function Get-ConvArgs([int]$e) {
+    return @("stage_8_4_run_ablation_experiments.py", "--exp", "$e", "--seed", "$convSeed", "--epochs", "$convEpochs",
+        "--data-yaml", $data, "--manifest-path", $manifest,
+        "--pretrained-weights", $w0, "--output-dir", "$convRoot/seed_$convSeed", "--skip-if-done")
+}
+function Get-MapDir([string]$dir) {
+    $f = "$dir/metrics_summary.json"
+    if (-not (Test-Path $f)) { return "" }
+    try { $j = Get-Content $f -Raw | ConvertFrom-Json; return ("{0:N2}%" -f ($j.metrics_validation.mAP50_95 * 100)) } catch { return "" }
+}
+function Invoke-PredictConv([int]$e) {
+    $run = "$($expLabel[$e]) seed $convSeed ${convEpochs}ep"
+    $pdir = "$convRoot/per_image"
+    $out = "$pdir/preds_seed${convSeed}_$($expNames[$e])_e${convEpochs}.csv"
+    if (Test-Path $out) { Add-Hasil "prediksi" $run "sudah ada" 0; return }
+    New-Item -ItemType Directory -Force -Path $pdir | Out-Null
+    $w = "$convRoot/seed_$convSeed/$($expNames[$e])/weights/best.pt"
+    if (-not (Test-Path $w)) { Add-Hasil "prediksi" $run "dilewati: bobot tidak ada" 0; return }
+    Write-Host ""
+    Write-Host "=== Prediksi per citra $run ($(Get-Date -Format HH:mm)) ===" -ForegroundColor Cyan
+    $t0 = Get-Date
+    $code = Invoke-Py @("predict_eleak_per_image.py", "--weights", $w, "--source", $valImages, "--out-preds", "$out.tmp", "--out-gt", "$pdir/gt_cleanval.csv")
+    $menit = [math]::Round(((Get-Date) - $t0).TotalMinutes, 1)
+    if ($code -eq 0 -and (Test-Path "$out.tmp")) { Move-Item -Force "$out.tmp" $out; Add-Hasil "prediksi" $run "OK" $menit }
+    else { Add-Hasil "prediksi" $run "GAGAL (exit $code)" $menit }
+}
 function Invoke-Predict([int]$s, [int]$e) {
     $run = "$($expLabel[$e]) seed $s"
     $out = "$predDir/preds_seed${s}_$($expNames[$e]).csv"
@@ -113,13 +154,13 @@ if (-not $TanpaCommit) {
         $files = @("predict_eleak_per_image.py", "analyze_eleak_per_image.py", "analyze_eleak_did.py",
             "jalankan_prediksi_eleak.ps1", "jalankan_prediksi_eleak.bat", "jalankan_fase3.ps1", "cek_siap_fase3.bat",
             "jalankan_malam_A.bat", "jalankan_malam_B.bat", "build_label_audit.py", "cek_struktur_kelas.py",
-            "audit_label_150/README_AUDIT.md", "MALAM_INI.md") | Where-Object { Test-Path $_ }
+            "audit_label_150/README_AUDIT.md", "MALAM_INI.md", "uji_baji_hitam.py", "analyze_ablation.py") | Where-Object { Test-Path $_ }
         git add -- $files 2>&1 | Out-Null
         git diff --cached --quiet -- $files
         if ($LASTEXITCODE -ne 0) {
-            git commit -m "Prediksi per citra memakai NMS seperti val, log Python di skrip Fase 3" `
-                -m "predict_eleak_per_image.py: multi_label=True dan tanpa batas waktu NMS (sebelumnya 49-179 citra tanpa prediksi). jalankan_fase3.ps1: keluaran Python tercatat di log, opsi -UlangELeak." `
-                -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`nClaude-Session: https://claude.ai/code/session_015oXrwUQZdycPnPqBtm95qT" -- $files 2>&1 | ForEach-Object { Write-Host "$_" }
+            git commit -m "Malam B: uji jalan pintas baji hitam dan uji konvergensi 60 epoch" `
+                -m "uji_baji_hitam.py: baji hitam vs baji warna rata pada validasi bersih, inferensi saja dengan EXP-0 tiga seed. jalankan_fase3.ps1: opsi -UjiBaji dan -Conv (EXP-0 dan EXP-1, seed 42, 60 epoch). MALAM_INI.md: runbook malam B." `
+                -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`nClaude-Session: https://claude.ai/code/session_015oXrwVC1rxV8W8friYcgig" -- $files 2>&1 | ForEach-Object { Write-Host "$_" }
             if ($LASTEXITCODE -eq 0) { Write-Host "Skrip baru di-commit ke branch $(git branch --show-current)." -ForegroundColor Green }
             else { Write-Host "Commit gagal (tidak menghentikan proses)." -ForegroundColor Yellow }
         }
@@ -138,6 +179,15 @@ foreach ($e in $urutan) {
     $menit = [math]::Round(((Get-Date) - $t0).TotalMinutes, 1)
     if ($code -ne 0) { Add-Hasil "preflight" "$($expLabel[$e]) (dry-run)" "GAGAL (exit $code)" $menit }
     else { Add-Hasil "preflight" "$($expLabel[$e]) (dry-run)" "OK" $menit }
+}
+if ($Conv) {
+    foreach ($e in $convExps) {
+        $t0 = Get-Date
+        $code = Invoke-Py ((Get-ConvArgs $e) + @("--dry-run"))
+        $menit = [math]::Round(((Get-Date) - $t0).TotalMinutes, 1)
+        $nm = "$($expLabel[$e]) ${convEpochs}ep (dry-run)"
+        if ($code -ne 0) { Add-Hasil "preflight" $nm "GAGAL (exit $code)" $menit } else { Add-Hasil "preflight" $nm "OK" $menit }
+    }
 }
 $preGagal = @($hasil | Where-Object { $_.Tahap -eq "preflight" -and $_.Status -like "GAGAL*" })
 if ($preGagal.Count -gt 0) {
@@ -176,6 +226,20 @@ if ($UlangELeak) {
     }
 }
 
+# --- 2b. Opsional: uji jalan pintas baji hitam (inferensi saja, beberapa menit) ---
+if ($UjiBaji) {
+    if (Test-Path "$bajiDir/SELESAI.txt") { Add-Hasil "uji baji" "EXP-0 tiga seed" "sudah ada" 0 }
+    else {
+        Write-Host ""
+        Write-Host "=== Uji jalan pintas baji hitam ($(Get-Date -Format HH:mm)) ===" -ForegroundColor Cyan
+        $t0 = Get-Date
+        $code = Invoke-Py @("uji_baji_hitam.py", "--out-dir", $bajiDir)
+        $menit = [math]::Round(((Get-Date) - $t0).TotalMinutes, 1)
+        if ($code -eq 0 -and (Test-Path "$bajiDir/SELESAI.txt")) { Add-Hasil "uji baji" "EXP-0 tiga seed" "OK" $menit }
+        else { Add-Hasil "uji baji" "EXP-0 tiga seed" "GAGAL (exit $code)" $menit }
+    }
+}
+
 # --- 2. Training + prediksi per citra -----------------------------------------
 foreach ($s in $SeedList) {
     Invoke-Predict $s 0
@@ -189,6 +253,21 @@ foreach ($s in $SeedList) {
         if ($code -ne 0) { Add-Hasil "training" $run "GAGAL (exit $code)" $menit; continue }
         Add-Hasil "training" $run "OK" $menit (Get-Map $s $e)
         Invoke-Predict $s $e
+    }
+}
+
+# --- 3. Opsional: Fase 4 CONV (60 epoch, seed 42, EXP-0 lalu EXP-1) -----------
+if ($Conv) {
+    foreach ($e in $convExps) {
+        $run = "$($expLabel[$e]) seed $convSeed ${convEpochs}ep"
+        Write-Host ""
+        Write-Host "=== Training CONV $run ($(Get-Date -Format HH:mm)) ===" -ForegroundColor Cyan
+        $t0 = Get-Date
+        $code = Invoke-Py (Get-ConvArgs $e)
+        $menit = [math]::Round(((Get-Date) - $t0).TotalMinutes, 1)
+        if ($code -ne 0) { Add-Hasil "CONV" $run "GAGAL (exit $code)" $menit; continue }
+        Add-Hasil "CONV" $run "OK" $menit (Get-MapDir "$convRoot/seed_$convSeed/$($expNames[$e])")
+        Invoke-PredictConv $e
     }
 }
 
