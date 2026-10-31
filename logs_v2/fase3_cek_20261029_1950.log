@@ -1,0 +1,644 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20261029195040
+Username: LAPTOP-P3SG0UKE\LENOVO
+RunAs User: LAPTOP-P3SG0UKE\LENOVO
+Configuration Name: 
+Machine: LAPTOP-P3SG0UKE (Microsoft Windows NT 10.0.26200.0)
+Host Application: powershell.exe -NoExit -ExecutionPolicy Bypass -File D:\UNDIP\SKRIPSI\jalankan_fase3.ps1 -Seeds 42,123,2026 -CekSaja
+Process ID: 23204
+PSVersion: 5.1.26100.9711
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9711
+BuildVersion: 10.0.26100.9711
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Seed: 42, 123, 2026  |  Mode: cek
+
+
+=== Preflight: GPU dan dry-run konfigurasi (19:50) ===
+GPU: NVIDIA GeForce RTX 4060 Laptop GPU
+================================================================================
+STAGE 8.4 — ABLATION STUDY EXPERIMENTS (EXP-0 .. EXP-3) (HARDENED STAGE 9.8)
+================================================================================
+Data YAML          : D:/UNDIP/SKRIPSI/cassava-v7-runtime-mirror/data.yaml
+Manifest Path      : D:/UNDIP/SKRIPSI/stage_v2_difficulty_20261028/train_image_difficulty_manifest.csv
+Output Directory   : D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_42
+Target Eksperimen  : 4
+Epochs per Eksper. : 30
+Patience           : 10
+Batch Size         : 16
+Image Resolution   : 640
+Random Seed        : 42
+Device             : 0
+Workers            : 2
+AMP                : True
+Plots              : False
+Close Mosaic       : 6
+Optimizer          : auto
+Skip if Done       : True
+================================================================================
+[EXP-0R] INFO: EXP-0R adalah kontrol baseline murni; manifest 'D:/UNDIP/SKRIPSI/stage_v2_difficulty_20261028/train_image_difficulty_manifest.csv' diabaikan.
+[EXP-0R] DRY-RUN PASS: Validasi preflight, dataset fingerprint, dan konfigurasi lolos 100%.
+
+================================================================================
+STAGE 8.4 DRY-RUN SELESAI: Seluruh eksperimen lolos validasi preflight!
+================================================================================
+================================================================================
+STAGE 8.4 — ABLATION STUDY EXPERIMENTS (EXP-0 .. EXP-3) (HARDENED STAGE 9.8)
+================================================================================
+Data YAML          : D:/UNDIP/SKRIPSI/cassava-v7-runtime-mirror/data.yaml
+Manifest Path      : D:/UNDIP/SKRIPSI/stage_v2_difficulty_20261028/train_image_difficulty_manifest.csv
+Output Directory   : D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_42
+Target Eksperimen  : 1
+Epochs per Eksper. : 30
+Patience           : 10
+Batch Size         : 16
+Image Resolution   : 640
+Random Seed        : 42
+Device             : 0
+Workers            : 2
+AMP                : True
+Plots              : False
+Close Mosaic       : 6
+Optimizer          : auto
+Skip if Done       : True
+================================================================================
+[EXP-1] Manifest provenance & coverage verified: D:/UNDIP/SKRIPSI/stage_v2_difficulty_20261028/train_image_difficulty_manifest.csv
+[EXP-1] DRY-RUN PASS: Validasi preflight, dataset fingerprint, dan konfigurasi lolos 100%.
+
+================================================================================
+STAGE 8.4 DRY-RUN SELESAI: Seluruh eksperimen lolos validasi preflight!
+================================================================================
+================================================================================
+STAGE 8.4 — ABLATION STUDY EXPERIMENTS (EXP-0 .. EXP-3) (HARDENED STAGE 9.8)
+================================================================================
+Data YAML          : D:/UNDIP/SKRIPSI/cassava-v7-runtime-mirror/data.yaml
+Manifest Path      : D:/UNDIP/SKRIPSI/stage_v2_difficulty_20261028/train_image_difficulty_manifest.csv
+Output Directory   : D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_42
+Target Eksperimen  : 2
+Epochs per Eksper. : 30
+Patience           : 10
+Batch Size         : 16
+Image Resolution   : 640
+Random Seed        : 42
+Device             : 0
+Workers            : 2
+AMP                : True
+Plots              : False
+Close Mosaic       : 6
+Optimizer          : auto
+Skip if Done       : True
+================================================================================
+[EXP-2] Manifest provenance & coverage verified: D:/UNDIP/SKRIPSI/stage_v2_difficulty_20261028/train_image_difficulty_manifest.csv
+[EXP-2] DRY-RUN PASS: Validasi preflight, dataset fingerprint, dan konfigurasi lolos 100%.
+
+================================================================================
+STAGE 8.4 DRY-RUN SELESAI: Seluruh eksperimen lolos validasi preflight!
+================================================================================
+================================================================================
+STAGE 8.4 — ABLATION STUDY EXPERIMENTS (EXP-0 .. EXP-3) (HARDENED STAGE 9.8)
+================================================================================
+Data YAML          : D:/UNDIP/SKRIPSI/cassava-v7-runtime-mirror/data.yaml
+Manifest Path      : D:/UNDIP/SKRIPSI/stage_v2_difficulty_20261028/train_image_difficulty_manifest.csv
+Output Directory   : D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_42
+Target Eksperimen  : 3
+Epochs per Eksper. : 30
+Patience           : 10
+Batch Size         : 16
+Image Resolution   : 640
+Random Seed        : 42
+Device             : 0
+Workers            : 2
+AMP                : True
+Plots              : False
+Close Mosaic       : 6
+Optimizer          : auto
+Skip if Done       : True
+================================================================================
+[EXP-3] Manifest provenance & coverage verified: D:/UNDIP/SKRIPSI/stage_v2_difficulty_20261028/train_image_difficulty_manifest.csv
+[EXP-3] DRY-RUN PASS: Validasi preflight, dataset fingerprint, dan konfigurasi lolos 100%.
+
+================================================================================
+STAGE 8.4 DRY-RUN SELESAI: Seluruh eksperimen lolos validasi preflight!
+================================================================================
+
+=== Prediksi per citra EXP-0 seed 42 (19:55) ===
+NMS: seperti val() (multi_label=True, torchvision, tanpa batas waktu)
+16/2567 citra
+32/2567 citra
+48/2567 citra
+64/2567 citra
+80/2567 citra
+96/2567 citra
+112/2567 citra
+128/2567 citra
+144/2567 citra
+160/2567 citra
+176/2567 citra
+192/2567 citra
+208/2567 citra
+224/2567 citra
+240/2567 citra
+256/2567 citra
+272/2567 citra
+288/2567 citra
+304/2567 citra
+320/2567 citra
+336/2567 citra
+352/2567 citra
+368/2567 citra
+384/2567 citra
+400/2567 citra
+416/2567 citra
+432/2567 citra
+448/2567 citra
+464/2567 citra
+480/2567 citra
+496/2567 citra
+512/2567 citra
+528/2567 citra
+544/2567 citra
+560/2567 citra
+576/2567 citra
+592/2567 citra
+608/2567 citra
+624/2567 citra
+640/2567 citra
+656/2567 citra
+672/2567 citra
+688/2567 citra
+704/2567 citra
+720/2567 citra
+736/2567 citra
+752/2567 citra
+768/2567 citra
+784/2567 citra
+800/2567 citra
+816/2567 citra
+832/2567 citra
+848/2567 citra
+864/2567 citra
+880/2567 citra
+896/2567 citra
+912/2567 citra
+928/2567 citra
+944/2567 citra
+960/2567 citra
+976/2567 citra
+992/2567 citra
+1008/2567 citra
+1024/2567 citra
+1040/2567 citra
+1056/2567 citra
+1072/2567 citra
+1088/2567 citra
+1104/2567 citra
+1120/2567 citra
+1136/2567 citra
+1152/2567 citra
+1168/2567 citra
+1184/2567 citra
+1200/2567 citra
+1216/2567 citra
+1232/2567 citra
+1248/2567 citra
+1264/2567 citra
+1280/2567 citra
+1296/2567 citra
+1312/2567 citra
+1328/2567 citra
+1344/2567 citra
+1360/2567 citra
+1376/2567 citra
+1392/2567 citra
+1408/2567 citra
+1424/2567 citra
+1440/2567 citra
+1456/2567 citra
+1472/2567 citra
+1488/2567 citra
+1504/2567 citra
+1520/2567 citra
+1536/2567 citra
+1552/2567 citra
+1568/2567 citra
+1584/2567 citra
+1600/2567 citra
+1616/2567 citra
+1632/2567 citra
+1648/2567 citra
+1664/2567 citra
+1680/2567 citra
+1696/2567 citra
+1712/2567 citra
+1728/2567 citra
+1744/2567 citra
+1760/2567 citra
+1776/2567 citra
+1792/2567 citra
+1808/2567 citra
+1824/2567 citra
+1840/2567 citra
+1856/2567 citra
+1872/2567 citra
+1888/2567 citra
+1904/2567 citra
+1920/2567 citra
+1936/2567 citra
+1952/2567 citra
+1968/2567 citra
+1984/2567 citra
+2000/2567 citra
+2016/2567 citra
+2032/2567 citra
+2048/2567 citra
+2064/2567 citra
+2080/2567 citra
+2096/2567 citra
+2112/2567 citra
+2128/2567 citra
+2144/2567 citra
+2160/2567 citra
+2176/2567 citra
+2192/2567 citra
+2208/2567 citra
+2224/2567 citra
+2240/2567 citra
+2256/2567 citra
+2272/2567 citra
+2288/2567 citra
+2304/2567 citra
+2320/2567 citra
+2336/2567 citra
+2352/2567 citra
+2368/2567 citra
+2384/2567 citra
+2400/2567 citra
+2416/2567 citra
+2432/2567 citra
+2448/2567 citra
+2464/2567 citra
+2480/2567 citra
+2496/2567 citra
+2512/2567 citra
+2528/2567 citra
+2544/2567 citra
+2560/2567 citra
+2567/2567 citra
+
+Selesai: 2567 citra, 436,270 prediksi, 9,649 objek GT, 0 citra tanpa prediksi
+
+=== Prediksi per citra EXP-0 seed 123 (19:56) ===
+NMS: seperti val() (multi_label=True, torchvision, tanpa batas waktu)
+16/2567 citra
+32/2567 citra
+48/2567 citra
+64/2567 citra
+80/2567 citra
+96/2567 citra
+112/2567 citra
+128/2567 citra
+144/2567 citra
+160/2567 citra
+176/2567 citra
+192/2567 citra
+208/2567 citra
+224/2567 citra
+240/2567 citra
+256/2567 citra
+272/2567 citra
+288/2567 citra
+304/2567 citra
+320/2567 citra
+336/2567 citra
+352/2567 citra
+368/2567 citra
+384/2567 citra
+400/2567 citra
+416/2567 citra
+432/2567 citra
+448/2567 citra
+464/2567 citra
+480/2567 citra
+496/2567 citra
+512/2567 citra
+528/2567 citra
+544/2567 citra
+560/2567 citra
+576/2567 citra
+592/2567 citra
+608/2567 citra
+624/2567 citra
+640/2567 citra
+656/2567 citra
+672/2567 citra
+688/2567 citra
+704/2567 citra
+720/2567 citra
+736/2567 citra
+752/2567 citra
+768/2567 citra
+784/2567 citra
+800/2567 citra
+816/2567 citra
+832/2567 citra
+848/2567 citra
+864/2567 citra
+880/2567 citra
+896/2567 citra
+912/2567 citra
+928/2567 citra
+944/2567 citra
+960/2567 citra
+976/2567 citra
+992/2567 citra
+1008/2567 citra
+1024/2567 citra
+1040/2567 citra
+1056/2567 citra
+1072/2567 citra
+1088/2567 citra
+1104/2567 citra
+1120/2567 citra
+1136/2567 citra
+1152/2567 citra
+1168/2567 citra
+1184/2567 citra
+1200/2567 citra
+1216/2567 citra
+1232/2567 citra
+1248/2567 citra
+1264/2567 citra
+1280/2567 citra
+1296/2567 citra
+1312/2567 citra
+1328/2567 citra
+1344/2567 citra
+1360/2567 citra
+1376/2567 citra
+1392/2567 citra
+1408/2567 citra
+1424/2567 citra
+1440/2567 citra
+1456/2567 citra
+1472/2567 citra
+1488/2567 citra
+1504/2567 citra
+1520/2567 citra
+1536/2567 citra
+1552/2567 citra
+1568/2567 citra
+1584/2567 citra
+1600/2567 citra
+1616/2567 citra
+1632/2567 citra
+1648/2567 citra
+1664/2567 citra
+1680/2567 citra
+1696/2567 citra
+1712/2567 citra
+1728/2567 citra
+1744/2567 citra
+1760/2567 citra
+1776/2567 citra
+1792/2567 citra
+1808/2567 citra
+1824/2567 citra
+1840/2567 citra
+1856/2567 citra
+1872/2567 citra
+1888/2567 citra
+1904/2567 citra
+1920/2567 citra
+1936/2567 citra
+1952/2567 citra
+1968/2567 citra
+1984/2567 citra
+2000/2567 citra
+2016/2567 citra
+2032/2567 citra
+2048/2567 citra
+2064/2567 citra
+2080/2567 citra
+2096/2567 citra
+2112/2567 citra
+2128/2567 citra
+2144/2567 citra
+2160/2567 citra
+2176/2567 citra
+2192/2567 citra
+2208/2567 citra
+2224/2567 citra
+2240/2567 citra
+2256/2567 citra
+2272/2567 citra
+2288/2567 citra
+2304/2567 citra
+2320/2567 citra
+2336/2567 citra
+2352/2567 citra
+2368/2567 citra
+2384/2567 citra
+2400/2567 citra
+2416/2567 citra
+2432/2567 citra
+2448/2567 citra
+2464/2567 citra
+2480/2567 citra
+2496/2567 citra
+2512/2567 citra
+2528/2567 citra
+2544/2567 citra
+2560/2567 citra
+2567/2567 citra
+
+Selesai: 2567 citra, 466,679 prediksi, 9,649 objek GT, 0 citra tanpa prediksi
+
+=== Prediksi per citra EXP-0 seed 2026 (19:57) ===
+NMS: seperti val() (multi_label=True, torchvision, tanpa batas waktu)
+16/2567 citra
+32/2567 citra
+48/2567 citra
+64/2567 citra
+80/2567 citra
+96/2567 citra
+112/2567 citra
+128/2567 citra
+144/2567 citra
+160/2567 citra
+176/2567 citra
+192/2567 citra
+208/2567 citra
+224/2567 citra
+240/2567 citra
+256/2567 citra
+272/2567 citra
+288/2567 citra
+304/2567 citra
+320/2567 citra
+336/2567 citra
+352/2567 citra
+368/2567 citra
+384/2567 citra
+400/2567 citra
+416/2567 citra
+432/2567 citra
+448/2567 citra
+464/2567 citra
+480/2567 citra
+496/2567 citra
+512/2567 citra
+528/2567 citra
+544/2567 citra
+560/2567 citra
+576/2567 citra
+592/2567 citra
+608/2567 citra
+624/2567 citra
+640/2567 citra
+656/2567 citra
+672/2567 citra
+688/2567 citra
+704/2567 citra
+720/2567 citra
+736/2567 citra
+752/2567 citra
+768/2567 citra
+784/2567 citra
+800/2567 citra
+816/2567 citra
+832/2567 citra
+848/2567 citra
+864/2567 citra
+880/2567 citra
+896/2567 citra
+912/2567 citra
+928/2567 citra
+944/2567 citra
+960/2567 citra
+976/2567 citra
+992/2567 citra
+1008/2567 citra
+1024/2567 citra
+1040/2567 citra
+1056/2567 citra
+1072/2567 citra
+1088/2567 citra
+1104/2567 citra
+1120/2567 citra
+1136/2567 citra
+1152/2567 citra
+1168/2567 citra
+1184/2567 citra
+1200/2567 citra
+1216/2567 citra
+1232/2567 citra
+1248/2567 citra
+1264/2567 citra
+1280/2567 citra
+1296/2567 citra
+1312/2567 citra
+1328/2567 citra
+1344/2567 citra
+1360/2567 citra
+1376/2567 citra
+1392/2567 citra
+1408/2567 citra
+1424/2567 citra
+1440/2567 citra
+1456/2567 citra
+1472/2567 citra
+1488/2567 citra
+1504/2567 citra
+1520/2567 citra
+1536/2567 citra
+1552/2567 citra
+1568/2567 citra
+1584/2567 citra
+1600/2567 citra
+1616/2567 citra
+1632/2567 citra
+1648/2567 citra
+1664/2567 citra
+1680/2567 citra
+1696/2567 citra
+1712/2567 citra
+1728/2567 citra
+1744/2567 citra
+1760/2567 citra
+1776/2567 citra
+1792/2567 citra
+1808/2567 citra
+1824/2567 citra
+1840/2567 citra
+1856/2567 citra
+1872/2567 citra
+1888/2567 citra
+1904/2567 citra
+1920/2567 citra
+1936/2567 citra
+1952/2567 citra
+1968/2567 citra
+1984/2567 citra
+2000/2567 citra
+2016/2567 citra
+2032/2567 citra
+2048/2567 citra
+2064/2567 citra
+2080/2567 citra
+2096/2567 citra
+2112/2567 citra
+2128/2567 citra
+2144/2567 citra
+2160/2567 citra
+2176/2567 citra
+2192/2567 citra
+2208/2567 citra
+2224/2567 citra
+2240/2567 citra
+2256/2567 citra
+2272/2567 citra
+2288/2567 citra
+2304/2567 citra
+2320/2567 citra
+2336/2567 citra
+2352/2567 citra
+2368/2567 citra
+2384/2567 citra
+2400/2567 citra
+2416/2567 citra
+2432/2567 citra
+2448/2567 citra
+2464/2567 citra
+2480/2567 citra
+2496/2567 citra
+2512/2567 citra
+2528/2567 citra
+2544/2567 citra
+2560/2567 citra
+2567/2567 citra
+
+Selesai: 2567 citra, 432,444 prediksi, 9,649 objek GT, 0 citra tanpa prediksi
+Preflight lolos. Siap untuk malam A dan B.
+
+=================== RINGKASAN (2026-10-29 19:57) ===================
+
+Tahap     Run              Status Menit mAP50-95
+-----     ---              ------ ----- --------
+preflight GPU              OK         0         
+preflight EXP-0R (dry-run) OK       4.4         
+preflight EXP-1 (dry-run)  OK       0.2         
+preflight EXP-2 (dry-run)  OK       0.1         
+preflight EXP-3 (dry-run)  OK       0.1         
+prediksi  EXP-0 seed 42    OK       0.7         
+prediksi  EXP-0 seed 123   OK       0.6         
+prediksi  EXP-0 seed 2026  OK       0.6
+Semua langkah selesai tanpa kegagalan. Log: logs_v2\fase3_cek_20261029_1950.log
+**********************
+Windows PowerShell transcript end
+End time: 20261029195740
+**********************

@@ -1,0 +1,86 @@
+{
+  "tanggal": "2026-10-30T20:02:43",
+  "skrip": "uji_baji_hitam.py",
+  "skrip_sha16": "098ec2cf5acdaef1",
+  "model": {
+    "exp0_s42": {
+      "path": "D:\\UNDIP\\SKRIPSI\\stage_8_ablation_clean_20261020\\exp_0_baseline\\weights\\best.pt",
+      "sha16": "eeb5e7c772dbee09"
+    },
+    "exp0_s123": {
+      "path": "D:\\UNDIP\\SKRIPSI\\stage_v2_ablation\\seed_123\\exp_0_baseline\\weights\\best.pt",
+      "sha16": "34a498e0822686f1"
+    },
+    "exp0_s2026": {
+      "path": "D:\\UNDIP\\SKRIPSI\\stage_v2_ablation\\seed_2026\\exp_0_baseline\\weights\\best.pt",
+      "sha16": "a737e29d5c97d5d3"
+    }
+  },
+  "varian_N": [
+    "N_asli",
+    "N_baji_hitam",
+    "N_baji_rata"
+  ],
+  "varian_W": [
+    "W_asli",
+    "W_rata",
+    "W_inpaint"
+  ],
+  "kriteria_baji": {
+    "sudut_px": 24,
+    "frak": 0.3,
+    "rgb_maks": 3
+  },
+  "ambang_gelap_estimasi": 12,
+  "lebar_tepi_px": 3,
+  "seed_donor": 42,
+  "prediksi": {
+    "imgsz": 640,
+    "conf": 0.001,
+    "iou": 0.7,
+    "max_det": 300,
+    "nms": "seperti val() (multi_label=True, tanpa batas waktu)"
+  },
+  "ringkasan_masker": {
+    "n_citra": 2567,
+    "n_W": 935,
+    "n_N": 1632,
+    "theta_abs_W": {
+      "median": 5.75,
+      "p10": 2.0,
+      "p90": 8.75
+    },
+    "n_W_iou_estimasi_lt_0_5": 52,
+    "n_W_hanya_dari_estimasi_sudut": 80,
+    "n_donor": 883,
+    "detik_lintasan_masker": 48.5
+  },
+  "jumlah_prediksi": {
+    "exp0_s42|N_asli": 268083,
+    "exp0_s42|N_baji_hitam": 258815,
+    "exp0_s42|N_baji_rata": 272278,
+    "exp0_s42|W_asli": 168180,
+    "exp0_s42|W_rata": 173585,
+    "exp0_s42|W_inpaint": 164451,
+    "exp0_s123|N_asli": 288235,
+    "exp0_s123|N_baji_hitam": 274867,
+    "exp0_s123|N_baji_rata": 288274,
+    "exp0_s123|W_asli": 178444,
+    "exp0_s123|W_rata": 182689,
+    "exp0_s123|W_inpaint": 175162,
+    "exp0_s2026|N_asli": 266634,
+    "exp0_s2026|N_baji_hitam": 254800,
+    "exp0_s2026|N_baji_rata": 267518,
+    "exp0_s2026|W_asli": 165868,
+    "exp0_s2026|W_rata": 170800,
+    "exp0_s2026|W_inpaint": 163124
+  },
+  "versi": {
+    "python": "3.13.7",
+    "torch": "2.9.1+cu130",
+    "ultralytics": "8.3.235",
+    "opencv": "5.0.0"
+  },
+  "detik_total": 395.1,
+  "batas": null
+}
