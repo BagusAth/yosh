@@ -1,0 +1,301 @@
+{
+  "42|EXP-2": {
+    "n_crop": 11196,
+    "n_epoch": 30,
+    "crop_per_epoch_median": 372.0,
+    "crop_per_epoch_min": 5,
+    "crop_per_epoch_max": 405,
+    "porsi_citra_latih_per_epoch_pct": 4.142538975501114,
+    "citra_unik": 755,
+    "jendela_px": {
+      "p25": 16.492422502470642,
+      "median": 39.689797177612284,
+      "p75": 53.056573579529235
+    },
+    "zoom": {
+      "p10": 10.71999216417624,
+      "p25": 12.06748432772962,
+      "median": 16.126331944989847,
+      "p75": 38.872890013478546,
+      "p90": 70.10930885410296,
+      "maks": 99.15970200640984,
+      "pct_ge_10": 100.0,
+      "pct_ge_32": 29.421221864951768
+    },
+    "aspek_zoom_x_per_y": {
+      "median": 1.0876725599418746,
+      "pct_di_luar_0_8_1_25": 78.38513754912468
+    },
+    "lesi_target_sebelum_px": {
+      "median": 19.844898588806142,
+      "pct_kecil_lt_32": 100.0
+    },
+    "lesi_target_sesudah_px": {
+      "median": 319.9999999609375,
+      "pct_besar_gt_96": 100.0
+    },
+    "kotak_tersisa": {
+      "rata2": 1.1035191139692748,
+      "pct_hanya_1": 91.42550911039658
+    },
+    "kelas_citra_dicrop_pct": {
+      "HEALTHY": 39.1,
+      "CMD": 26.1,
+      "CGM": 21.6,
+      "CBB": 10.0,
+      "CBSD": 3.2
+    }
+  },
+  "123|EXP-2": {
+    "n_crop": 11196,
+    "n_epoch": 30,
+    "crop_per_epoch_median": 372.0,
+    "crop_per_epoch_min": 5,
+    "crop_per_epoch_max": 405,
+    "porsi_citra_latih_per_epoch_pct": 4.142538975501114,
+    "citra_unik": 755,
+    "jendela_px": {
+      "p25": 16.492422502470642,
+      "median": 39.689797177612284,
+      "p75": 53.056573579529235
+    },
+    "zoom": {
+      "p10": 10.71999216417624,
+      "p25": 12.06748432772962,
+      "median": 16.126331944989847,
+      "p75": 38.872890013478546,
+      "p90": 70.10930885410296,
+      "maks": 99.15970200640984,
+      "pct_ge_10": 100.0,
+      "pct_ge_32": 29.421221864951768
+    },
+    "aspek_zoom_x_per_y": {
+      "median": 1.0876725599418746,
+      "pct_di_luar_0_8_1_25": 78.38513754912468
+    },
+    "lesi_target_sebelum_px": {
+      "median": 19.844898588806142,
+      "pct_kecil_lt_32": 100.0
+    },
+    "lesi_target_sesudah_px": {
+      "median": 319.9999999609375,
+      "pct_besar_gt_96": 100.0
+    },
+    "kotak_tersisa": {
+      "rata2": 1.1035191139692748,
+      "pct_hanya_1": 91.42550911039658
+    },
+    "kelas_citra_dicrop_pct": {
+      "HEALTHY": 39.1,
+      "CMD": 26.1,
+      "CGM": 21.6,
+      "CBB": 10.0,
+      "CBSD": 3.2
+    }
+  },
+  "2026|EXP-2": {
+    "n_crop": 11196,
+    "n_epoch": 30,
+    "crop_per_epoch_median": 372.0,
+    "crop_per_epoch_min": 5,
+    "crop_per_epoch_max": 405,
+    "porsi_citra_latih_per_epoch_pct": 4.142538975501114,
+    "citra_unik": 755,
+    "jendela_px": {
+      "p25": 16.492422502470642,
+      "median": 39.689797177612284,
+      "p75": 53.056573579529235
+    },
+    "zoom": {
+      "p10": 10.71999216417624,
+      "p25": 12.06748432772962,
+      "median": 16.126331944989847,
+      "p75": 38.872890013478546,
+      "p90": 70.10930885410296,
+      "maks": 99.15970200640984,
+      "pct_ge_10": 100.0,
+      "pct_ge_32": 29.421221864951768
+    },
+    "aspek_zoom_x_per_y": {
+      "median": 1.0876725599418746,
+      "pct_di_luar_0_8_1_25": 78.38513754912468
+    },
+    "lesi_target_sebelum_px": {
+      "median": 19.844898588806142,
+      "pct_kecil_lt_32": 100.0
+    },
+    "lesi_target_sesudah_px": {
+      "median": 319.9999999609375,
+      "pct_besar_gt_96": 100.0
+    },
+    "kotak_tersisa": {
+      "rata2": 1.1035191139692748,
+      "pct_hanya_1": 91.42550911039658
+    },
+    "kelas_citra_dicrop_pct": {
+      "HEALTHY": 39.1,
+      "CMD": 26.1,
+      "CGM": 21.6,
+      "CBB": 10.0,
+      "CBSD": 3.2
+    }
+  },
+  "42|EXP-3": {
+    "n_crop": 15516,
+    "n_epoch": 30,
+    "crop_per_epoch_median": 513.0,
+    "crop_per_epoch_min": 3,
+    "crop_per_epoch_max": 570,
+    "porsi_citra_latih_per_epoch_pct": 5.712694877505568,
+    "citra_unik": 755,
+    "jendela_px": {
+      "p25": 17.2441294358399,
+      "median": 39.744181964156716,
+      "p75": 53.056573579529235
+    },
+    "zoom": {
+      "p10": 10.75079513338432,
+      "p25": 12.06748432772962,
+      "median": 16.096058026734372,
+      "p75": 37.197694767283636,
+      "p90": 68.48558610393869,
+      "maks": 99.15970200640984,
+      "pct_ge_10": 100.0,
+      "pct_ge_32": 28.48027842227378
+    },
+    "aspek_zoom_x_per_y": {
+      "median": 1.0964398810095002,
+      "pct_di_luar_0_8_1_25": 78.61562258313998
+    },
+    "lesi_target_sebelum_px": {
+      "median": 19.872090982078358,
+      "pct_kecil_lt_32": 100.0
+    },
+    "lesi_target_sesudah_px": {
+      "median": 319.99999996093754,
+      "pct_besar_gt_96": 100.0
+    },
+    "kotak_tersisa": {
+      "rata2": 1.1026682134570767,
+      "pct_hanya_1": 91.4282031451405
+    },
+    "kelas_citra_dicrop_pct": {
+      "HEALTHY": 37.9,
+      "CMD": 26.3,
+      "CGM": 21.3,
+      "CBB": 10.9,
+      "CBSD": 3.6
+    }
+  },
+  "123|EXP-3": {
+    "n_crop": 15714,
+    "n_epoch": 30,
+    "crop_per_epoch_median": 522.0,
+    "crop_per_epoch_min": 4,
+    "crop_per_epoch_max": 571,
+    "porsi_citra_latih_per_epoch_pct": 5.812917594654789,
+    "citra_unik": 755,
+    "jendela_px": {
+      "p25": 17.09532099727876,
+      "median": 39.689797177612284,
+      "p75": 53.18505429159587
+    },
+    "zoom": {
+      "p10": 10.738327616533219,
+      "p25": 12.037527320841269,
+      "median": 16.126331944989847,
+      "p75": 37.47434322306396,
+      "p90": 68.48558610393869,
+      "maks": 99.15970200640984,
+      "pct_ge_10": 100.0,
+      "pct_ge_32": 28.700521827669593
+    },
+    "aspek_zoom_x_per_y": {
+      "median": 1.0910955880443534,
+      "pct_di_luar_0_8_1_25": 78.3377879597811
+    },
+    "lesi_target_sebelum_px": {
+      "median": 19.844898588806142,
+      "pct_kecil_lt_32": 100.0
+    },
+    "lesi_target_sesudah_px": {
+      "median": 319.9985283430808,
+      "pct_besar_gt_96": 100.0
+    },
+    "kotak_tersisa": {
+      "rata2": 1.1050019091256205,
+      "pct_hanya_1": 91.34529718722159
+    },
+    "kelas_citra_dicrop_pct": {
+      "HEALTHY": 37.9,
+      "CMD": 26.0,
+      "CGM": 21.6,
+      "CBB": 10.7,
+      "CBSD": 3.8
+    }
+  },
+  "2026|EXP-3": {
+    "n_crop": 15631,
+    "n_epoch": 30,
+    "crop_per_epoch_median": 522.0,
+    "crop_per_epoch_min": 8,
+    "crop_per_epoch_max": 556,
+    "porsi_citra_latih_per_epoch_pct": 5.812917594654789,
+    "citra_unik": 755,
+    "jendela_px": {
+      "p25": 17.09532099727876,
+      "median": 40.04060439104285,
+      "p75": 53.056573579529235
+    },
+    "zoom": {
+      "p10": 10.738327616533219,
+      "p25": 12.06748432772962,
+      "median": 15.978988797793182,
+      "p75": 37.47287935294004,
+      "p90": 68.48558610393869,
+      "maks": 99.15970200640984,
+      "pct_ge_10": 100.0,
+      "pct_ge_32": 28.347514554411106
+    },
+    "aspek_zoom_x_per_y": {
+      "median": 1.0981742472773863,
+      "pct_di_luar_0_8_1_25": 78.3635084127695
+    },
+    "lesi_target_sebelum_px": {
+      "median": 20.020302195521424,
+      "pct_kecil_lt_32": 100.0
+    },
+    "lesi_target_sesudah_px": {
+      "median": 319.9989999984375,
+      "pct_besar_gt_96": 100.0
+    },
+    "kotak_tersisa": {
+      "rata2": 1.1064551212334464,
+      "pct_hanya_1": 91.26735333631886
+    },
+    "kelas_citra_dicrop_pct": {
+      "HEALTHY": 37.9,
+      "CMD": 25.8,
+      "CGM": 22.4,
+      "CBB": 10.4,
+      "CBSD": 3.5
+    }
+  },
+  "validasi": {
+    "sisi_objek_validasi_px": {
+      "p10": 53.1127034179914,
+      "p25": 87.14212528966688,
+      "median": 145.2301456309949,
+      "p75": 238.53945774231985,
+      "p90": 376.37898012210553
+    },
+    "pct_objek_validasi_kecil_lt_32": 3.7413203440771063
+  },
+  "citra_latih_dengan_target_kecil": 755,
+  "kesamaan_peristiwa_antar_seed_pct": {
+    "EXP-2 42 vs 123": 100.0,
+    "EXP-2 42 vs 2026": 100.0,
+    "EXP-3 42 vs 123": 24.825132898996763,
+    "EXP-3 42 vs 2026": 24.597967837426992
+  }
+}

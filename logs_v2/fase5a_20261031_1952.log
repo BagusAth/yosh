@@ -1,0 +1,99 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20261031195249
+Username: LAPTOP-P3SG0UKE\LENOVO
+RunAs User: LAPTOP-P3SG0UKE\LENOVO
+Configuration Name: 
+Machine: LAPTOP-P3SG0UKE (Microsoft Windows NT 10.0.26200.0)
+Host Application: powershell.exe -NoExit -ExecutionPolicy Bypass -File D:\UNDIP\SKRIPSI\jalankan_fase5a.ps1
+Process ID: 10068
+PSVersion: 5.1.26100.9711
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9711
+BuildVersion: 10.0.26100.9711
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+=== Preflight GPU (19:52) ===
+GPU: NVIDIA GeForce RTX 4060 Laptop GPU
+
+=== B1: uji baji EXP-1 dan EXP-2, tiga seed (19:53) ===
+Lintasan 1: masker baji untuk 2567 citra validasi bersih
+  masker 200/2567 (7 dtk)
+  masker 400/2567 (14 dtk)
+  masker 600/2567 (22 dtk)
+  masker 800/2567 (28 dtk)
+  masker 1000/2567 (33 dtk)
+  masker 1200/2567 (39 dtk)
+  masker 1400/2567 (45 dtk)
+  masker 1600/2567 (50 dtk)
+  masker 1800/2567 (56 dtk)
+  masker 2000/2567 (62 dtk)
+  masker 2200/2567 (68 dtk)
+  masker 2400/2567 (73 dtk)
+{
+  "n_citra": 2567,
+  "n_W": 935,
+  "n_N": 1632,
+  "theta_abs_W": {
+    "median": 5.75,
+    "p10": 2.0,
+    "p90": 8.75
+  },
+  "n_W_iou_estimasi_lt_0_5": 52,
+  "n_W_hanya_dari_estimasi_sudut": 80,
+  "n_donor": 883,
+  "detik_lintasan_masker": 78.1
+}
+NMS: seperti val() (multi_label=True, torchvision, tanpa batas waktu)
+Lintasan 2: varian + prediksi (6 model x 3 varian per set)
+  256/2567 citra (52 dtk)
+  512/2567 citra (102 dtk)
+  768/2567 citra (151 dtk)
+  1024/2567 citra (202 dtk)
+  1280/2567 citra (250 dtk)
+  1536/2567 citra (299 dtk)
+  1792/2567 citra (349 dtk)
+  2048/2567 citra (399 dtk)
+  2304/2567 citra (448 dtk)
+  2560/2567 citra (498 dtk)
+  2567/2567 citra (499 dtk)
+Selesai dalam 9.7 menit. Keluaran: D:\UNDIP\SKRIPSI\stage_v2_baji_exp12
+
+=== B2: pycocotools (20:02) ===
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import pycocotools; print('pycocotools sudah terpasang')
+    ^^^^^^^^^^^^^^^^^^
+ModuleNotFoundError: No module named 'pycocotools'
+Memasang pycocotools ke .venv-cuda ...
+Collecting pycocotools
+  Downloading pycocotools-2.0.11-cp312-abi3-win_amd64.whl.metadata (1.3 kB)
+Requirement already satisfied: numpy in .\.venv-cuda\Lib\site-packages (from pycocotools) (2.5.2)
+Downloading pycocotools-2.0.11-cp312-abi3-win_amd64.whl (77 kB)
+Installing collected packages: pycocotools
+Successfully installed pycocotools-2.0.11
+System.Management.Automation.RemoteException
+[notice] A new release of pip is available: 26.2.1 -> 26.2.2
+[notice] To update, run: D:\UNDIP\SKRIPSI\.venv-cuda\Scripts\python.exe -m pip install --upgrade pip
+GT: 2567 citra, 9649 objek
+seed42_exp_0_baseline: AP 25.72 | AP_small 0.26 | AP_medium 6.53 | AP_large 32.26 | AR_small 12.08 (10.7 dtk)
+seed42_exp_1_adaptive_sampling: AP 24.39 | AP_small 0.21 | AP_medium 5.72 | AP_large 31.03 | AR_small 10.71 (11.3 dtk)
+seed42_exp_2_targeted_aug: AP 25.68 | AP_small 0.44 | AP_medium 6.64 | AP_large 32.08 | AR_small 10.28 (10.7 dtk)
+Selesai. Keluaran: D:\UNDIP\SKRIPSI\stage_v2_ablation\analysis\coco_cek
+
+=================== RINGKASAN (2026-10-31 20:03) ===================
+
+Tahap                        Status Menit
+-----                        ------ -----
+preflight GPU                OK         0
+B1 uji baji EXP-1/EXP-2      OK       9.7
+B2 pasang pycocotools        OK         0
+B2 cek pycocotools (3 model) OK       0.6
+Semua langkah selesai tanpa kegagalan. Log: logs_v2\fase5a_20261031_1952.log
+**********************
+Windows PowerShell transcript end
+End time: 20261031200324
+**********************

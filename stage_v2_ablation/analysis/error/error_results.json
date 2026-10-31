@@ -1,0 +1,3342 @@
+{
+  "point": {
+    "42|EXP-0": {
+      "semua|TP": 39.993781739040315,
+      "CBB|TP": 43.872919818456886,
+      "CBSD|TP": 40.57971014492754,
+      "CGM|TP": 39.0255905511811,
+      "CMD|TP": 34.217975937721164,
+      "HEALTHY|TP": 44.44767441860465,
+      "semua|kotak meleset": 11.493419007151,
+      "CBB|kotak meleset": 10.59001512859304,
+      "CBSD|kotak meleset": 13.043478260869565,
+      "CGM|kotak meleset": 9.202755905511811,
+      "CMD|kotak meleset": 14.932767162066526,
+      "HEALTHY|kotak meleset": 9.883720930232558,
+      "semua|salah kelas": 2.5909420665353924,
+      "CBB|salah kelas": 6.202723146747353,
+      "CBSD|salah kelas": 8.405797101449275,
+      "CGM|salah kelas": 3.149606299212598,
+      "CMD|salah kelas": 1.5923566878980893,
+      "HEALTHY|salah kelas": 1.2209302325581395,
+      "semua|meleset + salah kelas": 2.124572494559022,
+      "CBB|meleset + salah kelas": 4.387291981845689,
+      "CBSD|meleset + salah kelas": 4.492753623188406,
+      "CGM|meleset + salah kelas": 0.8366141732283465,
+      "CMD|meleset + salah kelas": 1.132342533616419,
+      "HEALTHY|meleset + salah kelas": 2.7906976744186047,
+      "semua|tidak terdeteksi": 43.79728469271427,
+      "CBB|tidak terdeteksi": 34.94704992435703,
+      "CBSD|tidak terdeteksi": 33.47826086956522,
+      "CGM|tidak terdeteksi": 47.78543307086614,
+      "CMD|tidak terdeteksi": 48.124557678697805,
+      "HEALTHY|tidak terdeteksi": 41.656976744186046,
+      "semua|fp_latar": 1.1597195169458512,
+      "CBB|fp_latar": 0.07869107908063888,
+      "CBSD|fp_latar": 0.050642773665757694,
+      "CGM|fp_latar": 0.19984417608102845,
+      "CMD|fp_latar": 0.2189326061550448,
+      "HEALTHY|fp_latar": 0.6116088819633814,
+      "semua|fp_sekelas": 0.7927541877678224,
+      "CBB|fp_sekelas": 0.08336579664978574,
+      "CBSD|fp_sekelas": 0.06349824698091157,
+      "CGM|fp_sekelas": 0.10518114530580444,
+      "CMD|fp_sekelas": 0.23100895987534087,
+      "HEALTHY|fp_sekelas": 0.30970003895597975,
+      "semua|fp_kelas_lain": 0.2130892091936112,
+      "CBB|fp_kelas_lain": 0.04012465913517725,
+      "CBSD|fp_kelas_lain": 0.025321386832878847,
+      "CGM|fp_kelas_lain": 0.0584339696143358,
+      "CMD|fp_kelas_lain": 0.04518893650175302,
+      "HEALTHY|fp_kelas_lain": 0.044020257109466304,
+      "semua|fp_total": 2.165562913907285,
+      "CBB|fp_total": 0.20218153486560186,
+      "CBSD|fp_total": 0.1394624074795481,
+      "CGM|fp_total": 0.3634592910011687,
+      "CMD|fp_total": 0.4951305025321387,
+      "HEALTHY|fp_total": 0.9653291780288275
+    },
+    "42|EXP-0R": {
+      "semua|TP": 38.884858534563165,
+      "CBB|TP": 41.90620272314675,
+      "CBSD|TP": 42.46376811594203,
+      "CGM|TP": 41.19094488188976,
+      "CMD|TP": 31.95329087048832,
+      "HEALTHY|TP": 41.91860465116279,
+      "semua|kotak meleset": 11.731785677272256,
+      "CBB|kotak meleset": 10.892586989409985,
+      "CBSD|kotak meleset": 12.173913043478262,
+      "CGM|kotak meleset": 9.251968503937007,
+      "CMD|kotak meleset": 13.623496107572542,
+      "HEALTHY|kotak meleset": 11.715116279069768,
+      "semua|salah kelas": 2.4458493108094106,
+      "CBB|salah kelas": 5.597579425113464,
+      "CBSD|salah kelas": 6.956521739130435,
+      "CGM|salah kelas": 2.2145669291338583,
+      "CMD|salah kelas": 2.1585279547062988,
+      "HEALTHY|salah kelas": 1.308139534883721,
+      "semua|meleset + salah kelas": 2.3733029329464195,
+      "CBB|meleset + salah kelas": 3.9334341906202726,
+      "CBSD|meleset + salah kelas": 4.9275362318840585,
+      "CGM|meleset + salah kelas": 1.279527559055118,
+      "CMD|meleset + salah kelas": 1.6631280962491155,
+      "HEALTHY|meleset + salah kelas": 2.7906976744186047,
+      "semua|tidak terdeteksi": 44.56420354440875,
+      "CBB|tidak terdeteksi": 37.67019667170953,
+      "CBSD|tidak terdeteksi": 33.47826086956522,
+      "CGM|tidak terdeteksi": 46.06299212598425,
+      "CMD|tidak terdeteksi": 50.60155697098372,
+      "HEALTHY|tidak terdeteksi": 42.26744186046511,
+      "semua|fp_latar": 1.1012855473315153,
+      "CBB|fp_latar": 0.0802493182703545,
+      "CBSD|fp_latar": 0.053759252045188936,
+      "CGM|fp_latar": 0.2337358784573432,
+      "CMD|fp_latar": 0.16439423451499804,
+      "HEALTHY|fp_latar": 0.5691468640436307,
+      "semua|fp_sekelas": 0.7744448772886638,
+      "CBB|fp_sekelas": 0.07051032333463186,
+      "CBSD|fp_sekelas": 0.07908063887806778,
+      "CGM|fp_sekelas": 0.10557070510323335,
+      "CMD|fp_sekelas": 0.22906116088819634,
+      "HEALTHY|fp_sekelas": 0.2902220490845345,
+      "semua|fp_kelas_lain": 0.20179197506817295,
+      "CBB|fp_kelas_lain": 0.036618620958317104,
+      "CBSD|fp_kelas_lain": 0.030385664199454616,
+      "CGM|fp_kelas_lain": 0.059602649006622516,
+      "CMD|fp_kelas_lain": 0.024931827035449942,
+      "HEALTHY|fp_kelas_lain": 0.05025321386832879,
+      "semua|fp_total": 2.0775223996883523,
+      "CBB|fp_total": 0.18737826256330348,
+      "CBSD|fp_total": 0.16322555512271134,
+      "CGM|fp_total": 0.39890923256719907,
+      "CMD|fp_total": 0.41838722243864435,
+      "HEALTHY|fp_total": 0.9096221269964939
+    },
+    "42|EXP-1": {
+      "semua|TP": 40.8125194320655,
+      "CBB|TP": 39.4856278366112,
+      "CBSD|TP": 45.507246376811594,
+      "CGM|TP": 40.452755905511815,
+      "CMD|TP": 34.53644727530078,
+      "HEALTHY|TP": 45.49418604651162,
+      "semua|kotak meleset": 11.255052337029744,
+      "CBB|kotak meleset": 10.892586989409985,
+      "CBSD|kotak meleset": 10.0,
+      "CGM|kotak meleset": 10.482283464566928,
+      "CMD|kotak meleset": 14.260438782731777,
+      "HEALTHY|kotak meleset": 9.563953488372093,
+      "semua|salah kelas": 2.528759456938543,
+      "CBB|salah kelas": 6.80786686838124,
+      "CBSD|salah kelas": 8.115942028985506,
+      "CGM|salah kelas": 2.9035433070866143,
+      "CMD|salah kelas": 1.521585279547063,
+      "HEALTHY|salah kelas": 1.1918604651162792,
+      "semua|meleset + salah kelas": 2.0831174214944554,
+      "CBB|meleset + salah kelas": 5.597579425113464,
+      "CBSD|meleset + salah kelas": 3.3333333333333335,
+      "CGM|meleset + salah kelas": 1.2303149606299213,
+      "CMD|meleset + salah kelas": 1.0615711252653928,
+      "HEALTHY|meleset + salah kelas": 2.5,
+      "semua|tidak terdeteksi": 43.32055135247176,
+      "CBB|tidak terdeteksi": 37.21633888048411,
+      "CBSD|tidak terdeteksi": 33.04347826086956,
+      "CGM|tidak terdeteksi": 44.931102362204726,
+      "CMD|tidak terdeteksi": 48.61995753715499,
+      "HEALTHY|tidak terdeteksi": 41.25,
+      "semua|fp_latar": 1.275418776782236,
+      "CBB|fp_latar": 0.08336579664978574,
+      "CBSD|fp_latar": 0.06116088819633814,
+      "CGM|fp_latar": 0.22204908453447605,
+      "CMD|fp_latar": 0.22750292169848071,
+      "HEALTHY|fp_latar": 0.6813400857031554,
+      "semua|fp_sekelas": 0.8913128165173354,
+      "CBB|fp_sekelas": 0.07830151928320997,
+      "CBSD|fp_sekelas": 0.0876509544215037,
+      "CGM|fp_sekelas": 0.12115309700038956,
+      "CMD|fp_sekelas": 0.271523178807947,
+      "HEALTHY|fp_sekelas": 0.33268406700428516,
+      "semua|fp_kelas_lain": 0.2119205298013245,
+      "CBB|fp_kelas_lain": 0.03934553954031944,
+      "CBSD|fp_kelas_lain": 0.03350214257888586,
+      "CGM|fp_kelas_lain": 0.05531749123490456,
+      "CMD|fp_kelas_lain": 0.039735099337748346,
+      "HEALTHY|fp_kelas_lain": 0.044020257109466304,
+      "semua|fp_total": 2.378652123100896,
+      "CBB|fp_total": 0.20101285547331516,
+      "CBSD|fp_total": 0.1823139851967277,
+      "CGM|fp_total": 0.3985196727697702,
+      "CMD|fp_total": 0.538761199844176,
+      "HEALTHY|fp_total": 1.0580444098169068
+    },
+    "42|EXP-2": {
+      "semua|TP": 38.988496217224586,
+      "CBB|TP": 44.3267776096823,
+      "CBSD|TP": 38.98550724637681,
+      "CGM|TP": 38.33661417322835,
+      "CMD|TP": 33.54564755838641,
+      "HEALTHY|TP": 42.81976744186046,
+      "semua|kotak meleset": 11.244688568763603,
+      "CBB|kotak meleset": 10.59001512859304,
+      "CBSD|kotak meleset": 11.304347826086957,
+      "CGM|kotak meleset": 8.612204724409448,
+      "CMD|kotak meleset": 14.260438782731777,
+      "HEALTHY|kotak meleset": 10.436046511627907,
+      "semua|salah kelas": 2.6116696030676754,
+      "CBB|salah kelas": 4.53857791225416,
+      "CBSD|salah kelas": 9.130434782608695,
+      "CGM|salah kelas": 4.084645669291338,
+      "CMD|salah kelas": 0.9554140127388535,
+      "HEALTHY|salah kelas": 1.4244186046511629,
+      "semua|meleset + salah kelas": 2.352575396414136,
+      "CBB|meleset + salah kelas": 3.479576399394856,
+      "CBSD|meleset + salah kelas": 4.492753623188406,
+      "CGM|meleset + salah kelas": 1.2303149606299213,
+      "CMD|meleset + salah kelas": 1.3446567586694975,
+      "HEALTHY|meleset + salah kelas": 3.1976744186046515,
+      "semua|tidak terdeteksi": 44.80257021453,
+      "CBB|tidak terdeteksi": 37.065052950075646,
+      "CBSD|tidak terdeteksi": 36.08695652173913,
+      "CGM|tidak terdeteksi": 47.73622047244094,
+      "CMD|tidak terdeteksi": 49.89384288747346,
+      "HEALTHY|tidak terdeteksi": 42.122093023255815,
+      "semua|fp_latar": 1.0342812621737436,
+      "CBB|fp_latar": 0.08414491624464356,
+      "CBSD|fp_latar": 0.039735099337748346,
+      "CGM|fp_latar": 0.18776782236073236,
+      "CMD|fp_latar": 0.19400077911959485,
+      "HEALTHY|fp_latar": 0.5286326451110246,
+      "semua|fp_sekelas": 0.7401636151149201,
+      "CBB|fp_sekelas": 0.07908063887806778,
+      "CBSD|fp_sekelas": 0.049863654070899883,
+      "CGM|fp_sekelas": 0.09076743280093494,
+      "CMD|fp_sekelas": 0.218153486560187,
+      "HEALTHY|fp_sekelas": 0.30229840280483056,
+      "semua|fp_kelas_lain": 0.1986754966887417,
+      "CBB|fp_kelas_lain": 0.0436306973120374,
+      "CBSD|fp_kelas_lain": 0.0218153486560187,
+      "CGM|fp_kelas_lain": 0.04947409427347098,
+      "CMD|fp_kelas_lain": 0.038176860148032725,
+      "HEALTHY|fp_kelas_lain": 0.045578496299181925,
+      "semua|fp_total": 1.9731203739774055,
+      "CBB|fp_total": 0.20685625243474873,
+      "CBSD|fp_total": 0.11141410206466693,
+      "CGM|fp_total": 0.3280093494351383,
+      "CMD|fp_total": 0.4503311258278146,
+      "HEALTHY|fp_total": 0.876509544215037
+    },
+    "42|EXP-3": {
+      "semua|TP": 40.1388744947663,
+      "CBB|TP": 41.301059001512854,
+      "CBSD|TP": 44.34782608695652,
+      "CGM|TP": 40.25590551181102,
+      "CMD|TP": 34.92569002123142,
+      "HEALTHY|TP": 43.28488372093023,
+      "semua|kotak meleset": 10.58140739973054,
+      "CBB|kotak meleset": 10.43872919818457,
+      "CBSD|kotak meleset": 9.27536231884058,
+      "CGM|kotak meleset": 9.596456692913385,
+      "CMD|kotak meleset": 13.552724699221514,
+      "HEALTHY|kotak meleset": 9.011627906976743,
+      "semua|salah kelas": 2.715307285729091,
+      "CBB|salah kelas": 6.051437216338881,
+      "CBSD|salah kelas": 9.130434782608695,
+      "CGM|salah kelas": 3.0511811023622046,
+      "CMD|salah kelas": 1.8046709129511678,
+      "HEALTHY|salah kelas": 1.3372093023255813,
+      "semua|meleset + salah kelas": 2.3007565550834284,
+      "CBB|meleset + salah kelas": 3.479576399394856,
+      "CBSD|meleset + salah kelas": 3.768115942028986,
+      "CGM|meleset + salah kelas": 1.0826771653543308,
+      "CMD|meleset + salah kelas": 1.7692852087756548,
+      "HEALTHY|meleset + salah kelas": 2.936046511627907,
+      "semua|tidak terdeteksi": 44.26365426469064,
+      "CBB|tidak terdeteksi": 38.72919818456884,
+      "CBSD|tidak terdeteksi": 33.47826086956522,
+      "CGM|tidak terdeteksi": 46.01377952755906,
+      "CMD|tidak terdeteksi": 47.947629157820245,
+      "HEALTHY|tidak terdeteksi": 43.43023255813954,
+      "semua|fp_latar": 1.2084144916244643,
+      "CBB|fp_latar": 0.06973120373977405,
+      "CBSD|fp_latar": 0.06466692637319829,
+      "CGM|fp_latar": 0.22321776392676276,
+      "CMD|fp_latar": 0.2337358784573432,
+      "HEALTHY|fp_latar": 0.6170627191273861,
+      "semua|fp_sekelas": 0.8332684067004286,
+      "CBB|fp_sekelas": 0.07206856252434748,
+      "CBSD|fp_sekelas": 0.08219711725749902,
+      "CGM|fp_sekelas": 0.1242695753798208,
+      "CMD|fp_sekelas": 0.2699649396182314,
+      "HEALTHY|fp_sekelas": 0.2847682119205298,
+      "semua|fp_kelas_lain": 0.22088040514218932,
+      "CBB|fp_kelas_lain": 0.037397740553174914,
+      "CBSD|fp_kelas_lain": 0.031164783794312426,
+      "CGM|fp_kelas_lain": 0.06739384495520062,
+      "CMD|fp_kelas_lain": 0.0436306973120374,
+      "HEALTHY|fp_kelas_lain": 0.04129333852746397,
+      "semua|fp_total": 2.2625633034670822,
+      "CBB|fp_total": 0.17919750681729646,
+      "CBSD|fp_total": 0.17802882742500975,
+      "CGM|fp_total": 0.41488118426178416,
+      "CMD|fp_total": 0.547331515387612,
+      "HEALTHY|fp_total": 0.9431242695753799
+    },
+    "123|EXP-0": {
+      "semua|TP": 40.03523681210488,
+      "CBB|TP": 45.688350983358546,
+      "CBSD|TP": 44.492753623188406,
+      "CGM|TP": 41.68307086614173,
+      "CMD|TP": 32.696390658174096,
+      "HEALTHY|TP": 43.110465116279066,
+      "semua|kotak meleset": 11.15141465436833,
+      "CBB|kotak meleset": 10.43872919818457,
+      "CBSD|kotak meleset": 13.043478260869565,
+      "CGM|kotak meleset": 10.580708661417324,
+      "CMD|kotak meleset": 13.83581033262562,
+      "HEALTHY|kotak meleset": 9.040697674418604,
+      "semua|salah kelas": 2.5391232252046847,
+      "CBB|salah kelas": 5.900151285930408,
+      "CBSD|salah kelas": 6.666666666666667,
+      "CGM|salah kelas": 2.706692913385827,
+      "CMD|salah kelas": 1.5923566878980893,
+      "HEALTHY|salah kelas": 1.744186046511628,
+      "semua|meleset + salah kelas": 2.186755104155871,
+      "CBB|meleset + salah kelas": 3.0257186081694405,
+      "CBSD|meleset + salah kelas": 3.0434782608695654,
+      "CGM|meleset + salah kelas": 1.574803149606299,
+      "CMD|meleset + salah kelas": 1.521585279547063,
+      "HEALTHY|meleset + salah kelas": 2.761627906976744,
+      "semua|tidak terdeteksi": 44.08747020416624,
+      "CBB|tidak terdeteksi": 34.94704992435703,
+      "CBSD|tidak terdeteksi": 32.7536231884058,
+      "CGM|tidak terdeteksi": 43.45472440944882,
+      "CMD|tidak terdeteksi": 50.353857041755134,
+      "HEALTHY|tidak terdeteksi": 43.343023255813954,
+      "semua|fp_latar": 1.164783794312427,
+      "CBB|fp_latar": 0.08492403583950137,
+      "CBSD|fp_latar": 0.04440981690689521,
+      "CGM|fp_latar": 0.25165562913907286,
+      "CMD|fp_latar": 0.19516945851188158,
+      "HEALTHY|fp_latar": 0.588624853915076,
+      "semua|fp_sekelas": 0.8137904168289832,
+      "CBB|fp_sekelas": 0.08609271523178808,
+      "CBSD|fp_sekelas": 0.07167900272691859,
+      "CGM|fp_sekelas": 0.12894429294896767,
+      "CMD|fp_sekelas": 0.23451499805220102,
+      "HEALTHY|fp_sekelas": 0.2925594078691079,
+      "semua|fp_kelas_lain": 0.20023373587845733,
+      "CBB|fp_kelas_lain": 0.045578496299181925,
+      "CBSD|fp_kelas_lain": 0.032333463186599146,
+      "CGM|fp_kelas_lain": 0.05531749123490456,
+      "CMD|fp_kelas_lain": 0.03428126217374367,
+      "HEALTHY|fp_kelas_lain": 0.03272302298402805,
+      "semua|fp_total": 2.1788079470198674,
+      "CBB|fp_total": 0.21659524737047137,
+      "CBSD|fp_total": 0.14842228282041292,
+      "CGM|fp_total": 0.4359174133229451,
+      "CMD|fp_total": 0.46396571873782627,
+      "HEALTHY|fp_total": 0.9139072847682119
+    },
+    "123|EXP-0R": {
+      "semua|TP": 39.70359622758835,
+      "CBB|TP": 40.09077155824508,
+      "CBSD|TP": 44.492753623188406,
+      "CGM|TP": 39.37007874015748,
+      "CMD|TP": 32.802547770700635,
+      "HEALTHY|TP": 44.53488372093023,
+      "semua|kotak meleset": 11.503782775417141,
+      "CBB|kotak meleset": 9.68229954614221,
+      "CBSD|kotak meleset": 11.73913043478261,
+      "CGM|kotak meleset": 9.251968503937007,
+      "CMD|kotak meleset": 15.21585279547063,
+      "HEALTHY|kotak meleset": 10.087209302325581,
+      "semua|salah kelas": 2.7049435174629495,
+      "CBB|salah kelas": 6.202723146747353,
+      "CBSD|salah kelas": 6.231884057971015,
+      "CGM|salah kelas": 3.1988188976377954,
+      "CMD|salah kelas": 2.0523708421797595,
+      "HEALTHY|salah kelas": 1.5697674418604652,
+      "semua|meleset + salah kelas": 2.3422116281479948,
+      "CBB|meleset + salah kelas": 2.8744326777609683,
+      "CBSD|meleset + salah kelas": 4.057971014492753,
+      "CGM|meleset + salah kelas": 0.984251968503937,
+      "CMD|meleset + salah kelas": 1.875442321302194,
+      "HEALTHY|meleset + salah kelas": 3.0813953488372094,
+      "semua|tidak terdeteksi": 43.745465851383564,
+      "CBB|tidak terdeteksi": 41.14977307110439,
+      "CBSD|tidak terdeteksi": 33.47826086956522,
+      "CGM|tidak terdeteksi": 47.19488188976378,
+      "CMD|tidak terdeteksi": 48.053786270346784,
+      "HEALTHY|tidak terdeteksi": 40.72674418604651,
+      "semua|fp_latar": 1.1682898324892872,
+      "CBB|fp_latar": 0.07791195948578107,
+      "CBSD|fp_latar": 0.04869497467861317,
+      "CGM|fp_latar": 0.1901051811453058,
+      "CMD|fp_latar": 0.20218153486560186,
+      "HEALTHY|fp_latar": 0.6493961823139852,
+      "semua|fp_sekelas": 0.8204129333852747,
+      "CBB|fp_sekelas": 0.06778340475262953,
+      "CBSD|fp_sekelas": 0.0728476821192053,
+      "CGM|fp_sekelas": 0.10673938449552006,
+      "CMD|fp_sekelas": 0.24659135177249708,
+      "HEALTHY|fp_sekelas": 0.32645111024542267,
+      "semua|fp_kelas_lain": 0.20257109466303078,
+      "CBB|fp_kelas_lain": 0.03700818075574601,
+      "CBSD|fp_kelas_lain": 0.03778730035060382,
+      "CGM|fp_kelas_lain": 0.06232956758862485,
+      "CMD|fp_kelas_lain": 0.026879626022594468,
+      "HEALTHY|fp_kelas_lain": 0.03856641994546163,
+      "semua|fp_total": 2.1912738605375925,
+      "CBB|fp_total": 0.1827035449941566,
+      "CBSD|fp_total": 0.1593299571484223,
+      "CGM|fp_total": 0.35917413322945074,
+      "CMD|fp_total": 0.4756525126606934,
+      "HEALTHY|fp_total": 1.0144137125048696
+    },
+    "123|EXP-1": {
+      "semua|TP": 43.020002072753655,
+      "CBB|TP": 36.45990922844176,
+      "CBSD|TP": 45.507246376811594,
+      "CGM|TP": 40.05905511811024,
+      "CMD|TP": 37.0134465675867,
+      "HEALTHY|TP": 50.46511627906977,
+      "semua|kotak meleset": 12.208519017514769,
+      "CBB|kotak meleset": 8.774583963691377,
+      "CBSD|kotak meleset": 8.550724637681158,
+      "CGM|kotak meleset": 9.399606299212598,
+      "CMD|kotak meleset": 15.074309978768577,
+      "HEALTHY|kotak meleset": 12.906976744186046,
+      "semua|salah kelas": 2.653124676132242,
+      "CBB|salah kelas": 8.169440242057489,
+      "CBSD|salah kelas": 8.695652173913043,
+      "CGM|salah kelas": 3.297244094488189,
+      "CMD|salah kelas": 1.910828025477707,
+      "HEALTHY|salah kelas": 0.6104651162790697,
+      "semua|meleset + salah kelas": 1.927660897502332,
+      "CBB|meleset + salah kelas": 5.597579425113464,
+      "CBSD|meleset + salah kelas": 3.91304347826087,
+      "CGM|meleset + salah kelas": 1.8700787401574805,
+      "CMD|meleset + salah kelas": 1.3092710544939843,
+      "HEALTHY|meleset + salah kelas": 1.3662790697674418,
+      "semua|tidak terdeteksi": 40.190693336097006,
+      "CBB|tidak terdeteksi": 40.998487140695914,
+      "CBSD|tidak terdeteksi": 33.33333333333333,
+      "CGM|tidak terdeteksi": 45.374015748031496,
+      "CMD|tidak terdeteksi": 44.69214437367304,
+      "HEALTHY|tidak terdeteksi": 34.651162790697676,
+      "semua|fp_latar": 1.5590183093104792,
+      "CBB|fp_latar": 0.07791195948578107,
+      "CBSD|fp_latar": 0.05025321386832879,
+      "CGM|fp_latar": 0.24503311258278146,
+      "CMD|fp_latar": 0.26334242306194,
+      "HEALTHY|fp_latar": 0.9224776003116478,
+      "semua|fp_sekelas": 0.9793533307362681,
+      "CBB|fp_sekelas": 0.058044409816906894,
+      "CBSD|fp_sekelas": 0.07908063887806778,
+      "CGM|fp_sekelas": 0.12738605375925205,
+      "CMD|fp_sekelas": 0.3077522399688352,
+      "HEALTHY|fp_sekelas": 0.4070899883132061,
+      "semua|fp_kelas_lain": 0.2271133619010518,
+      "CBB|fp_kelas_lain": 0.022984028048305415,
+      "CBSD|fp_kelas_lain": 0.026879626022594468,
+      "CGM|fp_kelas_lain": 0.0510323334631866,
+      "CMD|fp_kelas_lain": 0.047136735488897546,
+      "HEALTHY|fp_kelas_lain": 0.07908063887806778,
+      "semua|fp_total": 2.765485001947799,
+      "CBB|fp_total": 0.15894039735099338,
+      "CBSD|fp_total": 0.15621347876899103,
+      "CGM|fp_total": 0.4234514998052201,
+      "CMD|fp_total": 0.6182313985196728,
+      "HEALTHY|fp_total": 1.4086482275029217
+    },
+    "123|EXP-2": {
+      "semua|TP": 37.25774691677894,
+      "CBB|TP": 39.03177004538578,
+      "CBSD|TP": 40.0,
+      "CGM|TP": 34.89173228346456,
+      "CMD|TP": 34.57183297947629,
+      "HEALTHY|TP": 39.97093023255814,
+      "semua|kotak meleset": 10.747227691988808,
+      "CBB|kotak meleset": 8.774583963691377,
+      "CBSD|kotak meleset": 12.028985507246377,
+      "CGM|kotak meleset": 7.97244094488189,
+      "CMD|kotak meleset": 13.729653220099081,
+      "HEALTHY|kotak meleset": 10.058139534883722,
+      "semua|salah kelas": 2.3422116281479948,
+      "CBB|salah kelas": 5.748865355521937,
+      "CBSD|salah kelas": 6.956521739130435,
+      "CGM|salah kelas": 3.6909448818897634,
+      "CMD|salah kelas": 0.9200283085633405,
+      "HEALTHY|salah kelas": 1.1337209302325582,
+      "semua|meleset + salah kelas": 2.11420872629288,
+      "CBB|meleset + salah kelas": 5.143721633888049,
+      "CBSD|meleset + salah kelas": 3.4782608695652173,
+      "CGM|meleset + salah kelas": 1.279527559055118,
+      "CMD|meleset + salah kelas": 1.7338995046001413,
+      "HEALTHY|meleset + salah kelas": 2.063953488372093,
+      "semua|tidak terdeteksi": 47.538605036791374,
+      "CBB|tidak terdeteksi": 41.301059001512854,
+      "CBSD|tidak terdeteksi": 37.53623188405797,
+      "CGM|tidak terdeteksi": 52.16535433070866,
+      "CMD|tidak terdeteksi": 49.044585987261144,
+      "HEALTHY|tidak terdeteksi": 46.77325581395349,
+      "semua|fp_latar": 0.884690299961044,
+      "CBB|fp_latar": 0.05181145305804441,
+      "CBSD|fp_latar": 0.03467082197117258,
+      "CGM|fp_latar": 0.15504479937670432,
+      "CMD|fp_latar": 0.18854694195559019,
+      "HEALTHY|fp_latar": 0.45461628359953254,
+      "semua|fp_sekelas": 0.7522399688352162,
+      "CBB|fp_sekelas": 0.06271912738605376,
+      "CBSD|fp_sekelas": 0.07440592130892092,
+      "CGM|fp_sekelas": 0.07479548110634983,
+      "CMD|fp_sekelas": 0.2684067004285158,
+      "HEALTHY|fp_sekelas": 0.2719127386053759,
+      "semua|fp_kelas_lain": 0.1901051811453058,
+      "CBB|fp_kelas_lain": 0.024931827035449942,
+      "CBSD|fp_kelas_lain": 0.029606544604596805,
+      "CGM|fp_kelas_lain": 0.04830541488118426,
+      "CMD|fp_kelas_lain": 0.04246201791975068,
+      "HEALTHY|fp_kelas_lain": 0.044799376704324115,
+      "semua|fp_total": 1.827035449941566,
+      "CBB|fp_total": 0.1394624074795481,
+      "CBSD|fp_total": 0.1386832878846903,
+      "CGM|fp_total": 0.2781456953642384,
+      "CMD|fp_total": 0.49941566030385665,
+      "HEALTHY|fp_total": 0.7713283989092325
+    },
+    "123|EXP-3": {
+      "semua|TP": 41.62089335682454,
+      "CBB|TP": 39.78819969742814,
+      "CBSD|TP": 43.333333333333336,
+      "CGM|TP": 42.125984251968504,
+      "CMD|TP": 33.72257607926398,
+      "HEALTHY|TP": 47.81976744186046,
+      "semua|kotak meleset": 11.483055238884859,
+      "CBB|kotak meleset": 9.379727685325264,
+      "CBSD|kotak meleset": 10.869565217391305,
+      "CGM|kotak meleset": 10.9251968503937,
+      "CMD|kotak meleset": 13.729653220099081,
+      "HEALTHY|kotak meleset": 10.494186046511627,
+      "semua|salah kelas": 2.3940304694787025,
+      "CBB|salah kelas": 5.748865355521937,
+      "CBSD|salah kelas": 7.536231884057972,
+      "CGM|salah kelas": 2.65748031496063,
+      "CMD|salah kelas": 1.8046709129511678,
+      "HEALTHY|salah kelas": 1.0465116279069768,
+      "semua|meleset + salah kelas": 1.927660897502332,
+      "CBB|meleset + salah kelas": 3.9334341906202726,
+      "CBSD|meleset + salah kelas": 2.753623188405797,
+      "CGM|meleset + salah kelas": 1.033464566929134,
+      "CMD|meleset + salah kelas": 1.521585279547063,
+      "HEALTHY|meleset + salah kelas": 2.238372093023256,
+      "semua|tidak terdeteksi": 42.57436003730957,
+      "CBB|tidak terdeteksi": 41.14977307110439,
+      "CBSD|tidak terdeteksi": 35.507246376811594,
+      "CGM|tidak terdeteksi": 43.25787401574803,
+      "CMD|tidak terdeteksi": 49.22151450813871,
+      "HEALTHY|tidak terdeteksi": 38.401162790697676,
+      "semua|fp_latar": 1.3022984028048306,
+      "CBB|fp_latar": 0.05999220880405142,
+      "CBSD|fp_latar": 0.04207245812232178,
+      "CGM|fp_latar": 0.26373198285936894,
+      "CMD|fp_latar": 0.19984417608102845,
+      "HEALTHY|fp_latar": 0.73665757693806,
+      "semua|fp_sekelas": 0.8667705492793144,
+      "CBB|fp_sekelas": 0.06895208414491624,
+      "CBSD|fp_sekelas": 0.08102843786521231,
+      "CGM|fp_sekelas": 0.12738605375925205,
+      "CMD|fp_sekelas": 0.2403583950136346,
+      "HEALTHY|fp_sekelas": 0.3490455784962992,
+      "semua|fp_kelas_lain": 0.20802493182703544,
+      "CBB|fp_kelas_lain": 0.03077522399688352,
+      "CBSD|fp_kelas_lain": 0.02103622906116089,
+      "CGM|fp_kelas_lain": 0.06155044799376704,
+      "CMD|fp_kelas_lain": 0.033112582781456956,
+      "HEALTHY|fp_kelas_lain": 0.06155044799376704,
+      "semua|fp_total": 2.37709388391118,
+      "CBB|fp_total": 0.15971951694585118,
+      "CBSD|fp_total": 0.14413712504869497,
+      "CGM|fp_total": 0.452668484612388,
+      "CMD|fp_total": 0.47331515387612,
+      "HEALTHY|fp_total": 1.1472536034281262
+    },
+    "2026|EXP-0": {
+      "semua|TP": 39.74505130065292,
+      "CBB|TP": 43.11649016641452,
+      "CBSD|TP": 42.173913043478265,
+      "CGM|TP": 38.631889763779526,
+      "CMD|TP": 33.75796178343949,
+      "HEALTHY|TP": 44.18604651162791,
+      "semua|kotak meleset": 11.3690537879573,
+      "CBB|kotak meleset": 9.833585476550681,
+      "CBSD|kotak meleset": 13.333333333333334,
+      "CGM|kotak meleset": 9.399606299212598,
+      "CMD|kotak meleset": 14.472753007784856,
+      "HEALTHY|kotak meleset": 9.883720930232558,
+      "semua|salah kelas": 2.3422116281479948,
+      "CBB|salah kelas": 6.051437216338881,
+      "CBSD|salah kelas": 6.3768115942028984,
+      "CGM|salah kelas": 3.4448818897637796,
+      "CMD|salah kelas": 1.132342533616419,
+      "HEALTHY|salah kelas": 1.1627906976744187,
+      "semua|meleset + salah kelas": 2.166027567623588,
+      "CBB|meleset + salah kelas": 3.6308623298033282,
+      "CBSD|meleset + salah kelas": 3.6231884057971016,
+      "CGM|meleset + salah kelas": 0.9350393700787403,
+      "CMD|meleset + salah kelas": 1.2384996461429583,
+      "HEALTHY|meleset + salah kelas": 3.0813953488372094,
+      "semua|tidak terdeteksi": 44.3776557156182,
+      "CBB|tidak terdeteksi": 37.367624810892586,
+      "CBSD|tidak terdeteksi": 34.492753623188406,
+      "CGM|tidak terdeteksi": 47.588582677165356,
+      "CMD|tidak terdeteksi": 49.39844302901628,
+      "HEALTHY|tidak terdeteksi": 41.68604651162791,
+      "semua|fp_latar": 1.1301129723412544,
+      "CBB|fp_latar": 0.07323724191663421,
+      "CBSD|fp_latar": 0.05609661082976237,
+      "CGM|fp_latar": 0.19984417608102845,
+      "CMD|fp_latar": 0.21231008959875342,
+      "HEALTHY|fp_latar": 0.588624853915076,
+      "semua|fp_sekelas": 0.7849629918192442,
+      "CBB|fp_sekelas": 0.07908063887806778,
+      "CBSD|fp_sekelas": 0.06778340475262953,
+      "CGM|fp_sekelas": 0.10323334631865991,
+      "CMD|fp_sekelas": 0.23022984028048304,
+      "HEALTHY|fp_sekelas": 0.304635761589404,
+      "semua|fp_kelas_lain": 0.1897156213478769,
+      "CBB|fp_kelas_lain": 0.03778730035060382,
+      "CBSD|fp_kelas_lain": 0.023763147643163226,
+      "CGM|fp_kelas_lain": 0.05336969224776003,
+      "CMD|fp_kelas_lain": 0.03544994156603039,
+      "HEALTHY|fp_kelas_lain": 0.03934553954031944,
+      "semua|fp_total": 2.1047915855083756,
+      "CBB|fp_total": 0.1901051811453058,
+      "CBSD|fp_total": 0.14764316322555512,
+      "CGM|fp_total": 0.3564472146474484,
+      "CMD|fp_total": 0.47798987144526683,
+      "HEALTHY|fp_total": 0.9326061550447994
+    },
+    "2026|EXP-0R": {
+      "semua|TP": 40.97833972432377,
+      "CBB|TP": 39.93948562783661,
+      "CBSD|TP": 45.65217391304348,
+      "CGM|TP": 40.50196850393701,
+      "CMD|TP": 32.696390658174096,
+      "HEALTHY|TP": 47.325581395348834,
+      "semua|kotak meleset": 10.89232044771479,
+      "CBB|kotak meleset": 11.800302571860817,
+      "CBSD|kotak meleset": 11.014492753623188,
+      "CGM|kotak meleset": 8.562992125984252,
+      "CMD|kotak meleset": 13.128096249115357,
+      "HEALTHY|kotak meleset": 10.232558139534884,
+      "semua|salah kelas": 2.476940615607835,
+      "CBB|salah kelas": 6.051437216338881,
+      "CBSD|salah kelas": 5.072463768115942,
+      "CGM|salah kelas": 3.297244094488189,
+      "CMD|salah kelas": 1.4508138711960368,
+      "HEALTHY|salah kelas": 1.627906976744186,
+      "semua|meleset + salah kelas": 2.476940615607835,
+      "CBB|meleset + salah kelas": 3.9334341906202726,
+      "CBSD|meleset + salah kelas": 4.202898550724638,
+      "CGM|meleset + salah kelas": 1.673228346456693,
+      "CMD|meleset + salah kelas": 1.6631280962491155,
+      "HEALTHY|meleset + salah kelas": 2.994186046511628,
+      "semua|tidak terdeteksi": 43.17545859674578,
+      "CBB|tidak terdeteksi": 38.27534039334342,
+      "CBSD|tidak terdeteksi": 34.05797101449276,
+      "CGM|tidak terdeteksi": 45.96456692913386,
+      "CMD|tidak terdeteksi": 51.061571125265395,
+      "HEALTHY|tidak terdeteksi": 37.81976744186046,
+      "semua|fp_latar": 1.1203739774055317,
+      "CBB|fp_latar": 0.05921308920919361,
+      "CBSD|fp_latar": 0.05492793143747565,
+      "CGM|fp_latar": 0.18854694195559019,
+      "CMD|fp_latar": 0.16439423451499804,
+      "HEALTHY|fp_latar": 0.6532917802882743,
+      "semua|fp_sekelas": 0.773665757693806,
+      "CBB|fp_sekelas": 0.07128944292948967,
+      "CBSD|fp_sekelas": 0.07012076353720297,
+      "CGM|fp_sekelas": 0.10479158550837553,
+      "CMD|fp_sekelas": 0.1901051811453058,
+      "HEALTHY|fp_sekelas": 0.33735878457343205,
+      "semua|fp_kelas_lain": 0.2049084534476042,
+      "CBB|fp_kelas_lain": 0.03077522399688352,
+      "CBSD|fp_kelas_lain": 0.04246201791975068,
+      "CGM|fp_kelas_lain": 0.050642773665757694,
+      "CMD|fp_kelas_lain": 0.037397740553174914,
+      "HEALTHY|fp_kelas_lain": 0.0436306973120374,
+      "semua|fp_total": 2.098948188546942,
+      "CBB|fp_total": 0.1612777561355668,
+      "CBSD|fp_total": 0.1675107128944293,
+      "CGM|fp_total": 0.3439813011297234,
+      "CMD|fp_total": 0.39189715621347876,
+      "HEALTHY|fp_total": 1.0342812621737436
+    },
+    "2026|EXP-1": {
+      "semua|TP": 40.88506580992849,
+      "CBB|TP": 44.78063540090771,
+      "CBSD|TP": 43.913043478260875,
+      "CGM|TP": 41.97834645669291,
+      "CMD|TP": 35.9518754423213,
+      "HEALTHY|TP": 42.93604651162791,
+      "semua|kotak meleset": 11.814695823401388,
+      "CBB|kotak meleset": 11.195158850226928,
+      "CBSD|kotak meleset": 10.289855072463768,
+      "CGM|kotak meleset": 10.433070866141732,
+      "CMD|kotak meleset": 14.685067232837934,
+      "HEALTHY|kotak meleset": 10.69767441860465,
+      "semua|salah kelas": 2.5702145300031094,
+      "CBB|salah kelas": 5.900151285930408,
+      "CBSD|salah kelas": 6.956521739130435,
+      "CGM|salah kelas": 3.8385826771653546,
+      "CMD|salah kelas": 0.9200283085633405,
+      "HEALTHY|salah kelas": 1.6569767441860463,
+      "semua|meleset + salah kelas": 2.259301482018862,
+      "CBB|meleset + salah kelas": 3.479576399394856,
+      "CBSD|meleset + salah kelas": 5.072463768115942,
+      "CGM|meleset + salah kelas": 1.1318897637795275,
+      "CMD|meleset + salah kelas": 1.132342533616419,
+      "HEALTHY|meleset + salah kelas": 3.0523255813953485,
+      "semua|tidak terdeteksi": 42.470722354648146,
+      "CBB|tidak terdeteksi": 34.64447806354009,
+      "CBSD|tidak terdeteksi": 33.768115942028984,
+      "CGM|tidak terdeteksi": 42.618110236220474,
+      "CMD|tidak terdeteksi": 47.310686482661005,
+      "HEALTHY|tidak terdeteksi": 41.656976744186046,
+      "semua|fp_latar": 1.3377483443708609,
+      "CBB|fp_latar": 0.0950525905726529,
+      "CBSD|fp_latar": 0.057265290222049084,
+      "CGM|fp_latar": 0.2902220490845345,
+      "CMD|fp_latar": 0.26373198285936894,
+      "HEALTHY|fp_latar": 0.6314764316322555,
+      "semua|fp_sekelas": 0.8792364627970394,
+      "CBB|fp_sekelas": 0.08336579664978574,
+      "CBSD|fp_sekelas": 0.08375535644721464,
+      "CGM|fp_sekelas": 0.14063108687183482,
+      "CMD|fp_sekelas": 0.2719127386053759,
+      "HEALTHY|fp_sekelas": 0.2995714842228282,
+      "semua|fp_kelas_lain": 0.22906116088819634,
+      "CBB|fp_kelas_lain": 0.04246201791975068,
+      "CBSD|fp_kelas_lain": 0.03700818075574601,
+      "CGM|fp_kelas_lain": 0.058823529411764705,
+      "CMD|fp_kelas_lain": 0.05609661082976237,
+      "HEALTHY|fp_kelas_lain": 0.03467082197117258,
+      "semua|fp_total": 2.4460459680560964,
+      "CBB|fp_total": 0.22088040514218932,
+      "CBSD|fp_total": 0.17802882742500975,
+      "CGM|fp_total": 0.48967666536813403,
+      "CMD|fp_total": 0.5917413322945072,
+      "HEALTHY|fp_total": 0.9657187378262563
+    },
+    "2026|EXP-2": {
+      "semua|TP": 38.93667737589387,
+      "CBB|TP": 42.81391830559758,
+      "CBSD|TP": 40.57971014492754,
+      "CGM|TP": 39.960629921259844,
+      "CMD|TP": 32.519462137296536,
+      "HEALTHY|TP": 42.52906976744186,
+      "semua|kotak meleset": 11.6177842263447,
+      "CBB|kotak meleset": 11.951588502269288,
+      "CBSD|kotak meleset": 11.73913043478261,
+      "CGM|kotak meleset": 9.84251968503937,
+      "CMD|kotak meleset": 14.012738853503185,
+      "HEALTHY|kotak meleset": 10.61046511627907,
+      "semua|salah kelas": 2.3629391646802778,
+      "CBB|salah kelas": 5.143721633888049,
+      "CBSD|salah kelas": 8.115942028985506,
+      "CGM|salah kelas": 2.7559055118110236,
+      "CMD|salah kelas": 1.3800424628450108,
+      "HEALTHY|salah kelas": 1.25,
+      "semua|meleset + salah kelas": 2.2903927868172866,
+      "CBB|meleset + salah kelas": 2.5718608169440245,
+      "CBSD|meleset + salah kelas": 4.63768115942029,
+      "CGM|meleset + salah kelas": 0.7874015748031495,
+      "CMD|meleset + salah kelas": 1.6985138004246285,
+      "HEALTHY|meleset + salah kelas": 3.1395348837209305,
+      "semua|tidak terdeteksi": 44.79220644626386,
+      "CBB|tidak terdeteksi": 37.518910741301056,
+      "CBSD|tidak terdeteksi": 34.92753623188406,
+      "CGM|tidak terdeteksi": 46.653543307086615,
+      "CMD|tidak terdeteksi": 50.38924274593064,
+      "HEALTHY|tidak terdeteksi": 42.47093023255814,
+      "semua|fp_latar": 1.0522010128554733,
+      "CBB|fp_latar": 0.07908063887806778,
+      "CBSD|fp_latar": 0.03934553954031944,
+      "CGM|fp_latar": 0.20140241527074407,
+      "CMD|fp_latar": 0.1908843007401636,
+      "HEALTHY|fp_latar": 0.5414881184261784,
+      "semua|fp_sekelas": 0.7608102843786522,
+      "CBB|fp_sekelas": 0.07557460070120764,
+      "CBSD|fp_sekelas": 0.06194000779119595,
+      "CGM|fp_sekelas": 0.10557070510323335,
+      "CMD|fp_sekelas": 0.22088040514218932,
+      "HEALTHY|fp_sekelas": 0.29684456564082584,
+      "semua|fp_kelas_lain": 0.19945461628359953,
+      "CBB|fp_kelas_lain": 0.03934553954031944,
+      "CBSD|fp_kelas_lain": 0.022984028048305415,
+      "CGM|fp_kelas_lain": 0.05765485001947799,
+      "CMD|fp_kelas_lain": 0.030385664199454616,
+      "HEALTHY|fp_kelas_lain": 0.04908453447604207,
+      "semua|fp_total": 2.012465913517725,
+      "CBB|fp_total": 0.19400077911959485,
+      "CBSD|fp_total": 0.1242695753798208,
+      "CGM|fp_total": 0.3646279703934554,
+      "CMD|fp_total": 0.4421503700818076,
+      "HEALTHY|fp_total": 0.8874172185430463
+    },
+    "2026|EXP-3": {
+      "semua|TP": 41.7348948077521,
+      "CBB|TP": 41.90620272314675,
+      "CBSD|TP": 44.20289855072464,
+      "CGM|TP": 43.01181102362205,
+      "CMD|TP": 34.53644727530078,
+      "HEALTHY|TP": 46.366279069767444,
+      "semua|kotak meleset": 12.177427712716343,
+      "CBB|kotak meleset": 11.043872919818456,
+      "CBSD|kotak meleset": 11.304347826086957,
+      "CGM|kotak meleset": 9.84251968503937,
+      "CMD|kotak meleset": 14.154281670205238,
+      "HEALTHY|kotak meleset": 12.325581395348838,
+      "semua|salah kelas": 2.259301482018862,
+      "CBB|salah kelas": 7.2617246596066565,
+      "CBSD|salah kelas": 7.391304347826087,
+      "CGM|salah kelas": 2.7559055118110236,
+      "CMD|salah kelas": 1.2384996461429583,
+      "HEALTHY|salah kelas": 0.813953488372093,
+      "semua|meleset + salah kelas": 1.9794797388330398,
+      "CBB|meleset + salah kelas": 3.177004538577912,
+      "CBSD|meleset + salah kelas": 4.782608695652174,
+      "CGM|meleset + salah kelas": 1.033464566929134,
+      "CMD|meleset + salah kelas": 1.4508138711960368,
+      "HEALTHY|meleset + salah kelas": 2.1802325581395348,
+      "semua|tidak terdeteksi": 41.84889625867966,
+      "CBB|tidak terdeteksi": 36.61119515885023,
+      "CBSD|tidak terdeteksi": 32.31884057971015,
+      "CGM|tidak terdeteksi": 43.35629921259843,
+      "CMD|tidak terdeteksi": 48.61995753715499,
+      "HEALTHY|tidak terdeteksi": 38.31395348837209,
+      "semua|fp_latar": 1.3100895987534087,
+      "CBB|fp_latar": 0.07206856252434748,
+      "CBSD|fp_latar": 0.06194000779119595,
+      "CGM|fp_latar": 0.25282430853135957,
+      "CMD|fp_latar": 0.2481495909622127,
+      "HEALTHY|fp_latar": 0.6751071289442929,
+      "semua|fp_sekelas": 0.8959875340864822,
+      "CBB|fp_sekelas": 0.08102843786521231,
+      "CBSD|fp_sekelas": 0.08881963381379042,
+      "CGM|fp_sekelas": 0.1382937280872614,
+      "CMD|fp_sekelas": 0.2415270744059213,
+      "HEALTHY|fp_sekelas": 0.34631865991429683,
+      "semua|fp_kelas_lain": 0.2111414102064667,
+      "CBB|fp_kelas_lain": 0.03778730035060382,
+      "CBSD|fp_kelas_lain": 0.031554343591741335,
+      "CGM|fp_kelas_lain": 0.0584339696143358,
+      "CMD|fp_kelas_lain": 0.03856641994546163,
+      "HEALTHY|fp_kelas_lain": 0.044799376704324115,
+      "semua|fp_total": 2.4172185430463577,
+      "CBB|fp_total": 0.1908843007401636,
+      "CBSD|fp_total": 0.1823139851967277,
+      "CGM|fp_total": 0.44955200623295677,
+      "CMD|fp_total": 0.5282430853135957,
+      "HEALTHY|fp_total": 1.0662251655629138
+    }
+  },
+  "contrasts": {
+    "EXP-1 \u2212 EXP-0R|semua|TP": {
+      "per_seed": [
+        1.927660897502335,
+        3.3164058451653062,
+        -0.09327391439527588
+      ],
+      "mean": 1.716930942757455,
+      "ci95": [
+        1.0260890142779135,
+        2.4808044156859856
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|semua|tidak terdeteksi": {
+      "per_seed": [
+        -1.243652191936988,
+        -3.554772515286558,
+        -0.7047362420976313
+      ],
+      "mean": -1.8343869831070592,
+      "ci95": [
+        -2.631219389694613,
+        -1.0984882136934355
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0R|semua|kotak meleset": {
+      "per_seed": [
+        -0.4767333402425127,
+        0.7047362420976278,
+        0.9223753756865989
+      ],
+      "mean": 0.38345942584723797,
+      "ci95": [
+        -0.19652798593661744,
+        0.9477138825071298
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|semua|salah kelas": {
+      "per_seed": [
+        0.08291014612913239,
+        -0.05181884133070769,
+        0.09327391439527455
+      ],
+      "mean": 0.04145507306456642,
+      "ci95": [
+        -0.20093151960950256,
+        0.2999728266167553
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|semua|fp_total": {
+      "per_seed": [
+        0.3011297234125436,
+        0.5742111414102062,
+        0.3470977795091543
+      ],
+      "mean": 0.40747954811063475,
+      "ci95": [
+        0.3494918552891177,
+        0.47110263100674055
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0R|semua|fp_latar": {
+      "per_seed": [
+        0.17413322945072074,
+        0.39072847682119205,
+        0.2173743669653292
+      ],
+      "mean": 0.2607453577457473,
+      "ci95": [
+        0.2195228342866717,
+        0.30691237272094785
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0R|semua|fp_sekelas": {
+      "per_seed": [
+        0.11686793922867156,
+        0.1589403973509934,
+        0.10557070510323341
+      ],
+      "mean": 0.1271263472276328,
+      "ci95": [
+        0.1003416332978506,
+        0.1546615044143604
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0R|semua|fp_kelas_lain": {
+      "per_seed": [
+        0.010128554733151551,
+        0.024542267238021026,
+        0.02415270744059214
+      ],
+      "mean": 0.019607843137254905,
+      "ci95": [
+        0.004846008337299354,
+        0.034353673219525815
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0R|CBB|TP": {
+      "per_seed": [
+        -2.4205748865355474,
+        -3.630862329803321,
+        4.841149773071102
+      ],
+      "mean": -0.4034291477559222,
+      "ci95": [
+        -2.7663862852330845,
+        2.0126600329050413
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CBB|tidak terdeteksi": {
+      "per_seed": [
+        -0.453857791225424,
+        -0.15128593040847704,
+        -3.6308623298033282
+      ],
+      "mean": -1.412002017145743,
+      "ci95": [
+        -3.581628637287265,
+        0.4912421324339726
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CBB|kotak meleset": {
+      "per_seed": [
+        0.0,
+        -0.9077155824508321,
+        -0.6051437216338886
+      ],
+      "mean": -0.5042864346949069,
+      "ci95": [
+        -2.0802274835590406,
+        1.0179680507186049
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CBB|salah kelas": {
+      "per_seed": [
+        1.2102874432677764,
+        1.9667170953101358,
+        -0.1512859304084726
+      ],
+      "mean": 1.0085728693898133,
+      "ci95": [
+        -0.3274822695035462,
+        2.4777295952669083
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CBB|fp_total": {
+      "per_seed": [
+        0.013634592910011678,
+        -0.02376314764316323,
+        0.059602649006622516
+      ],
+      "mean": 0.016491364757823656,
+      "ci95": [
+        0.004276661345787881,
+        0.03019920012305798
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CBB|fp_latar": {
+      "per_seed": [
+        0.0031164783794312423,
+        0.0,
+        0.03583950136345929
+      ],
+      "mean": 0.012985326580963512,
+      "ci95": [
+        0.004022931128640961,
+        0.023793270266636208
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CBB|fp_sekelas": {
+      "per_seed": [
+        0.007791195948578106,
+        -0.009738994935722639,
+        0.01207635372029607
+      ],
+      "mean": 0.0033761849110505123,
+      "ci95": [
+        -0.00273611821779485,
+        0.009450057048645771
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CBB|fp_kelas_lain": {
+      "per_seed": [
+        0.002726918582002337,
+        -0.014024152707440594,
+        0.011686793922867162
+      ],
+      "mean": 0.0001298532658096351,
+      "ci95": [
+        -0.0043948957839499,
+        0.004457175066702924
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CBSD|TP": {
+      "per_seed": [
+        3.0434782608695627,
+        1.0144927536231876,
+        -1.7391304347826022
+      ],
+      "mean": 0.7729468599033827,
+      "ci95": [
+        -1.7523604269293973,
+        3.1385008297127146
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CBSD|tidak terdeteksi": {
+      "per_seed": [
+        -0.4347826086956559,
+        -0.14492753623189003,
+        -0.28985507246377296
+      ],
+      "mean": -0.28985507246377296,
+      "ci95": [
+        -2.1918911329950426,
+        1.4868105515587533
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CBSD|kotak meleset": {
+      "per_seed": [
+        -2.1739130434782616,
+        -3.188405797101451,
+        -0.72463768115942
+      ],
+      "mean": -2.0289855072463774,
+      "ci95": [
+        -4.268773974128744,
+        0.10318000188241565
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CBSD|salah kelas": {
+      "per_seed": [
+        1.1594202898550714,
+        2.4637681159420284,
+        1.8840579710144922
+      ],
+      "mean": 1.8357487922705307,
+      "ci95": [
+        0.6524190381245841,
+        3.055229995592419
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0R|CBSD|fp_total": {
+      "per_seed": [
+        0.019088430074016366,
+        -0.00311647837943127,
+        0.010518114530580464
+      ],
+      "mean": 0.008830022075055186,
+      "ci95": [
+        -0.004820615665235214,
+        0.022624598973029965
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CBSD|fp_latar": {
+      "per_seed": [
+        0.0074016361511492,
+        0.0015582391897156211,
+        0.0023373587845734317
+      ],
+      "mean": 0.0037657447084794176,
+      "ci95": [
+        -0.003898787708565961,
+        0.011553456038732028
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CBSD|fp_sekelas": {
+      "per_seed": [
+        0.008570315543435916,
+        0.006232956758862485,
+        0.013634592910011678
+      ],
+      "mean": 0.009479288404103359,
+      "ci95": [
+        0.0027238284738007644,
+        0.016458088386859183
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0R|CBSD|fp_kelas_lain": {
+      "per_seed": [
+        0.0031164783794312458,
+        -0.010907674328009351,
+        -0.005453837164004674
+      ],
+      "mean": -0.004415011037527593,
+      "ci95": [
+        -0.010708060045397639,
+        0.002087599139217664
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CGM|TP": {
+      "per_seed": [
+        -0.7381889763779483,
+        0.6889763779527556,
+        1.4763779527559038
+      ],
+      "mean": 0.4757217847769037,
+      "ci95": [
+        -0.7745407696783361,
+        1.8214629904743784
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CGM|tidak terdeteksi": {
+      "per_seed": [
+        -1.131889763779526,
+        -1.8208661417322816,
+        -3.346456692913385
+      ],
+      "mean": -2.0997375328083976,
+      "ci95": [
+        -3.6097792858480746,
+        -0.6420897604113317
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0R|CGM|kotak meleset": {
+      "per_seed": [
+        1.2303149606299204,
+        0.14763779527559073,
+        1.8700787401574797
+      ],
+      "mean": 1.0826771653543303,
+      "ci95": [
+        0.03618450414456415,
+        2.1423028460104248
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0R|CGM|salah kelas": {
+      "per_seed": [
+        0.688976377952756,
+        0.09842519685039353,
+        0.5413385826771657
+      ],
+      "mean": 0.44291338582677175,
+      "ci95": [
+        -0.30168910267116467,
+        1.176136287606332
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CGM|fp_total": {
+      "per_seed": [
+        -0.00038955979742888447,
+        0.06427736657576938,
+        0.14569536423841062
+      ],
+      "mean": 0.0698610570055837,
+      "ci95": [
+        0.048696546894583394,
+        0.09076860029336938
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CGM|fp_latar": {
+      "per_seed": [
+        -0.011686793922867145,
+        0.05492793143747565,
+        0.10167510712894429
+      ],
+      "mean": 0.04830541488118426,
+      "ci95": [
+        0.03316798562934,
+        0.06332307379473527
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CGM|fp_sekelas": {
+      "per_seed": [
+        0.015582391897156211,
+        0.020646669263731987,
+        0.035839501363459286
+      ],
+      "mean": 0.024022854174782494,
+      "ci95": [
+        0.013766938963996235,
+        0.033994154316953844
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0R|CGM|fp_kelas_lain": {
+      "per_seed": [
+        -0.004285157771717958,
+        -0.011297234125438253,
+        0.008180755746007011
+      ],
+      "mean": -0.002467212050383067,
+      "ci95": [
+        -0.009405448961030814,
+        0.0044612507710293774
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CMD|TP": {
+      "per_seed": [
+        2.58315640481246,
+        4.210898796886063,
+        3.2554847841472068
+      ],
+      "mean": 3.3498466619485767,
+      "ci95": [
+        2.3156765716303873,
+        4.525816311811908
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0R|CMD|tidak terdeteksi": {
+      "per_seed": [
+        -1.981599433828734,
+        -3.3616418966737456,
+        -3.7508846426043903
+      ],
+      "mean": -3.0313753243689567,
+      "ci95": [
+        -4.435229188681896,
+        -1.7457675892967834
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0R|CMD|kotak meleset": {
+      "per_seed": [
+        0.6369426751592346,
+        -0.14154281670205293,
+        1.556970983722577
+      ],
+      "mean": 0.6841236140599195,
+      "ci95": [
+        -0.2665096070613194,
+        1.805515029184001
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|CMD|salah kelas": {
+      "per_seed": [
+        -0.6369426751592357,
+        -0.1415428167020525,
+        -0.5307855626326963
+      ],
+      "mean": -0.43642368483132815,
+      "ci95": [
+        -0.7435014772832435,
+        -0.1648601018649434
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0R|CMD|fp_total": {
+      "per_seed": [
+        0.12037397740553168,
+        0.14257888585897938,
+        0.19984417608102845
+      ],
+      "mean": 0.1542656797818465,
+      "ci95": [
+        0.12667862996288434,
+        0.18671909896166192
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0R|CMD|fp_latar": {
+      "per_seed": [
+        0.06310868718348267,
+        0.06116088819633814,
+        0.0993377483443709
+      ],
+      "mean": 0.07453577457473057,
+      "ci95": [
+        0.057723777059809606,
+        0.09340711481204701
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0R|CMD|fp_sekelas": {
+      "per_seed": [
+        0.04246201791975068,
+        0.06116088819633814,
+        0.0818075574600701
+      ],
+      "mean": 0.0618101545253863,
+      "ci95": [
+        0.04574794359933904,
+        0.07881182494888919
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0R|CMD|fp_kelas_lain": {
+      "per_seed": [
+        0.014803272302298404,
+        0.02025710946630308,
+        0.018698870276587454
+      ],
+      "mean": 0.017919750681729647,
+      "ci95": [
+        0.009351277897493111,
+        0.027287909495325485
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0R|HEALTHY|TP": {
+      "per_seed": [
+        3.5755813953488342,
+        5.9302325581395365,
+        -4.389534883720927
+      ],
+      "mean": 1.7054263565891479,
+      "ci95": [
+        0.28816111518531806,
+        3.265297756939797
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|HEALTHY|tidak terdeteksi": {
+      "per_seed": [
+        -1.0174418604651123,
+        -6.075581395348834,
+        3.837209302325583
+      ],
+      "mean": -1.0852713178294546,
+      "ci95": [
+        -2.6166354865847685,
+        0.4595816589503652
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|HEALTHY|kotak meleset": {
+      "per_seed": [
+        -2.1511627906976756,
+        2.8197674418604652,
+        0.4651162790697665
+      ],
+      "mean": 0.3779069767441854,
+      "ci95": [
+        -0.7260097864436866,
+        1.3949940777835175
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|HEALTHY|salah kelas": {
+      "per_seed": [
+        -0.11627906976744184,
+        -0.9593023255813955,
+        0.029069767441860295
+      ],
+      "mean": -0.3488372093023257,
+      "ci95": [
+        -0.6995354543662766,
+        -0.0368657738779907
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|HEALTHY|fp_total": {
+      "per_seed": [
+        0.14842228282041292,
+        0.3942345149980522,
+        -0.06856252434748733
+      ],
+      "mean": 0.15803142449032592,
+      "ci95": [
+        0.11291330783563794,
+        0.21173579294691264
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|HEALTHY|fp_latar": {
+      "per_seed": [
+        0.11219322165952472,
+        0.2730814179976626,
+        -0.02181534865601875
+      ],
+      "mean": 0.12115309700038952,
+      "ci95": [
+        0.0842564871196725,
+        0.16120033120954694
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|HEALTHY|fp_sekelas": {
+      "per_seed": [
+        0.04246201791975068,
+        0.08063887806778341,
+        -0.03778730035060385
+      ],
+      "mean": 0.028437865212310082,
+      "ci95": [
+        0.011933960263321178,
+        0.047328909012001444
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0R|HEALTHY|fp_kelas_lain": {
+      "per_seed": [
+        -0.006232956758862485,
+        0.04051421893260615,
+        -0.008959875340864822
+      ],
+      "mean": 0.00844046227762628,
+      "ci95": [
+        0.001030911361275144,
+        0.01566406861943457
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|semua|TP": {
+      "per_seed": [
+        0.8187376930251844,
+        2.9847652606487785,
+        1.1400145092755736
+      ],
+      "mean": 1.647839154316512,
+      "ci95": [
+        0.988488351330865,
+        2.4710431968031705
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0|semua|tidak terdeteksi": {
+      "per_seed": [
+        -0.4767333402425109,
+        -3.8967768680692316,
+        -1.9069333609700507
+      ],
+      "mean": -2.0934811897605976,
+      "ci95": [
+        -2.9276892379024586,
+        -1.3008349447171428
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0|semua|kotak meleset": {
+      "per_seed": [
+        -0.23836667012125545,
+        1.0571043631464399,
+        0.445642035444088
+      ],
+      "mean": 0.4214599094897575,
+      "ci95": [
+        -0.09373831870119129,
+        0.963388492734939
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|semua|salah kelas": {
+      "per_seed": [
+        -0.0621826095968494,
+        0.11400145092755709,
+        0.22800290185511463
+      ],
+      "mean": 0.0932739143952741,
+      "ci95": [
+        -0.14523664030729339,
+        0.35702459480381865
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|semua|fp_total": {
+      "per_seed": [
+        0.21308920919361096,
+        0.5866770549279314,
+        0.3412543825477208
+      ],
+      "mean": 0.38034021555642106,
+      "ci95": [
+        0.32423123910620916,
+        0.43626633500086237
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0|semua|fp_latar": {
+      "per_seed": [
+        0.11569925983638485,
+        0.3942345149980522,
+        0.20763537202960647
+      ],
+      "mean": 0.23918971562134783,
+      "ci95": [
+        0.19507454588115686,
+        0.28358459744926057
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0|semua|fp_sekelas": {
+      "per_seed": [
+        0.09855862874951304,
+        0.16556291390728484,
+        0.09427347097779515
+      ],
+      "mean": 0.11946500454486435,
+      "ci95": [
+        0.09249529402342112,
+        0.14681896231545968
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0|semua|fp_kelas_lain": {
+      "per_seed": [
+        -0.001168679392286709,
+        0.02687962602259447,
+        0.03934553954031944
+      ],
+      "mean": 0.02168549539020907,
+      "ci95": [
+        0.008624757691599615,
+        0.034972753721094194
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CBB|TP": {
+      "per_seed": [
+        -4.387291981845685,
+        -9.228441754916787,
+        1.6641452344931906
+      ],
+      "mean": -3.9838628340897606,
+      "ci95": [
+        -6.060723879541921,
+        -1.8165223406435733
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CBB|tidak terdeteksi": {
+      "per_seed": [
+        2.2692889561270775,
+        6.051437216338883,
+        -2.7231467473524944
+      ],
+      "mean": 1.8658598083711553,
+      "ci95": [
+        -0.2482854554865429,
+        3.993005298348812
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CBB|kotak meleset": {
+      "per_seed": [
+        0.3025718608169452,
+        -1.6641452344931924,
+        1.3615733736762472
+      ],
+      "mean": 0.0,
+      "ci95": [
+        -1.5450199151215778,
+        1.5078082929456116
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CBB|salah kelas": {
+      "per_seed": [
+        0.6051437216338877,
+        2.26928895612708,
+        -0.1512859304084726
+      ],
+      "mean": 0.9077155824508317,
+      "ci95": [
+        -0.2775173987038343,
+        2.1210426533685736
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CBB|fp_total": {
+      "per_seed": [
+        -0.001168679392286709,
+        -0.05765485001947798,
+        0.03077522399688351
+      ],
+      "mean": -0.009349435138293727,
+      "ci95": [
+        -0.021915137523791418,
+        0.004010841807689425
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CBB|fp_latar": {
+      "per_seed": [
+        0.004674717569146863,
+        -0.007012076353720295,
+        0.021815348656018696
+      ],
+      "mean": 0.006492663290481755,
+      "ci95": [
+        -0.0019546304884112947,
+        0.016247658900553307
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CBB|fp_sekelas": {
+      "per_seed": [
+        -0.005064277366575776,
+        -0.02804830541488118,
+        0.004285157771717965
+      ],
+      "mean": -0.009609141669912996,
+      "ci95": [
+        -0.01607980131943488,
+        -0.0028323927631889894
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CBB|fp_kelas_lain": {
+      "per_seed": [
+        -0.0007791195948578106,
+        -0.02259446825087651,
+        0.004674717569146863
+      ],
+      "mean": -0.0062329567588624854,
+      "ci95": [
+        -0.01128232087227414,
+        -0.001442996264850854
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CBSD|TP": {
+      "per_seed": [
+        4.927536231884055,
+        1.0144927536231876,
+        1.7391304347826093
+      ],
+      "mean": 2.5603864734299506,
+      "ci95": [
+        -0.0935552787563864,
+        5.491089042844543
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CBSD|tidak terdeteksi": {
+      "per_seed": [
+        -0.4347826086956559,
+        0.5797101449275317,
+        -0.7246376811594217
+      ],
+      "mean": -0.19323671497584863,
+      "ci95": [
+        -2.605044904692082,
+        2.035437527860226
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CBSD|kotak meleset": {
+      "per_seed": [
+        -3.0434782608695645,
+        -4.492753623188406,
+        -3.0434782608695663
+      ],
+      "mean": -3.526570048309179,
+      "ci95": [
+        -6.047317250465676,
+        -1.103025825216888
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0|CBSD|salah kelas": {
+      "per_seed": [
+        -0.2898550724637694,
+        2.028985507246376,
+        0.5797101449275361
+      ],
+      "mean": 0.772946859903381,
+      "ci95": [
+        -0.8873077532899951,
+        2.274034320545949
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CBSD|fp_total": {
+      "per_seed": [
+        0.042851577717179595,
+        0.007791195948578106,
+        0.030385664199454626
+      ],
+      "mean": 0.02700947928840411,
+      "ci95": [
+        0.01458203871892925,
+        0.04006243980846088
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0|CBSD|fp_latar": {
+      "per_seed": [
+        0.010518114530580443,
+        0.005843396961433579,
+        0.0011686793922867159
+      ],
+      "mean": 0.005843396961433579,
+      "ci95": [
+        -0.0020608931341392607,
+        0.012893873479786565
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CBSD|fp_sekelas": {
+      "per_seed": [
+        0.024152707440592128,
+        0.0074016361511491935,
+        0.01597195169458511
+      ],
+      "mean": 0.015842098428775476,
+      "ci95": [
+        0.007896800100734656,
+        0.02504608553543827
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0|CBSD|fp_kelas_lain": {
+      "per_seed": [
+        0.008180755746007014,
+        -0.0054538371640046775,
+        0.013245033112582783
+      ],
+      "mean": 0.00532398389819504,
+      "ci95": [
+        0.00038477218460173003,
+        0.010892984209685246
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CGM|TP": {
+      "per_seed": [
+        1.4271653543307181,
+        -1.6240157480314963,
+        3.346456692913385
+      ],
+      "mean": 1.0498687664042023,
+      "ci95": [
+        -0.4210196588146787,
+        2.5121426026297033
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CGM|tidak terdeteksi": {
+      "per_seed": [
+        -2.854330708661415,
+        1.9192913385826742,
+        -4.9704724409448815
+      ],
+      "mean": -1.968503937007874,
+      "ci95": [
+        -3.516099323143162,
+        -0.41311446188709877
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CGM|kotak meleset": {
+      "per_seed": [
+        1.2795275590551167,
+        -1.1811023622047259,
+        1.0334645669291334
+      ],
+      "mean": 0.37729658792650805,
+      "ci95": [
+        -0.8392015579585695,
+        1.6576948870367996
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CGM|salah kelas": {
+      "per_seed": [
+        -0.24606299212598381,
+        0.590551181102362,
+        0.393700787401575
+      ],
+      "mean": 0.2460629921259844,
+      "ci95": [
+        -0.5281524170293161,
+        1.0317778744037738
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CGM|fp_total": {
+      "per_seed": [
+        0.03506038176860149,
+        -0.01246591351772497,
+        0.13322945072068565
+      ],
+      "mean": 0.051941306323854054,
+      "ci95": [
+        0.0322185909009011,
+        0.07151187316741514
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CGM|fp_latar": {
+      "per_seed": [
+        0.022204908453447608,
+        -0.006622516556291397,
+        0.09037787300350603
+      ],
+      "mean": 0.035320088300220744,
+      "ci95": [
+        0.021708339995090475,
+        0.04909679818081516
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CGM|fp_sekelas": {
+      "per_seed": [
+        0.015971951694585124,
+        -0.0015582391897156211,
+        0.03739774055317491
+      ],
+      "mean": 0.01727048435268147,
+      "ci95": [
+        0.008106992087678783,
+        0.02640683412329509
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CGM|fp_kelas_lain": {
+      "per_seed": [
+        -0.0031164783794312423,
+        -0.004285157771717958,
+        0.005453837164004674
+      ],
+      "mean": -0.0006492663290481754,
+      "ci95": [
+        -0.006790520652685318,
+        0.005478279448162574
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CMD|TP": {
+      "per_seed": [
+        0.31847133757961643,
+        4.317055909412602,
+        2.1939136588818116
+      ],
+      "mean": 2.27648030195801,
+      "ci95": [
+        1.1837665521942589,
+        3.34433095321249
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0|CMD|tidak terdeteksi": {
+      "per_seed": [
+        0.4953998584571835,
+        -5.661712668082096,
+        -2.0877565463552727
+      ],
+      "mean": -2.4180231186600616,
+      "ci95": [
+        -3.664229357546192,
+        -1.183233949919579
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CMD|kotak meleset": {
+      "per_seed": [
+        -0.6723283793347488,
+        1.238499646142957,
+        0.21231422505307762
+      ],
+      "mean": 0.25949516395376193,
+      "ci95": [
+        -0.8000929858316755,
+        1.2879882544309946
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CMD|salah kelas": {
+      "per_seed": [
+        -0.07077140835102624,
+        0.31847133757961776,
+        -0.2123142250530785
+      ],
+      "mean": 0.011795234725171003,
+      "ci95": [
+        -0.3104958709291625,
+        0.35307579054351307
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|CMD|fp_total": {
+      "per_seed": [
+        0.043630697312037336,
+        0.15426567978184652,
+        0.11375146084924037
+      ],
+      "mean": 0.10388261264770808,
+      "ci95": [
+        0.07670103346216882,
+        0.13599803289852672
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0|CMD|fp_latar": {
+      "per_seed": [
+        0.008570315543435902,
+        0.06817296455005842,
+        0.051421893260615525
+      ],
+      "mean": 0.04272172445136995,
+      "ci95": [
+        0.02497793946493067,
+        0.061217951464212515
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0|CMD|fp_sekelas": {
+      "per_seed": [
+        0.04051421893260615,
+        0.0732372419166342,
+        0.04168289832489286
+      ],
+      "mean": 0.0518114530580444,
+      "ci95": [
+        0.036304009728301646,
+        0.07091581068194555
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0|CMD|fp_kelas_lain": {
+      "per_seed": [
+        -0.005453837164004674,
+        0.012855473315153874,
+        0.02064666926373198
+      ],
+      "mean": 0.009349435138293727,
+      "ci95": [
+        0.0023300292994494114,
+        0.015782349389424914
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|HEALTHY|TP": {
+      "per_seed": [
+        1.0465116279069733,
+        7.354651162790702,
+        -1.25
+      ],
+      "mean": 2.3837209302325584,
+      "ci95": [
+        0.9346681927426066,
+        3.918780017424396
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|HEALTHY|tidak terdeteksi": {
+      "per_seed": [
+        -0.40697674418604635,
+        -8.691860465116278,
+        -0.02906976744186096
+      ],
+      "mean": -3.0426356589147283,
+      "ci95": [
+        -4.634461483306157,
+        -1.5019670682385955
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0|HEALTHY|kotak meleset": {
+      "per_seed": [
+        -0.31976744186046524,
+        3.866279069767442,
+        0.8139534883720927
+      ],
+      "mean": 1.4534883720930232,
+      "ci95": [
+        0.6092003200186988,
+        2.2703010680949065
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|HEALTHY|salah kelas": {
+      "per_seed": [
+        -0.029069767441860295,
+        -1.1337209302325582,
+        0.4941860465116277
+      ],
+      "mean": -0.2228682170542636,
+      "ci95": [
+        -0.525301483940418,
+        0.06290218528367772
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|HEALTHY|fp_total": {
+      "per_seed": [
+        0.09271523178807939,
+        0.4947409427347098,
+        0.0331125827814569
+      ],
+      "mean": 0.2068562524347487,
+      "ci95": [
+        0.16302061222706546,
+        0.2548983045215706
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0|HEALTHY|fp_latar": {
+      "per_seed": [
+        0.06973120373977404,
+        0.3338527463965718,
+        0.04285157771717951
+      ],
+      "mean": 0.14881184261784178,
+      "ci95": [
+        0.11437374885475464,
+        0.18662984426755044
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-1 \u2212 EXP-0|HEALTHY|fp_sekelas": {
+      "per_seed": [
+        0.022984028048305405,
+        0.1145305804440982,
+        -0.005064277366575776
+      ],
+      "mean": 0.04415011037527594,
+      "ci95": [
+        0.02891505330848017,
+        0.060548354640151514
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-1 \u2212 EXP-0|HEALTHY|fp_kelas_lain": {
+      "per_seed": [
+        0.0,
+        0.04635761589403973,
+        -0.004674717569146863
+      ],
+      "mean": 0.013894299441630955,
+      "ci95": [
+        0.007381221054611279,
+        0.020581079864369526
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|semua|TP": {
+      "per_seed": [
+        -1.005285521815729,
+        -2.7774898953259353,
+        -0.8083739247590458
+      ],
+      "mean": -1.5303831139669033,
+      "ci95": [
+        -2.1795833336050117,
+        -0.8605841894234317
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-2 \u2212 EXP-0|semua|tidak terdeteksi": {
+      "per_seed": [
+        1.005285521815729,
+        3.4511348326251365,
+        0.41455073064566506
+      ],
+      "mean": 1.623657028362177,
+      "ci95": [
+        0.958436479508467,
+        2.338735719517978
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-2 \u2212 EXP-0|semua|kotak meleset": {
+      "per_seed": [
+        -0.24873043838739584,
+        -0.4041869623795211,
+        0.2487304383873994
+      ],
+      "mean": -0.1347289874598392,
+      "ci95": [
+        -0.6246017602608209,
+        0.35706149699796513
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|semua|salah kelas": {
+      "per_seed": [
+        0.020727536532282986,
+        -0.19691159705668992,
+        0.020727536532282986
+      ],
+      "mean": -0.051818841330707986,
+      "ci95": [
+        -0.2578759663106906,
+        0.14212554082543058
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|semua|fp_total": {
+      "per_seed": [
+        -0.19244253992987947,
+        -0.3517724970783014,
+        -0.09232567199065045
+      ],
+      "mean": -0.21218023633294378,
+      "ci95": [
+        -0.26142627274248237,
+        -0.16594767821113807
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-2 \u2212 EXP-0|semua|fp_latar": {
+      "per_seed": [
+        -0.12543825477210757,
+        -0.2800934943513831,
+        -0.07791195948578111
+      ],
+      "mean": -0.16114790286975725,
+      "ci95": [
+        -0.20140278090653518,
+        -0.12571010599302182
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-2 \u2212 EXP-0|semua|fp_sekelas": {
+      "per_seed": [
+        -0.052590572652902234,
+        -0.06155044799376708,
+        -0.02415270744059206
+      ],
+      "mean": -0.046097909362420454,
+      "ci95": [
+        -0.06925481516350282,
+        -0.025642413689246513
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-2 \u2212 EXP-0|semua|fp_kelas_lain": {
+      "per_seed": [
+        -0.014413712504869503,
+        -0.010128554733151524,
+        0.009738994935722639
+      ],
+      "mean": -0.004934424100766129,
+      "ci95": [
+        -0.017351046924305148,
+        0.008495907213486168
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CBB|TP": {
+      "per_seed": [
+        0.4538577912254169,
+        -6.65658093797277,
+        -0.3025718608169399
+      ],
+      "mean": -2.1684316691880974,
+      "ci95": [
+        -3.751992206798858,
+        -0.4526874072714511
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CBB|tidak terdeteksi": {
+      "per_seed": [
+        2.1180030257186147,
+        6.354009077155823,
+        0.15128593040846994
+      ],
+      "mean": 2.8744326777609692,
+      "ci95": [
+        0.6632911927614008,
+        5.055521370654517
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-2 \u2212 EXP-0|CBB|kotak meleset": {
+      "per_seed": [
+        0.0,
+        -1.6641452344931924,
+        2.1180030257186075
+      ],
+      "mean": 0.1512859304084717,
+      "ci95": [
+        -1.386826937494093,
+        1.5278823296354989
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CBB|salah kelas": {
+      "per_seed": [
+        -1.6641452344931924,
+        -0.1512859304084717,
+        -0.9077155824508321
+      ],
+      "mean": -0.9077155824508321,
+      "ci95": [
+        -2.112471511277605,
+        0.15959404537232028
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CBB|fp_total": {
+      "per_seed": [
+        0.004674717569146863,
+        -0.07713283989092326,
+        0.003895597974289039
+      ],
+      "mean": -0.022854174782495785,
+      "ci95": [
+        -0.0327396011325116,
+        -0.012923037813372916
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CBB|fp_latar": {
+      "per_seed": [
+        0.005453837164004674,
+        -0.033112582781456956,
+        0.005843396961433572
+      ],
+      "mean": -0.00727178288533957,
+      "ci95": [
+        -0.012833786478651672,
+        -0.0014133691559487418
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CBB|fp_sekelas": {
+      "per_seed": [
+        -0.004285157771717965,
+        -0.023373587845734317,
+        -0.0035060381768601406
+      ],
+      "mean": -0.010388261264770807,
+      "ci95": [
+        -0.01659248416836926,
+        -0.0034956886257973686
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-2 \u2212 EXP-0|CBB|fp_kelas_lain": {
+      "per_seed": [
+        0.0035060381768601476,
+        -0.020646669263731984,
+        0.0015582391897156211
+      ],
+      "mean": -0.005194130632385405,
+      "ci95": [
+        -0.009966110694652676,
+        -0.0006519906566612605
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CBSD|TP": {
+      "per_seed": [
+        -1.5942028985507264,
+        -4.492753623188406,
+        -1.5942028985507264
+      ],
+      "mean": -2.560386473429953,
+      "ci95": [
+        -4.4881264558293745,
+        -0.5944814366424562
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-2 \u2212 EXP-0|CBSD|tidak terdeteksi": {
+      "per_seed": [
+        2.608695652173914,
+        4.782608695652172,
+        0.4347826086956559
+      ],
+      "mean": 2.608695652173914,
+      "ci95": [
+        0.36623790034431225,
+        4.704057960507833
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-2 \u2212 EXP-0|CBSD|kotak meleset": {
+      "per_seed": [
+        -1.7391304347826075,
+        -1.0144927536231876,
+        -1.5942028985507246
+      ],
+      "mean": -1.44927536231884,
+      "ci95": [
+        -2.9418310350846557,
+        0.1654030073274048
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CBSD|salah kelas": {
+      "per_seed": [
+        0.72463768115942,
+        0.2898550724637676,
+        1.7391304347826075
+      ],
+      "mean": 0.917874396135265,
+      "ci95": [
+        -0.2751316619422888,
+        2.196778865833307
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CBSD|fp_total": {
+      "per_seed": [
+        -0.02804830541488118,
+        -0.009738994935722611,
+        -0.023373587845734317
+      ],
+      "mean": -0.020386962732112702,
+      "ci95": [
+        -0.03079501470180508,
+        -0.010765030670515357
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-2 \u2212 EXP-0|CBSD|fp_latar": {
+      "per_seed": [
+        -0.010907674328009348,
+        -0.009738994935722632,
+        -0.016751071289442927
+      ],
+      "mean": -0.01246591351772497,
+      "ci95": [
+        -0.019592376014789806,
+        -0.006583598337601229
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-2 \u2212 EXP-0|CBSD|fp_sekelas": {
+      "per_seed": [
+        -0.013634592910011685,
+        0.00272691858200233,
+        -0.005843396961433586
+      ],
+      "mean": -0.005583690429814314,
+      "ci95": [
+        -0.010910170244996895,
+        0.0003901753896307344
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CBSD|fp_kelas_lain": {
+      "per_seed": [
+        -0.0035060381768601476,
+        -0.0027269185820023405,
+        -0.0007791195948578106
+      ],
+      "mean": -0.002337358784573433,
+      "ci95": [
+        -0.00651743390915247,
+        0.002204993085439913
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CGM|TP": {
+      "per_seed": [
+        -0.6889763779527485,
+        -6.79133858267717,
+        1.3287401574803184
+      ],
+      "mean": -2.0505249343832,
+      "ci95": [
+        -3.23616650267565,
+        -0.7897924876302495
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CGM|tidak terdeteksi": {
+      "per_seed": [
+        -0.04921259842519987,
+        8.710629921259837,
+        -0.9350393700787407
+      ],
+      "mean": 2.575459317585299,
+      "ci95": [
+        1.209182597770293,
+        3.9348852232367544
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CGM|kotak meleset": {
+      "per_seed": [
+        -0.5905511811023629,
+        -2.608267716535434,
+        0.4429133858267722
+      ],
+      "mean": -0.9186351706036749,
+      "ci95": [
+        -1.858550790809543,
+        0.015000435858464695
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CGM|salah kelas": {
+      "per_seed": [
+        0.9350393700787398,
+        0.9842519685039366,
+        -0.688976377952756
+      ],
+      "mean": 0.41010498687664015,
+      "ci95": [
+        -0.10858804092628387,
+        0.9800516204745573
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CGM|fp_total": {
+      "per_seed": [
+        -0.035449941566030374,
+        -0.1577717179587067,
+        0.008180755746007018
+      ],
+      "mean": -0.061680301259576686,
+      "ci95": [
+        -0.08021601931428497,
+        -0.04334448967601143
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CGM|fp_latar": {
+      "per_seed": [
+        -0.012076353720296085,
+        -0.09661082976236854,
+        0.0015582391897156211
+      ],
+      "mean": -0.03570964809764967,
+      "ci95": [
+        -0.05080230740046592,
+        -0.0230721698903347
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CGM|fp_sekelas": {
+      "per_seed": [
+        -0.014413712504869503,
+        -0.05414881184261784,
+        0.0023373587845734456
+      ],
+      "mean": -0.022075055187637967,
+      "ci95": [
+        -0.03066712694359123,
+        -0.013458397059717367
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CGM|fp_kelas_lain": {
+      "per_seed": [
+        -0.008959875340864822,
+        -0.007012076353720295,
+        0.004285157771717958
+      ],
+      "mean": -0.003895597974289053,
+      "ci95": [
+        -0.010605202380815613,
+        0.0021939378348676533
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CMD|TP": {
+      "per_seed": [
+        -0.6723283793347505,
+        1.8754423213021951,
+        -1.2384996461429552
+      ],
+      "mean": -0.01179523472517019,
+      "ci95": [
+        -0.9408724368073972,
+        0.9788486640307926
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CMD|tidak terdeteksi": {
+      "per_seed": [
+        1.7692852087756563,
+        -1.3092710544939905,
+        0.9907997169143599
+      ],
+      "mean": 0.4836046237320086,
+      "ci95": [
+        -0.5826604182366805,
+        1.5354339919555235
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CMD|kotak meleset": {
+      "per_seed": [
+        -0.6723283793347488,
+        -0.10615711252653881,
+        -0.46001415428167114
+      ],
+      "mean": -0.4128332153809862,
+      "ci95": [
+        -1.435936818266855,
+        0.58971164429389
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CMD|salah kelas": {
+      "per_seed": [
+        -0.6369426751592357,
+        -0.6723283793347488,
+        0.24769992922859174
+      ],
+      "mean": -0.35385704175513094,
+      "ci95": [
+        -0.6296765556040886,
+        -0.1193934839741888
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CMD|fp_total": {
+      "per_seed": [
+        -0.0447993767043241,
+        0.035449941566030374,
+        -0.03583950136345926
+      ],
+      "mean": -0.015062978833917662,
+      "ci95": [
+        -0.03599049801116697,
+        0.00450453108320608
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CMD|fp_latar": {
+      "per_seed": [
+        -0.024931827035449966,
+        -0.006622516556291397,
+        -0.02142578885858981
+      ],
+      "mean": -0.017660044150110393,
+      "ci95": [
+        -0.032200931777611144,
+        -0.002875317570530074
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-2 \u2212 EXP-0|CMD|fp_sekelas": {
+      "per_seed": [
+        -0.012855473315153881,
+        0.03389170237631475,
+        -0.009349435138293727
+      ],
+      "mean": 0.003895597974289048,
+      "ci95": [
+        -0.007603403190456203,
+        0.015158092935731893
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|CMD|fp_kelas_lain": {
+      "per_seed": [
+        -0.007012076353720295,
+        0.008180755746007011,
+        -0.005064277366575772
+      ],
+      "mean": -0.0012985326580963522,
+      "ci95": [
+        -0.0073048951924105,
+        0.00456609840008359
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|HEALTHY|TP": {
+      "per_seed": [
+        -1.6279069767441854,
+        -3.139534883720927,
+        -1.6569767441860463
+      ],
+      "mean": -2.1414728682170527,
+      "ci95": [
+        -3.5861030297228598,
+        -0.8070308931144864
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-2 \u2212 EXP-0|HEALTHY|tidak terdeteksi": {
+      "per_seed": [
+        0.46511627906976827,
+        3.4302325581395365,
+        0.7848837209302317
+      ],
+      "mean": 1.5600775193798455,
+      "ci95": [
+        0.15785478757407503,
+        3.039113611784127
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-2 \u2212 EXP-0|HEALTHY|kotak meleset": {
+      "per_seed": [
+        0.5523255813953494,
+        1.0174418604651176,
+        0.7267441860465116
+      ],
+      "mean": 0.7655038759689928,
+      "ci95": [
+        -0.06956534354689026,
+        1.6544630344168763
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|HEALTHY|salah kelas": {
+      "per_seed": [
+        0.2034883720930234,
+        -0.6104651162790697,
+        0.08720930232558133
+      ],
+      "mean": -0.10658914728682167,
+      "ci95": [
+        -0.3859674837016981,
+        0.1323600808207734
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|HEALTHY|fp_total": {
+      "per_seed": [
+        -0.08881963381379043,
+        -0.14257888585897938,
+        -0.04518893650175304
+      ],
+      "mean": -0.09219581872484095,
+      "ci95": [
+        -0.13271991382410525,
+        -0.05535748552069976
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-2 \u2212 EXP-0|HEALTHY|fp_latar": {
+      "per_seed": [
+        -0.08297623685235678,
+        -0.13400857031554347,
+        -0.04713673548889763
+      ],
+      "mean": -0.08804051421893262,
+      "ci95": [
+        -0.11997227296214792,
+        -0.05761185127696575
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-2 \u2212 EXP-0|HEALTHY|fp_sekelas": {
+      "per_seed": [
+        -0.0074016361511491935,
+        -0.020646669263731987,
+        -0.0077911959485781335
+      ],
+      "mean": -0.011946500454486439,
+      "ci95": [
+        -0.02683142797755148,
+        0.0019670006801637547
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-2 \u2212 EXP-0|HEALTHY|fp_kelas_lain": {
+      "per_seed": [
+        0.0015582391897156211,
+        0.012076353720296064,
+        0.009738994935722632
+      ],
+      "mean": 0.007791195948578106,
+      "ci95": [
+        0.0008968325337927504,
+        0.015689864412033856
+      ],
+      "verdict": "naik secara konsisten"
+    },
+    "EXP-3 \u2212 EXP-1|semua|TP": {
+      "per_seed": [
+        -0.6736449372992013,
+        -1.399108715929117,
+        0.8498289978236073
+      ],
+      "mean": -0.4076415518015703,
+      "ci95": [
+        -1.0352132872185549,
+        0.18449427453744097
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|semua|tidak terdeteksi": {
+      "per_seed": [
+        0.9431029122188832,
+        2.3836667012125616,
+        -0.6218260959684869
+      ],
+      "mean": 0.9016478391543193,
+      "ci95": [
+        0.1503785021824756,
+        1.714740954368392
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|semua|kotak meleset": {
+      "per_seed": [
+        -0.673644937299203,
+        -0.7254637786299103,
+        0.36273188931495426
+      ],
+      "mean": -0.3454589422047197,
+      "ci95": [
+        -0.8311128316749442,
+        0.1558755760368665
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|semua|salah kelas": {
+      "per_seed": [
+        0.1865478287905482,
+        -0.2590942066535393,
+        -0.31091304798424746
+      ],
+      "mean": -0.12781980861574618,
+      "ci95": [
+        -0.34917556654475373,
+        0.08901499867605125
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|semua|fp_total": {
+      "per_seed": [
+        -0.11608881963381368,
+        -0.38839111803661863,
+        -0.028827425009738672
+      ],
+      "mean": -0.17776912089339034,
+      "ci95": [
+        -0.23514720547606788,
+        -0.12787664208223057
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-3 \u2212 EXP-1|semua|fp_latar": {
+      "per_seed": [
+        -0.06700428515777168,
+        -0.2567199065056487,
+        -0.027658745617452185
+      ],
+      "mean": -0.11712764576029085,
+      "ci95": [
+        -0.1586553053772922,
+        -0.07964803199318236
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-3 \u2212 EXP-1|semua|fp_sekelas": {
+      "per_seed": [
+        -0.05804440981690684,
+        -0.11258278145695366,
+        0.016751071289442865
+      ],
+      "mean": -0.05129203999480588,
+      "ci95": [
+        -0.07862143868727381,
+        -0.026111939844707673
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|semua|fp_kelas_lain": {
+      "per_seed": [
+        0.008959875340864815,
+        -0.019088430074016366,
+        -0.01791975068172963
+      ],
+      "mean": -0.009349435138293727,
+      "ci95": [
+        -0.02478623834313039,
+        0.00501922024986324
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CBB|TP": {
+      "per_seed": [
+        1.8154311649016535,
+        3.3282904689863813,
+        -2.8744326777609643
+      ],
+      "mean": 0.7564296520423568,
+      "ci95": [
+        -1.0903624038091808,
+        2.5064174568318474
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CBB|tidak terdeteksi": {
+      "per_seed": [
+        1.5128593040847278,
+        0.15128593040847704,
+        1.9667170953101376
+      ],
+      "mean": 1.2102874432677808,
+      "ci95": [
+        -0.841595077603156,
+        3.414844403572195
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CBB|kotak meleset": {
+      "per_seed": [
+        -0.45385779122541514,
+        0.6051437216338869,
+        -0.1512859304084717
+      ],
+      "mean": 0.0,
+      "ci95": [
+        -1.686570772124051,
+        1.6803870656507611
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CBB|salah kelas": {
+      "per_seed": [
+        -0.7564296520423595,
+        -2.420574886535552,
+        1.361573373676248
+      ],
+      "mean": -0.6051437216338877,
+      "ci95": [
+        -1.6643837151324674,
+        0.5038700633837148
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CBB|fp_total": {
+      "per_seed": [
+        -0.021815348656018696,
+        0.0007791195948577967,
+        -0.029996104402025714
+      ],
+      "mean": -0.017010777821062206,
+      "ci95": [
+        -0.030699770944609614,
+        -0.003864665804788543
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CBB|fp_latar": {
+      "per_seed": [
+        -0.013634592910011692,
+        -0.01791975068172965,
+        -0.02298402804830542
+      ],
+      "mean": -0.01817945721334892,
+      "ci95": [
+        -0.029477757336404224,
+        -0.008109200878795105
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-3 \u2212 EXP-1|CBB|fp_sekelas": {
+      "per_seed": [
+        -0.006232956758862485,
+        0.010907674328009348,
+        -0.0023373587845734317
+      ],
+      "mean": 0.0007791195948578106,
+      "ci95": [
+        -0.005814803481572148,
+        0.00817292581253923
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CBB|fp_kelas_lain": {
+      "per_seed": [
+        -0.0019477989871445264,
+        0.007791195948578106,
+        -0.004674717569146863
+      ],
+      "mean": 0.0003895597974289053,
+      "ci95": [
+        -0.0039870890755096195,
+        0.004567546283300949
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CBSD|TP": {
+      "per_seed": [
+        -1.1594202898550705,
+        -2.173913043478258,
+        0.28985507246376585
+      ],
+      "mean": -1.0144927536231876,
+      "ci95": [
+        -3.2459707026575306,
+        1.184468331838877
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CBSD|tidak terdeteksi": {
+      "per_seed": [
+        0.4347826086956559,
+        2.173913043478265,
+        -1.4492753623188364
+      ],
+      "mean": 0.3864734299516949,
+      "ci95": [
+        -1.6568775100401563,
+        2.5213500034160035
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CBSD|kotak meleset": {
+      "per_seed": [
+        -0.72463768115942,
+        2.3188405797101463,
+        1.0144927536231894
+      ],
+      "mean": 0.8695652173913052,
+      "ci95": [
+        -0.8409572451027983,
+        2.78770974775073
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CBSD|salah kelas": {
+      "per_seed": [
+        1.0144927536231894,
+        -1.1594202898550714,
+        0.43478260869565233
+      ],
+      "mean": 0.09661835748792343,
+      "ci95": [
+        -1.2365915256657392,
+        1.4304294856584296
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CBSD|fp_total": {
+      "per_seed": [
+        -0.004285157771717951,
+        -0.012076353720296057,
+        0.004285157771717951
+      ],
+      "mean": -0.004025451240098686,
+      "ci95": [
+        -0.01594208675669144,
+        0.007784653459122342
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CBSD|fp_latar": {
+      "per_seed": [
+        0.0035060381768601545,
+        -0.008180755746007011,
+        0.004674717569146863
+      ],
+      "mean": 2.3129646346357427e-18,
+      "ci95": [
+        -0.0068001190276031935,
+        0.007633227636117062
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CBSD|fp_sekelas": {
+      "per_seed": [
+        -0.005453837164004674,
+        0.0019477989871445334,
+        0.005064277366575776
+      ],
+      "mean": 0.000519413063238545,
+      "ci95": [
+        -0.006559550444532861,
+        0.0065739864452314094
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CBSD|fp_kelas_lain": {
+      "per_seed": [
+        -0.002337358784573435,
+        -0.005843396961433579,
+        -0.005453837164004674
+      ],
+      "mean": -0.0045448643033372295,
+      "ci95": [
+        -0.01050226187347151,
+        0.00129372118735142
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CGM|TP": {
+      "per_seed": [
+        -0.19685039370079238,
+        2.0669291338582667,
+        1.0334645669291405
+      ],
+      "mean": 0.9678477690288716,
+      "ci95": [
+        -0.07638511678435655,
+        2.0932694367368905
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CGM|tidak terdeteksi": {
+      "per_seed": [
+        1.0826771653543332,
+        -2.1161417322834666,
+        0.7381889763779554
+      ],
+      "mean": -0.09842519685039264,
+      "ci95": [
+        -1.3363492120088416,
+        1.1023311901445694
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CGM|kotak meleset": {
+      "per_seed": [
+        -0.8858267716535426,
+        1.5255905511811019,
+        -0.5905511811023612
+      ],
+      "mean": 0.016404199475066033,
+      "ci95": [
+        -0.8752616697931113,
+        0.8654015470000367
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CGM|salah kelas": {
+      "per_seed": [
+        0.1476377952755903,
+        -0.6397637795275588,
+        -1.082677165354331
+      ],
+      "mean": -0.5249343832020998,
+      "ci95": [
+        -1.1531579825439477,
+        0.04731880297526412
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CGM|fp_total": {
+      "per_seed": [
+        0.01636151149201398,
+        0.02921698480716789,
+        -0.040124659135177265
+      ],
+      "mean": 0.0018179457213348682,
+      "ci95": [
+        -0.016875865724750118,
+        0.021212614584400658
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CGM|fp_latar": {
+      "per_seed": [
+        0.001168679392286709,
+        0.01869887027658748,
+        -0.03739774055317491
+      ],
+      "mean": -0.005843396961433572,
+      "ci95": [
+        -0.018767658936580642,
+        0.008235020521691712
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CGM|fp_sekelas": {
+      "per_seed": [
+        0.0031164783794312423,
+        0.0,
+        -0.002337358784573418
+      ],
+      "mean": 0.0002597065316192748,
+      "ci95": [
+        -0.007828944327164583,
+        0.009265728649491444
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CGM|fp_kelas_lain": {
+      "per_seed": [
+        0.012076353720296064,
+        0.010518114530580443,
+        -0.0003895597974289053
+      ],
+      "mean": 0.0074016361511492,
+      "ci95": [
+        0.00037982339852282287,
+        0.014317229858177261
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CMD|TP": {
+      "per_seed": [
+        0.38924274593063757,
+        -3.2908704883227173,
+        -1.4154281670205222
+      ],
+      "mean": -1.4390186364708673,
+      "ci95": [
+        -2.6051908381755915,
+        -0.36242947572996725
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CMD|tidak terdeteksi": {
+      "per_seed": [
+        -0.6723283793347434,
+        4.5293701344656725,
+        1.3092710544939834
+      ],
+      "mean": 1.722104269874971,
+      "ci95": [
+        0.38786178932505805,
+        3.1121147618216516
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CMD|kotak meleset": {
+      "per_seed": [
+        -0.7077140835102629,
+        -1.3446567586694957,
+        -0.5307855626326958
+      ],
+      "mean": -0.8610521349374848,
+      "ci95": [
+        -1.8821542701260372,
+        0.26733203422299123
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CMD|salah kelas": {
+      "per_seed": [
+        0.28308563340410475,
+        -0.10615711252653925,
+        0.31847133757961776
+      ],
+      "mean": 0.16513328615239442,
+      "ci95": [
+        -0.16457883663370007,
+        0.46244112609719523
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CMD|fp_total": {
+      "per_seed": [
+        0.008570315543436013,
+        -0.1449162446435528,
+        -0.06349824698091155
+      ],
+      "mean": -0.06661472536034278,
+      "ci95": [
+        -0.09297018828877184,
+        -0.04251967537853909
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CMD|fp_latar": {
+      "per_seed": [
+        0.006232956758862485,
+        -0.06349824698091155,
+        -0.01558239189715624
+      ],
+      "mean": -0.02428256070640177,
+      "ci95": [
+        -0.03959726964351295,
+        -0.00987368871761936
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|CMD|fp_sekelas": {
+      "per_seed": [
+        -0.0015582391897155934,
+        -0.06739384495520062,
+        -0.0303856641994546
+      ],
+      "mean": -0.033112582781456935,
+      "ci95": [
+        -0.04848663803388211,
+        -0.01878464669934304
+      ],
+      "verdict": "turun secara konsisten"
+    },
+    "EXP-3 \u2212 EXP-1|CMD|fp_kelas_lain": {
+      "per_seed": [
+        0.003895597974289053,
+        -0.01402415270744059,
+        -0.017530190884300738
+      ],
+      "mean": -0.009219581872484091,
+      "ci95": [
+        -0.016343848235353103,
+        -0.0025918657733560026
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|HEALTHY|TP": {
+      "per_seed": [
+        -2.2093023255813904,
+        -2.645348837209305,
+        3.4302325581395365
+      ],
+      "mean": -0.4748062015503862,
+      "ci95": [
+        -1.7984188931432403,
+        0.8662073076008957
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|HEALTHY|tidak terdeteksi": {
+      "per_seed": [
+        2.1802325581395365,
+        3.75,
+        -3.3430232558139537
+      ],
+      "mean": 0.8624031007751943,
+      "ci95": [
+        -0.6220516697816348,
+        2.3037319184814646
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|HEALTHY|kotak meleset": {
+      "per_seed": [
+        -0.5523255813953494,
+        -2.412790697674419,
+        1.6279069767441872
+      ],
+      "mean": -0.44573643410852704,
+      "ci95": [
+        -1.2164186149400262,
+        0.38639964807439664
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|HEALTHY|salah kelas": {
+      "per_seed": [
+        0.14534883720930214,
+        0.4360465116279071,
+        -0.8430232558139533
+      ],
+      "mean": -0.08720930232558137,
+      "ci95": [
+        -0.3526673043536658,
+        0.1788744298436275
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|HEALTHY|fp_total": {
+      "per_seed": [
+        -0.11492014024152697,
+        -0.2613946240747955,
+        0.10050642773665752
+      ],
+      "mean": -0.09193611219322166,
+      "ci95": [
+        -0.1352343413766789,
+        -0.05329260847553534
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|HEALTHY|fp_latar": {
+      "per_seed": [
+        -0.06427736657576932,
+        -0.18582002337358783,
+        0.04363069731203739
+      ],
+      "mean": -0.06882223087910659,
+      "ci95": [
+        -0.10367666200732882,
+        -0.03676909015066006
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|HEALTHY|fp_sekelas": {
+      "per_seed": [
+        -0.04791585508375534,
+        -0.058044409816906894,
+        0.046747175691468634
+      ],
+      "mean": -0.019737696403064536,
+      "ci95": [
+        -0.03701039266593415,
+        -0.005174335423258732
+      ],
+      "verdict": "tidak terbukti berbeda"
+    },
+    "EXP-3 \u2212 EXP-1|HEALTHY|fp_kelas_lain": {
+      "per_seed": [
+        -0.002726918582002337,
+        -0.017530190884300738,
+        0.010128554733151537
+      ],
+      "mean": -0.0033761849110505123,
+      "ci95": [
+        -0.0113548867821945,
+        0.0044926926204885125
+      ],
+      "verdict": "tidak terbukti berbeda"
+    }
+  }
+}

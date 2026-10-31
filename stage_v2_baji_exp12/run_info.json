@@ -1,0 +1,116 @@
+{
+  "tanggal": "2026-10-31T20:02:45",
+  "skrip": "uji_baji_hitam.py",
+  "skrip_sha16": "098ec2cf5acdaef1",
+  "model": {
+    "exp1_s42": {
+      "path": "D:\\UNDIP\\SKRIPSI\\stage_v2_ablation\\seed_42\\exp_1_adaptive_sampling\\weights\\best.pt",
+      "sha16": "85ac88adb5c00d85"
+    },
+    "exp2_s42": {
+      "path": "D:\\UNDIP\\SKRIPSI\\stage_v2_ablation\\seed_42\\exp_2_targeted_aug\\weights\\best.pt",
+      "sha16": "197c7ea15363c8ba"
+    },
+    "exp1_s123": {
+      "path": "D:\\UNDIP\\SKRIPSI\\stage_v2_ablation\\seed_123\\exp_1_adaptive_sampling\\weights\\best.pt",
+      "sha16": "d7036a461e4a1526"
+    },
+    "exp2_s123": {
+      "path": "D:\\UNDIP\\SKRIPSI\\stage_v2_ablation\\seed_123\\exp_2_targeted_aug\\weights\\best.pt",
+      "sha16": "7cd9373f4bded1e3"
+    },
+    "exp1_s2026": {
+      "path": "D:\\UNDIP\\SKRIPSI\\stage_v2_ablation\\seed_2026\\exp_1_adaptive_sampling\\weights\\best.pt",
+      "sha16": "6f58cbe38bec4138"
+    },
+    "exp2_s2026": {
+      "path": "D:\\UNDIP\\SKRIPSI\\stage_v2_ablation\\seed_2026\\exp_2_targeted_aug\\weights\\best.pt",
+      "sha16": "23412767f80bb6f1"
+    }
+  },
+  "varian_N": [
+    "N_asli",
+    "N_baji_hitam",
+    "N_baji_rata"
+  ],
+  "varian_W": [
+    "W_asli",
+    "W_rata",
+    "W_inpaint"
+  ],
+  "kriteria_baji": {
+    "sudut_px": 24,
+    "frak": 0.3,
+    "rgb_maks": 3
+  },
+  "ambang_gelap_estimasi": 12,
+  "lebar_tepi_px": 3,
+  "seed_donor": 42,
+  "prediksi": {
+    "imgsz": 640,
+    "conf": 0.001,
+    "iou": 0.7,
+    "max_det": 300,
+    "nms": "seperti val() (multi_label=True, tanpa batas waktu)"
+  },
+  "ringkasan_masker": {
+    "n_citra": 2567,
+    "n_W": 935,
+    "n_N": 1632,
+    "theta_abs_W": {
+      "median": 5.75,
+      "p10": 2.0,
+      "p90": 8.75
+    },
+    "n_W_iou_estimasi_lt_0_5": 52,
+    "n_W_hanya_dari_estimasi_sudut": 80,
+    "n_donor": 883,
+    "detik_lintasan_masker": 78.1
+  },
+  "jumlah_prediksi": {
+    "exp1_s42|N_asli": 285322,
+    "exp1_s42|N_baji_hitam": 271112,
+    "exp1_s42|N_baji_rata": 298747,
+    "exp1_s42|W_asli": 176248,
+    "exp1_s42|W_rata": 189160,
+    "exp1_s42|W_inpaint": 175705,
+    "exp2_s42|N_asli": 260799,
+    "exp2_s42|N_baji_hitam": 250124,
+    "exp2_s42|N_baji_rata": 261701,
+    "exp2_s42|W_asli": 162163,
+    "exp2_s42|W_rata": 165818,
+    "exp2_s42|W_inpaint": 158454,
+    "exp1_s123|N_asli": 296181,
+    "exp1_s123|N_baji_hitam": 281117,
+    "exp1_s123|N_baji_rata": 301737,
+    "exp1_s123|W_asli": 183148,
+    "exp1_s123|W_rata": 192222,
+    "exp1_s123|W_inpaint": 181768,
+    "exp2_s123|N_asli": 271579,
+    "exp2_s123|N_baji_hitam": 259418,
+    "exp2_s123|N_baji_rata": 275795,
+    "exp2_s123|W_asli": 168804,
+    "exp2_s123|W_rata": 176178,
+    "exp2_s123|W_inpaint": 166410,
+    "exp1_s2026|N_asli": 281433,
+    "exp1_s2026|N_baji_hitam": 271810,
+    "exp1_s2026|N_baji_rata": 290456,
+    "exp1_s2026|W_asli": 178934,
+    "exp1_s2026|W_rata": 188632,
+    "exp1_s2026|W_inpaint": 175632,
+    "exp2_s2026|N_asli": 257674,
+    "exp2_s2026|N_baji_hitam": 248960,
+    "exp2_s2026|N_baji_rata": 263248,
+    "exp2_s2026|W_asli": 161685,
+    "exp2_s2026|W_rata": 167816,
+    "exp2_s2026|W_inpaint": 157398
+  },
+  "versi": {
+    "python": "3.13.7",
+    "torch": "2.9.1+cu130",
+    "ultralytics": "8.3.235",
+    "opencv": "5.0.0"
+  },
+  "detik_total": 581.2,
+  "batas": null
+}

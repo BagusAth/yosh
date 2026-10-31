@@ -1,0 +1,5 @@
+﻿"Tahap","Status","Menit"
+"preflight GPU","OK","0"
+"B1 uji baji EXP-1/EXP-2","OK","9.7"
+"B2 pasang pycocotools","OK","0"
+"B2 cek pycocotools (3 model)","OK","0.6"

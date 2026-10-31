@@ -12,6 +12,7 @@ Tambahan deskriptif: efek total (hitam - asli), efek oklusi (rata - asli), AP pe
 teratas per citra, dan analisis sensitivitas (citra N yang bajinya terdeteksi; citra W dengan estimasi sudut andal).
 
 Pemakaian: python analyze_baji.py prep ; python analyze_baji.py boot --seed 0 --iters 250 ; python analyze_baji.py report
+  Model lain: --dir stage_v2_baji_exp12 --models exp1_s42,exp1_s123,exp1_s2026 --label EXP-1 --out-sub analysis_exp1
 Keluaran: stage_v2_baji/analysis/ (BAJI_REPORT.md, baji_results.json, boot_seed*.csv, cache/)
 """
 from __future__ import annotations
@@ -120,16 +121,21 @@ def subset_images(meta: pd.DataFrame, name: str) -> list[str]:
 
 
 def main() -> None:
+    global MODELS
     ap = argparse.ArgumentParser()
     ap.add_argument("mode", choices=["prep", "boot", "report"])
     ap.add_argument("--root", default=str(ROOT))
     ap.add_argument("--dir", default="stage_v2_baji")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--iters", type=int, default=250)
+    ap.add_argument("--models", default=",".join(MODELS), help="nama model dipisah koma (default EXP-0 tiga seed)")
+    ap.add_argument("--label", default="EXP-0", help="label model di laporan")
+    ap.add_argument("--out-sub", default="analysis", help="subfolder keluaran di dalam --dir")
     args = ap.parse_args()
+    MODELS = args.models.split(",")
     root = Path(args.root).resolve()
     bd = root / args.dir
-    out = bd / "analysis"
+    out = bd / args.out_sub
     cache = out / "cache"
     cache.mkdir(parents=True, exist_ok=True)
     meta = pd.read_csv(bd / "meta_baji.csv")
@@ -202,7 +208,7 @@ def main() -> None:
     n_img = {sub: len(subset_images(meta, sub)) for sub in SUBSETS}
     res = {"n_citra": n_img, "point": point, "contrasts": {}, "sensitivitas": {}}
     L = ["# Uji jalan pintas baji hitam — hasil",
-         f"Tanggal: {datetime.now():%Y-%m-%d %H:%M} · model EXP-0 seed 42/123/2026 · bootstrap klaster per grup {len(B)} iterasi",
+         f"Tanggal: {datetime.now():%Y-%m-%d %H:%M} · model {args.label} seed 42/123/2026 · bootstrap klaster per grup {len(B)} iterasi",
          "", "## Himpunan citra", "",
          f"- Set N (tanpa baji): {int((meta.set == 'N').sum()):,} citra; subset primer N berkelas dominan CBB/CBSD: {n_img['N_cb']:,} citra.",
          f"- Set W (berbaji): {int((meta.set == 'W').sum()):,} citra; {int(((meta.set == 'W') & (meta.kriteria_lama_sudut24 == 0)).sum())} di antaranya hanya terdeteksi lewat estimasi sudut.",

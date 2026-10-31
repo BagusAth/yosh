@@ -87,3 +87,13 @@ stage_v2_eleak_sim/per_image*/preds_*.csv
 stage_v2_eleak_sim/per_image*/gt_*.csv
 stage_v2_eleak_sim/per_image*/*.npz
 *.csv.tmp
+
+# ==============================================================================
+# Prediksi uji baji dan CONV (puluhan MB per file; dibuat ulang dari best.pt).
+# Ditambahkan 31 Okt 2026. File yang SUDAH dilacak (commit 9a3a444a) tetap dilacak.
+# ==============================================================================
+stage_v2_baji*/preds_*.csv
+stage_v2_baji*/gt_*.csv
+stage_v2_conv60/per_image/*.csv
+stage_v2_*/analysis/cache/
+stage_v2_*/analysis/coco_cek/*.tmp
