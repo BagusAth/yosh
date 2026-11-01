@@ -1,0 +1,43 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20261101094140
+Username: LAPTOP-P3SG0UKE\LENOVO
+RunAs User: LAPTOP-P3SG0UKE\LENOVO
+Configuration Name: 
+Machine: LAPTOP-P3SG0UKE (Microsoft Windows NT 10.0.26200.0)
+Host Application: powershell.exe -NoExit -ExecutionPolicy Bypass -File D:\UNDIP\SKRIPSI\jalankan_uji_garis.ps1
+Process ID: 24504
+PSVersion: 5.1.26100.9711
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9711
+BuildVersion: 10.0.26100.9711
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+=== Preflight GPU (09:41) ===
+GPU: NVIDIA GeForce RTX 4060 Laptop GPU
+
+=== Uji pinggiran bergaris: 9 model x 3 varian (09:41) ===
+Set G: 1183 citra (set N uji baji, tidak bergaris menurut detektor)
+NMS: seperti val() (multi_label=True, torchvision, tanpa batas waktu)
+Varian + prediksi (9 model x 3 varian)
+  256/1183 citra (85 dtk)
+  512/1183 citra (167 dtk)
+  768/1183 citra (247 dtk)
+  1024/1183 citra (329 dtk)
+  1183/1183 citra (379 dtk)
+Selesai dalam 6.4 menit. Keluaran: D:\UNDIP\SKRIPSI\stage_v2_garis
+
+=================== RINGKASAN (2026-11-01 09:48) ===================
+
+Tahap                  Status Menit
+-----                  ------ -----
+preflight GPU          OK         0
+uji pinggiran bergaris OK       6.4
+Selesai tanpa kegagalan. Log: logs_v2\uji_garis_20261101_0941.log. Beri tahu Claude untuk analisis.
+**********************
+Windows PowerShell transcript end
+End time: 20261101094820
+**********************

@@ -1,0 +1,102 @@
+{
+  "tanggal": "2026-11-01T09:48:19",
+  "skrip": "uji_pinggiran_bergaris.py",
+  "skrip_sha16": "5ed31cf68db190da",
+  "model": {
+    "exp0_s42": {
+      "path": "D:\\UNDIP\\SKRIPSI\\stage_8_ablation_clean_20261020\\exp_0_baseline\\weights\\best.pt",
+      "sha16": "eeb5e7c772dbee09"
+    },
+    "exp0_s123": {
+      "path": "D:\\UNDIP\\SKRIPSI\\stage_v2_ablation\\seed_123\\exp_0_baseline\\weights\\best.pt",
+      "sha16": "34a498e0822686f1"
+    },
+    "exp0_s2026": {
+      "path": "D:\\UNDIP\\SKRIPSI\\stage_v2_ablation\\seed_2026\\exp_0_baseline\\weights\\best.pt",
+      "sha16": "a737e29d5c97d5d3"
+    },
+    "exp1_s42": {
+      "path": "D:\\UNDIP\\SKRIPSI\\stage_v2_ablation\\seed_42\\exp_1_adaptive_sampling\\weights\\best.pt",
+      "sha16": "85ac88adb5c00d85"
+    },
+    "exp1_s123": {
+      "path": "D:\\UNDIP\\SKRIPSI\\stage_v2_ablation\\seed_123\\exp_1_adaptive_sampling\\weights\\best.pt",
+      "sha16": "d7036a461e4a1526"
+    },
+    "exp1_s2026": {
+      "path": "D:\\UNDIP\\SKRIPSI\\stage_v2_ablation\\seed_2026\\exp_1_adaptive_sampling\\weights\\best.pt",
+      "sha16": "6f58cbe38bec4138"
+    },
+    "exp2_s42": {
+      "path": "D:\\UNDIP\\SKRIPSI\\stage_v2_ablation\\seed_42\\exp_2_targeted_aug\\weights\\best.pt",
+      "sha16": "197c7ea15363c8ba"
+    },
+    "exp2_s123": {
+      "path": "D:\\UNDIP\\SKRIPSI\\stage_v2_ablation\\seed_123\\exp_2_targeted_aug\\weights\\best.pt",
+      "sha16": "7cd9373f4bded1e3"
+    },
+    "exp2_s2026": {
+      "path": "D:\\UNDIP\\SKRIPSI\\stage_v2_ablation\\seed_2026\\exp_2_targeted_aug\\weights\\best.pt",
+      "sha16": "23412767f80bb6f1"
+    }
+  },
+  "varian": [
+    "G_asli",
+    "G_garis",
+    "G_rata"
+  ],
+  "n_citra": 1183,
+  "geometri": {
+    "rot_maks_derajat": 20.0,
+    "geser_maks_fraksi": 0.15,
+    "seed": "random.Random('garis-<image_id>')"
+  },
+  "sumber_set": [
+    "D:\\UNDIP\\SKRIPSI\\stage_v2_baji\\meta_baji.csv",
+    "D:\\UNDIP\\SKRIPSI\\stage_v2_ablation\\analysis\\pinggiran\\pinggiran_val.csv"
+  ],
+  "prediksi": {
+    "imgsz": 640,
+    "conf": 0.001,
+    "iou": 0.7,
+    "max_det": 300,
+    "nms": "seperti val() (multi_label=True, tanpa batas waktu)"
+  },
+  "jumlah_prediksi": {
+    "exp0_s42|G_asli": 205367,
+    "exp0_s42|G_garis": 180683,
+    "exp0_s42|G_rata": 185132,
+    "exp0_s123|G_asli": 218899,
+    "exp0_s123|G_garis": 202052,
+    "exp0_s123|G_rata": 200788,
+    "exp0_s2026|G_asli": 204598,
+    "exp0_s2026|G_garis": 183154,
+    "exp0_s2026|G_rata": 187248,
+    "exp1_s42|G_asli": 219460,
+    "exp1_s42|G_garis": 195837,
+    "exp1_s42|G_rata": 205122,
+    "exp1_s123|G_asli": 226941,
+    "exp1_s123|G_garis": 194419,
+    "exp1_s123|G_rata": 207722,
+    "exp1_s2026|G_asli": 216272,
+    "exp1_s2026|G_garis": 192082,
+    "exp1_s2026|G_rata": 201258,
+    "exp2_s42|G_asli": 200457,
+    "exp2_s42|G_garis": 175662,
+    "exp2_s42|G_rata": 182976,
+    "exp2_s123|G_asli": 208700,
+    "exp2_s123|G_garis": 184988,
+    "exp2_s123|G_rata": 190877,
+    "exp2_s2026|G_asli": 197016,
+    "exp2_s2026|G_garis": 176314,
+    "exp2_s2026|G_rata": 179706
+  },
+  "versi": {
+    "python": "3.13.7",
+    "torch": "2.9.1+cu130",
+    "ultralytics": "8.3.235",
+    "opencv": "5.0.0"
+  },
+  "detik_total": 383.6,
+  "batas": null
+}

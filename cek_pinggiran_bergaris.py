@@ -37,11 +37,14 @@ _grid = None
 
 
 def nilai_citra(path: str) -> dict:
+    return nilai_array(cv2.imread(path, cv2.IMREAD_COLOR))
+
+
+def nilai_array(img: np.ndarray) -> dict:
     """Detektor bebas geometri: per petak 40 px, rasio (selisih minimum antar arah) / (median antar arah) dari
     |I(p + 8 px * arah) - I(p)|. Isian replikasi tepi memberi rasio sangat kecil pada satu arah (piksel konstan
-    sepanjang garis); tekstur alami tidak. Hanya petak di cincin pinggir (28 petak) yang dihitung."""
+    sepanjang garis); tekstur alami tidak. Hanya petak di cincin pinggir (28 petak) yang dihitung. img = BGR uint8."""
     global _grid
-    img = cv2.imread(path, cv2.IMREAD_COLOR)
     hitam = (img.max(axis=2) <= 12).mean() * 100
     g = cv2.cvtColor(cv2.resize(img, (S, S), interpolation=cv2.INTER_AREA), cv2.COLOR_BGR2GRAY).astype(np.float32)
     if _grid is None:
