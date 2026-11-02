@@ -1,0 +1,30 @@
+{
+  "all": {
+    "CBB": 339,
+    "CBSD": 330,
+    "CGM": 968,
+    "CMD": 1447,
+    "HEALTHY": 2005
+  },
+  "small": {
+    "CBB": 23,
+    "CBSD": 4,
+    "CGM": 15,
+    "CMD": 75,
+    "HEALTHY": 73
+  },
+  "medium": {
+    "CBB": 66,
+    "CBSD": 47,
+    "CGM": 198,
+    "CMD": 418,
+    "HEALTHY": 675
+  },
+  "large": {
+    "CBB": 250,
+    "CBSD": 279,
+    "CGM": 755,
+    "CMD": 954,
+    "HEALTHY": 1257
+  }
+}

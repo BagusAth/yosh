@@ -1,6 +1,6 @@
 # Pra-registrasi Fase 6: evaluasi test set
 
-Status: DRAF (ubah menjadi "Status: DISETUJUI" setelah disetujui; runner menolak berjalan sebelum itu)
+Status: DISETUJUI (ubah menjadi "Status: DISETUJUI" setelah disetujui; runner menolak berjalan sebelum itu)
 
 Disusun 2 November 2026 (pakem v1.5.2), sebelum test set disentuh untuk penelitian v2. Dokumen ini
 mengunci apa yang dihitung pada test set, bagaimana hasilnya ditafsirkan, dan apa yang tidak dilakukan.

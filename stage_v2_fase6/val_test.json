@@ -1,0 +1,87 @@
+{
+  "42|EXP-0": {
+    "mAP50": 0.3414066051343269,
+    "mAP50_95": 0.2483489797254677,
+    "weights": "D:/UNDIP/SKRIPSI/stage_8_ablation_clean_20261020/exp_0_baseline/weights/best.pt"
+  },
+  "42|EXP-0R": {
+    "mAP50": 0.3449122427432126,
+    "mAP50_95": 0.24916066601952516,
+    "weights": "D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_42/exp_0r_uniform_replacement/weights/best.pt"
+  },
+  "42|EXP-1": {
+    "mAP50": 0.3193365277468872,
+    "mAP50_95": 0.22874689414220387,
+    "weights": "D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_42/exp_1_adaptive_sampling/weights/best.pt"
+  },
+  "42|EXP-2": {
+    "mAP50": 0.34771449233702423,
+    "mAP50_95": 0.25037741745651976,
+    "weights": "D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_42/exp_2_targeted_aug/weights/best.pt"
+  },
+  "42|EXP-3": {
+    "mAP50": 0.325263452937029,
+    "mAP50_95": 0.2335565845451995,
+    "weights": "D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_42/exp_3_full_proposed/weights/best.pt"
+  },
+  "123|EXP-0": {
+    "mAP50": 0.341654894310759,
+    "mAP50_95": 0.2473935372277295,
+    "weights": "D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_123/exp_0_baseline/weights/best.pt"
+  },
+  "123|EXP-0R": {
+    "mAP50": 0.3431126116052282,
+    "mAP50_95": 0.24615997349084595,
+    "weights": "D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_123/exp_0r_uniform_replacement/weights/best.pt"
+  },
+  "123|EXP-1": {
+    "mAP50": 0.3323983729611573,
+    "mAP50_95": 0.23530238088028135,
+    "weights": "D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_123/exp_1_adaptive_sampling/weights/best.pt"
+  },
+  "123|EXP-2": {
+    "mAP50": 0.3535514288778144,
+    "mAP50_95": 0.25628687782410237,
+    "weights": "D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_123/exp_2_targeted_aug/weights/best.pt"
+  },
+  "123|EXP-3": {
+    "mAP50": 0.33246268040921245,
+    "mAP50_95": 0.23697248712634297,
+    "weights": "D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_123/exp_3_full_proposed/weights/best.pt"
+  },
+  "2026|EXP-0": {
+    "mAP50": 0.34152565497445925,
+    "mAP50_95": 0.24657185996152242,
+    "weights": "D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_2026/exp_0_baseline/weights/best.pt"
+  },
+  "2026|EXP-0R": {
+    "mAP50": 0.3420434173383094,
+    "mAP50_95": 0.24357142958408737,
+    "weights": "D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_2026/exp_0r_uniform_replacement/weights/best.pt"
+  },
+  "2026|EXP-1": {
+    "mAP50": 0.32314481509041754,
+    "mAP50_95": 0.23417367339389356,
+    "weights": "D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_2026/exp_1_adaptive_sampling/weights/best.pt"
+  },
+  "2026|EXP-2": {
+    "mAP50": 0.3455802763572159,
+    "mAP50_95": 0.24887810401718752,
+    "weights": "D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_2026/exp_2_targeted_aug/weights/best.pt"
+  },
+  "2026|EXP-3": {
+    "mAP50": 0.3299290641278366,
+    "mAP50_95": 0.23720428965452695,
+    "weights": "D:/UNDIP/SKRIPSI/stage_v2_ablation/seed_2026/exp_3_full_proposed/weights/best.pt"
+  },
+  "conv|EXP-0 60ep": {
+    "mAP50": 0.3489335923666721,
+    "mAP50_95": 0.2535293921929127,
+    "weights": "D:/UNDIP/SKRIPSI/stage_v2_conv60/seed_42/exp_0_baseline/weights/best.pt"
+  },
+  "conv|EXP-1 60ep": {
+    "mAP50": 0.3252425733056768,
+    "mAP50_95": 0.2304479445157703,
+    "weights": "D:/UNDIP/SKRIPSI/stage_v2_conv60/seed_42/exp_1_adaptive_sampling/weights/best.pt"
+  }
+}
