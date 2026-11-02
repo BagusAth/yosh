@@ -103,14 +103,17 @@ def main() -> None:
     ap.add_argument("mode", choices=["prep", "report"])
     ap.add_argument("--root", default=str(ROOT))
     ap.add_argument("--out", default="stage_v2_ablation/analysis/error")
+    ap.add_argument("--per-image-dir", default="stage_v2_ablation/per_image", help="Folder preds_seed*.csv (Fase 6: stage_v2_fase6/per_image)")
+    ap.add_argument("--gt-name", default="gt_cleanval.csv")
+    ap.add_argument("--nama-data", default="citra validasi bersih")
     ap.add_argument("--iters", type=int, default=1000)
     args = ap.parse_args()
     root = Path(args.root).resolve()
     out = root / args.out
     cache = out / "cache"
     cache.mkdir(parents=True, exist_ok=True)
-    pdir = root / "stage_v2_ablation/per_image"
-    G = pd.read_csv(pdir / "gt_cleanval.csv")
+    pdir = root / args.per_image_dir
+    G = pd.read_csv(pdir / args.gt_name)
     keys = [(s, e, lab) for s in SEEDS for e, lab in EXPS]
     f_img = cache / "images.json"
     if not f_img.exists():
@@ -148,7 +151,7 @@ def main() -> None:
                     store[(s, lab)][k].append(r[k])
     labs = [lab for _, lab in EXPS]
     L = ["# Pergeseran jenis error (Fase 5 A2)",
-         f"Tanggal: {datetime.now():%Y-%m-%d %H:%M} · {len(images):,} citra validasi bersih · pencocokan v2 (tau 0,25) · bootstrap klaster {args.iters} iterasi",
+         f"Tanggal: {datetime.now():%Y-%m-%d %H:%M} · {len(images):,} {args.nama_data} · pencocokan v2 (tau 0,25) · bootstrap klaster {args.iters} iterasi",
          "", "## Komposisi objek GT menurut taksonomi (%, rata-rata tiga seed)", "",
          "| Model | Kelas | TP | Tidak terdeteksi | Kotak meleset | Salah kelas | Meleset + salah kelas |", "| --- | --- | --- | --- | --- | --- | --- |"]
     for lab in labs:

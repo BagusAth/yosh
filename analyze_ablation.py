@@ -132,6 +132,9 @@ def main() -> None:
     ap.add_argument("--val-json", default=None, help="JSON angka val() bila folder run tidak tersedia")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--iters", type=int, default=250)
+    ap.add_argument("--gt-name", default="gt_cleanval.csv", help="Nama file GT di --per-image-dir (Fase 6: gt_test.csv)")
+    ap.add_argument("--nama-data", default="citra validasi bersih", help="Teks himpunan data di laporan")
+    ap.add_argument("--judul", default="Fase 3", help="Teks fase di judul laporan")
     args = ap.parse_args()
     root = Path(args.root).resolve()
     pdir = root / args.per_image_dir
@@ -140,7 +143,7 @@ def main() -> None:
     cache.mkdir(parents=True, exist_ok=True)
 
     if args.mode == "prep":
-        gt = pdir / "gt_cleanval.csv"
+        gt = pdir / args.gt_name
         for s in SEEDS:
             for e, lab in EXPS:
                 f = pdir / f"preds_seed{s}_{e}.csv"
@@ -186,9 +189,9 @@ def main() -> None:
     labs = [lab for _, lab in EXPS]
     lengkap = all(f"{s}|{lab}" in rec for s in SEEDS for lab in labs)
     common_all = [s for s in seeds_avail if all(f"{s}|{lab}" in rec for lab in labs)] or seeds_avail
-    L = [f"# Ablasi multi-seed — hasil {'' if lengkap else 'SEMENTARA '}(Fase 3)",
+    L = [f"# Ablasi multi-seed — hasil {'' if lengkap else 'SEMENTARA '}({args.judul})",
          f"Tanggal: {datetime.now():%Y-%m-%d %H:%M} · seed tersedia: {', '.join(map(str, seeds_avail))} · "
-         f"{P['n_images']:,} citra validasi bersih · bootstrap klaster {len(B)} iterasi", "",
+         f"{P['n_images']:,} {args.nama_data} · bootstrap klaster {len(B)} iterasi", "",
          "## mAP@50–95 per model (hitung ulang dari prediksi per citra; angka val() Ultralytics dalam kurung)", "",
          "| Model | " + " | ".join(f"Seed {s}" for s in seeds_avail) + " | Rata-rata ± SD |", "| --- |" + " --- |" * (len(seeds_avail) + 1)]
     for lab in labs:

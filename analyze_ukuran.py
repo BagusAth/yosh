@@ -178,6 +178,9 @@ def main() -> None:
     ap.add_argument("mode", choices=["prep", "boot", "report", "cek"])
     ap.add_argument("--root", default=str(ROOT))
     ap.add_argument("--out", default="stage_v2_ablation/analysis/ukuran")
+    ap.add_argument("--per-image-dir", default="stage_v2_ablation/per_image", help="Folder preds_seed*.csv (Fase 6: stage_v2_fase6/per_image)")
+    ap.add_argument("--gt-name", default="gt_cleanval.csv")
+    ap.add_argument("--nama-data", default="citra validasi bersih")
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--iters", type=int, default=250)
     ap.add_argument("--coco-dir", default="stage_v2_ablation/analysis/coco_cek")
@@ -186,8 +189,8 @@ def main() -> None:
     out = root / args.out
     cache = out / "cache"
     cache.mkdir(parents=True, exist_ok=True)
-    pdir = root / "stage_v2_ablation/per_image"
-    G = pd.read_csv(pdir / "gt_cleanval.csv")
+    pdir = root / args.per_image_dir
+    G = pd.read_csv(pdir / args.gt_name)
     keys = [(s, e, lab) for s in SEEDS for e, lab in EXPS]
 
     def images_list():
@@ -257,7 +260,7 @@ def main() -> None:
     mets = [("AP_small", "AP objek kecil"), ("AP_medium", "AP objek sedang"), ("AP_large", "AP objek besar"),
             ("AR_small", "AR objek kecil (maxDets 100)"), ("rec025_small", "Recall objek kecil, conf ≥ 0,25")]
     L = ["# AP dan recall per ukuran objek (Fase 5 A1)",
-         f"Tanggal: {datetime.now():%Y-%m-%d %H:%M} · {len(images):,} citra validasi bersih · 15 model · bootstrap klaster {len(B)} iterasi",
+         f"Tanggal: {datetime.now():%Y-%m-%d %H:%M} · {len(images):,} {args.nama_data} · 15 model · bootstrap klaster {len(B)} iterasi",
          "", "Protokol COCO: kecil < 32², sedang 32²–96², besar > 96² piksel (citra 640 px); maxDets 100; replikasi numpy dari pycocotools.",
          "", "## Jumlah objek GT per ukuran", "", "| Ukuran | " + " | ".join(CLASS_NAMES) + " | Total |", "| --- |" + " --- |" * (NC + 1)]
     for a in ("small", "medium", "large"):

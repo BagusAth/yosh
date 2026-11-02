@@ -58,14 +58,19 @@ def main() -> None:
     ap.add_argument("--out", default="stage_v2_conv60/analysis")
     ap.add_argument("--gt", default="stage_v2_ablation/per_image/gt_cleanval.csv")
     ap.add_argument("--iters", type=int, default=1000)
+    ap.add_argument("--pred-30-dir", default="stage_v2_ablation/per_image", help="Folder prediksi 30 epoch (Fase 6: stage_v2_fase6/per_image)")
+    ap.add_argument("--pred-60-dir", default="stage_v2_conv60/per_image", help="Folder prediksi 60 epoch (Fase 6: stage_v2_fase6/per_image_conv)")
+    ap.add_argument("--nama-data", default="citra validasi bersih")
     args = ap.parse_args()
     root = Path(args.root).resolve()
     out = root / args.out
     out.mkdir(parents=True, exist_ok=True)
 
     runs, images = {}, None
+    pref = {"stage_v2_ablation/per_image": args.pred_30_dir, "stage_v2_conv60/per_image": args.pred_60_dir}
     for k, (p, _) in RUNS.items():
-        z = prepare_run(root / p, root / args.gt)
+        d0, nama = p.rsplit("/", 1)
+        z = prepare_run(root / pref[d0] / nama, root / args.gt)
         if images is None:
             images = z["images"]
         assert np.array_equal(images, z["images"]), "himpunan citra berbeda"
@@ -111,7 +116,7 @@ def main() -> None:
     res["runs"] = meta
 
     L = ["# CONV (Fase 4): EXP-0 dan EXP-1, seed 42, 30 vs 60 epoch",
-         f"Tanggal: {datetime.now():%Y-%m-%d %H:%M} · {len(images):,} citra validasi bersih · bootstrap klaster {args.iters} iterasi",
+         f"Tanggal: {datetime.now():%Y-%m-%d %H:%M} · {len(images):,} {args.nama_data} · bootstrap klaster {args.iters} iterasi",
          "", "Satu seed: IK hanya menangkap ketidakpastian sampel citra. Hasil dilaporkan deskriptif, tidak memakai aturan keputusan tiga seed.",
          "", "## Jalannya training (val() Ultralytics selama training)", "",
          "| Run | Epoch selesai | Epoch terbaik | mAP@50–95 terbaik (val) | LR saat berhenti | Early stopping |", "| --- | --- | --- | --- | --- | --- |"]

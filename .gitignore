@@ -99,3 +99,12 @@ stage_v2_*/analysis/cache/
 stage_v2_*/analysis/coco_cek/*.tmp
 stage_v2_garis/preds_*.csv
 stage_v2_garis/gt_*.csv
+
+# kerja sementara panduan audit (dapat dibuat ulang)
+_panduan_kerja/
+
+# Fase 6 (test set): prediksi per citra, run val(), cache analisis
+stage_v2_fase6/per_image*/*.csv
+stage_v2_fase6/per_image*/*.tmp
+stage_v2_fase6/val_runs/
+stage_v2_fase6/analysis/**/cache/
