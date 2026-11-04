@@ -1,0 +1,669 @@
+{
+  "waktu": "2026-11-04T13:13:50",
+  "label": "PASCA-HOC (eksploratif)",
+  "P1": {
+    "tinggi": {
+      "n_citra": 100,
+      "n_objek": 114,
+      "kelas_dominan": {
+        "CBB": {
+          "k": 28,
+          "n": 100,
+          "pct": 28.000000000000004
+        },
+        "CBSD": {
+          "k": 18,
+          "n": 100,
+          "pct": 18.0
+        },
+        "CGM": {
+          "k": 16,
+          "n": 100,
+          "pct": 16.0
+        },
+        "CMD": {
+          "k": 26,
+          "n": 100,
+          "pct": 26.0
+        },
+        "HEALTHY": {
+          "k": 12,
+          "n": 100,
+          "pct": 12.0
+        },
+        "(tanpa kotak)": {
+          "k": 0,
+          "n": 100,
+          "pct": 0.0
+        }
+      },
+      "jumlah_kotak": {
+        "median": 1.0,
+        "q1": 1.0,
+        "q3": 1.0,
+        "satu_kotak": {
+          "k": 87,
+          "n": 100,
+          "pct": 87.0
+        },
+        "tujuh_atau_lebih": {
+          "k": 0,
+          "n": 100,
+          "pct": 0.0
+        }
+      },
+      "ukuran_objek": {
+        "Small": {
+          "k": 8,
+          "n": 114,
+          "pct": 7.017543859649122
+        },
+        "Medium": {
+          "k": 1,
+          "n": 114,
+          "pct": 0.8771929824561403
+        },
+        "Large": {
+          "k": 105,
+          "n": 114,
+          "pct": 92.10526315789474
+        }
+      },
+      "citra_ada_objek_kecil": {
+        "k": 7,
+        "n": 100,
+        "pct": 7.000000000000001
+      },
+      "taksonomi_objek": {
+        "True_Positive": {
+          "k": 0,
+          "n": 114,
+          "pct": 0.0
+        },
+        "False_Negative_Missed": {
+          "k": 8,
+          "n": 114,
+          "pct": 7.017543859649122
+        },
+        "Localization_Error": {
+          "k": 0,
+          "n": 114,
+          "pct": 0.0
+        },
+        "Classification_Confusion": {
+          "k": 106,
+          "n": 114,
+          "pct": 92.98245614035088
+        },
+        "Localization_and_Class_Error": {
+          "k": 0,
+          "n": 114,
+          "pct": 0.0
+        }
+      },
+      "citra_ada_wrong_class": {
+        "k": 94,
+        "n": 100,
+        "pct": 94.0
+      },
+      "asal_roboflow": {
+        "test": {
+          "k": 22,
+          "n": 100,
+          "pct": 22.0
+        },
+        "train": {
+          "k": 54,
+          "n": 100,
+          "pct": 54.0
+        },
+        "valid": {
+          "k": 24,
+          "n": 100,
+          "pct": 24.0
+        }
+      },
+      "sinyal_lq": {
+        "missing>0": {
+          "k": 6,
+          "n": 100,
+          "pct": 6.0
+        },
+        "swap>0": {
+          "k": 94,
+          "n": 100,
+          "pct": 94.0
+        },
+        "badloc>0": {
+          "k": 0,
+          "n": 100,
+          "pct": 0.0
+        },
+        "median_label_quality": 0.57605
+      },
+      "artefak": {
+        "n": 100,
+        "baji_hitam": {
+          "k": 26,
+          "n": 100,
+          "pct": 26.0
+        },
+        "bergaris_tanpa_baji": {
+          "k": 27,
+          "n": 74,
+          "pct": 36.486486486486484
+        },
+        "artefak_apa_pun": {
+          "k": 53,
+          "n": 100,
+          "pct": 53.0
+        }
+      }
+    },
+    "acak": {
+      "n_citra": 50,
+      "n_objek": 203,
+      "kelas_dominan": {
+        "CBB": {
+          "k": 4,
+          "n": 50,
+          "pct": 8.0
+        },
+        "CBSD": {
+          "k": 8,
+          "n": 50,
+          "pct": 16.0
+        },
+        "CGM": {
+          "k": 7,
+          "n": 50,
+          "pct": 14.000000000000002
+        },
+        "CMD": {
+          "k": 11,
+          "n": 50,
+          "pct": 22.0
+        },
+        "HEALTHY": {
+          "k": 20,
+          "n": 50,
+          "pct": 40.0
+        },
+        "(tanpa kotak)": {
+          "k": 0,
+          "n": 50,
+          "pct": 0.0
+        }
+      },
+      "jumlah_kotak": {
+        "median": 3.0,
+        "q1": 1.0,
+        "q3": 5.75,
+        "satu_kotak": {
+          "k": 14,
+          "n": 50,
+          "pct": 28.000000000000004
+        },
+        "tujuh_atau_lebih": {
+          "k": 9,
+          "n": 50,
+          "pct": 18.0
+        }
+      },
+      "ukuran_objek": {
+        "Small": {
+          "k": 11,
+          "n": 203,
+          "pct": 5.41871921182266
+        },
+        "Medium": {
+          "k": 61,
+          "n": 203,
+          "pct": 30.049261083743843
+        },
+        "Large": {
+          "k": 131,
+          "n": 203,
+          "pct": 64.5320197044335
+        }
+      },
+      "citra_ada_objek_kecil": {
+        "k": 6,
+        "n": 50,
+        "pct": 12.0
+      },
+      "taksonomi_objek": {
+        "True_Positive": {
+          "k": 83,
+          "n": 203,
+          "pct": 40.88669950738916
+        },
+        "False_Negative_Missed": {
+          "k": 91,
+          "n": 203,
+          "pct": 44.827586206896555
+        },
+        "Localization_Error": {
+          "k": 25,
+          "n": 203,
+          "pct": 12.31527093596059
+        },
+        "Classification_Confusion": {
+          "k": 1,
+          "n": 203,
+          "pct": 0.49261083743842365
+        },
+        "Localization_and_Class_Error": {
+          "k": 3,
+          "n": 203,
+          "pct": 1.477832512315271
+        }
+      },
+      "citra_ada_wrong_class": {
+        "k": 1,
+        "n": 50,
+        "pct": 2.0
+      },
+      "asal_roboflow": {
+        "test": {
+          "k": 4,
+          "n": 50,
+          "pct": 8.0
+        },
+        "train": {
+          "k": 38,
+          "n": 50,
+          "pct": 76.0
+        },
+        "valid": {
+          "k": 8,
+          "n": 50,
+          "pct": 16.0
+        }
+      },
+      "sinyal_lq": {
+        "missing>0": {
+          "k": 7,
+          "n": 50,
+          "pct": 14.000000000000002
+        },
+        "swap>0": {
+          "k": 1,
+          "n": 50,
+          "pct": 2.0
+        },
+        "badloc>0": {
+          "k": 15,
+          "n": 50,
+          "pct": 30.0
+        },
+        "median_label_quality": 0.66125
+      },
+      "artefak": {
+        "n": 50,
+        "baji_hitam": {
+          "k": 19,
+          "n": 50,
+          "pct": 38.0
+        },
+        "bergaris_tanpa_baji": {
+          "k": 6,
+          "n": 31,
+          "pct": 19.35483870967742
+        },
+        "artefak_apa_pun": {
+          "k": 25,
+          "n": 50,
+          "pct": 50.0
+        }
+      }
+    },
+    "populasi": {
+      "n_citra": 8980,
+      "n_objek": 34219,
+      "kelas_dominan": {
+        "CBB": {
+          "k": 1095,
+          "n": 8980,
+          "pct": 12.193763919821826
+        },
+        "CBSD": {
+          "k": 1207,
+          "n": 8980,
+          "pct": 13.44097995545657
+        },
+        "CGM": {
+          "k": 2208,
+          "n": 8980,
+          "pct": 24.587973273942094
+        },
+        "CMD": {
+          "k": 2198,
+          "n": 8980,
+          "pct": 24.476614699331847
+        },
+        "HEALTHY": {
+          "k": 2206,
+          "n": 8980,
+          "pct": 24.565701559020045
+        },
+        "(tanpa kotak)": {
+          "k": 66,
+          "n": 8980,
+          "pct": 0.734966592427617
+        }
+      },
+      "jumlah_kotak": {
+        "median": 3.0,
+        "q1": 1.0,
+        "q3": 5.0,
+        "satu_kotak": {
+          "k": 2958,
+          "n": 8980,
+          "pct": 32.93986636971047
+        },
+        "tujuh_atau_lebih": {
+          "k": 1478,
+          "n": 8980,
+          "pct": 16.45879732739421
+        }
+      },
+      "ukuran_objek": {
+        "Small": {
+          "k": 1149,
+          "n": 34219,
+          "pct": 3.357783687425115
+        },
+        "Medium": {
+          "k": 9358,
+          "n": 34219,
+          "pct": 27.347380110464947
+        },
+        "Large": {
+          "k": 23712,
+          "n": 34219,
+          "pct": 69.29483620210995
+        }
+      },
+      "citra_ada_objek_kecil": {
+        "k": 789,
+        "n": 8980,
+        "pct": 8.78619153674833
+      },
+      "taksonomi_objek": {
+        "True_Positive": {
+          "k": 12216,
+          "n": 34219,
+          "pct": 35.6994652093866
+        },
+        "False_Negative_Missed": {
+          "k": 16506,
+          "n": 34219,
+          "pct": 48.236359917005174
+        },
+        "Localization_Error": {
+          "k": 3503,
+          "n": 34219,
+          "pct": 10.237002834682487
+        },
+        "Classification_Confusion": {
+          "k": 1069,
+          "n": 34219,
+          "pct": 3.1239954411291975
+        },
+        "Localization_and_Class_Error": {
+          "k": 925,
+          "n": 34219,
+          "pct": 2.7031765977965456
+        }
+      },
+      "citra_ada_wrong_class": {
+        "k": 908,
+        "n": 8980,
+        "pct": 10.111358574610245
+      },
+      "asal_roboflow": {
+        "test": {
+          "k": 1059,
+          "n": 8980,
+          "pct": 11.792873051224944
+        },
+        "train": {
+          "k": 6868,
+          "n": 8980,
+          "pct": 76.48106904231626
+        },
+        "valid": {
+          "k": 1053,
+          "n": 8980,
+          "pct": 11.726057906458799
+        }
+      },
+      "sinyal_lq": {
+        "missing>0": {
+          "k": 1140,
+          "n": 8980,
+          "pct": 12.694877505567929
+        },
+        "swap>0": {
+          "k": 908,
+          "n": 8980,
+          "pct": 10.111358574610245
+        },
+        "badloc>0": {
+          "k": 1951,
+          "n": 8980,
+          "pct": 21.7260579064588
+        },
+        "median_label_quality": 0.6968
+      },
+      "artefak": {
+        "n": 1000,
+        "baji_hitam": {
+          "k": 366,
+          "n": 1000,
+          "pct": 36.6
+        },
+        "bergaris_tanpa_baji": {
+          "k": 168,
+          "n": 634,
+          "pct": 26.498422712933756
+        },
+        "artefak_apa_pun": {
+          "k": 534,
+          "n": 1000,
+          "pct": 53.400000000000006
+        }
+      }
+    }
+  },
+  "P2": {
+    "per_kelas": {
+      "CBB": {
+        "tinggi": {
+          "k": 6,
+          "n": 28
+        },
+        "acak": {
+          "k": 1,
+          "n": 4
+        }
+      },
+      "CBSD": {
+        "tinggi": {
+          "k": 1,
+          "n": 18
+        },
+        "acak": {
+          "k": 2,
+          "n": 8
+        }
+      },
+      "CGM": {
+        "tinggi": {
+          "k": 2,
+          "n": 16
+        },
+        "acak": {
+          "k": 5,
+          "n": 7
+        }
+      },
+      "CMD": {
+        "tinggi": {
+          "k": 7,
+          "n": 26
+        },
+        "acak": {
+          "k": 9,
+          "n": 11
+        }
+      },
+      "HEALTHY": {
+        "tinggi": {
+          "k": 6,
+          "n": 12
+        },
+        "acak": {
+          "k": 19,
+          "n": 20
+        }
+      },
+      "(tanpa kotak)": {
+        "tinggi": {
+          "k": 0,
+          "n": 0
+        },
+        "acak": {
+          "k": 0,
+          "n": 0
+        }
+      }
+    },
+    "selisih_MH": -0.4011884560618704,
+    "ik": [
+      -0.5533236645152194,
+      -0.24049426043830244
+    ]
+  },
+  "P3": {
+    "auc_acak": 0.7123015873015873,
+    "ik": [
+      0.5488494208494209,
+      0.8621415441176471
+    ]
+  },
+  "P4": {
+    "puncak_min_d": 0.989866,
+    "pita": [
+      {
+        "pita": 0,
+        "batas": [
+          "min",
+          0.3289
+        ],
+        "n_populasi": 2215,
+        "porsi_citra": 0.24665924276169265,
+        "porsi_tarikan_exp1": 0.14257936238945662,
+        "n_audit": 14,
+        "k_audit": 7
+      },
+      {
+        "pita": 1,
+        "batas": [
+          0.3289,
+          0.5331
+        ],
+        "n_populasi": 2213,
+        "porsi_citra": 0.24643652561247217,
+        "porsi_tarikan_exp1": 0.21734601426562766,
+        "n_audit": 16,
+        "k_audit": 12
+      },
+      {
+        "pita": 2,
+        "batas": [
+          0.5331,
+          0.7022
+        ],
+        "n_populasi": 2215,
+        "porsi_citra": 0.24665924276169265,
+        "porsi_tarikan_exp1": 0.27846832399146887,
+        "n_audit": 10,
+        "k_audit": 8
+      },
+      {
+        "pita": 3,
+        "batas": [
+          0.7022,
+          0.9899
+        ],
+        "n_populasi": 2215,
+        "porsi_citra": 0.24665924276169265,
+        "porsi_tarikan_exp1": 0.3393098013259662,
+        "n_audit": 10,
+        "k_audit": 9
+      },
+      {
+        "pita": 4,
+        "batas": [
+          0.9899,
+          "maks"
+        ],
+        "n_populasi": 122,
+        "porsi_citra": 0.013585746102449888,
+        "porsi_tarikan_exp1": 0.02229649802748048,
+        "n_audit": 100,
+        "k_audit": 22
+      }
+    ],
+    "E1": {
+      "rasio": 1.050503759927362,
+      "ik": [
+        0.9991656626033855,
+        1.1058438533143096
+      ],
+      "porsi_uniform": 0.730466592427617,
+      "porsi_exp1": 0.7673579018465395,
+      "n_tinggi": 100,
+      "n_acak": 50,
+      "tafsiran": "belum dapat ditentukan"
+    },
+    "E2": {
+      "rasio": 1.059987858983081,
+      "ik": [
+        1.0073401857884723,
+        1.1151251690504387
+      ],
+      "porsi_uniform": 0.7291710986875752,
+      "porsi_exp1": 0.7729125117301837,
+      "n_tinggi": 100,
+      "n_acak": 50,
+      "tafsiran": "lebih sering"
+    },
+    "E3": {
+      "rasio": 0.9938932523274853,
+      "ik": [
+        0.992843517814066,
+        0.9952006497851922
+      ],
+      "porsi_uniform": 0.713207126948775,
+      "porsi_exp1": 0.7088517509862596,
+      "n_tinggi": 100,
+      "n_acak": 50,
+      "tafsiran": "lebih jarang"
+    },
+    "E1-S1": {
+      "rasio": 1.1033992049757344,
+      "ik": [
+        0.9107355313802342,
+        1.2148388105060197
+      ],
+      "porsi_uniform": 0.46161355039417407,
+      "porsi_exp1": 0.5093440245109577,
+      "n_tinggi": 88,
+      "n_acak": 23,
+      "tafsiran": "belum dapat ditentukan"
+    }
+  }
+}
