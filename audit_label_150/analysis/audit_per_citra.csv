@@ -1,0 +1,151 @@
+kode,utama,tambahan,tanpa,yakin,presisi,y_label,y_label_utama,y_hilang,y_presisi,image_id,strata,d_image,label_quality,missing_score,badloc_score,swap_score
+A001,Kotak bersarang/ganda,,0,Yakin,Sebagian,1,1,0.0,1.0,image_6_jpg.rf.aa4f59f8594ec58fe220469c7a9d4d51.jpg,acak,0.611976,1.0,0.0,0.0,0.0
+A002,Daun tanpa kotak,,3-5,Kurang yakin,Ya,1,1,1.0,0.0,1613820742_jpg.rf.b5af9b0a10128c84f6919d7e8c9d027d.jpg,acak,0.154075,0.2694,0.7306,0.0,0.0
+A003,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_549_jpg.rf.44f2480d07a1edcc12f7248e02cb1d96.jpg,tinggi,0.991042,0.6818,0.0,0.0,0.3182
+A004,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_274_jpg.rf.719f4fe1b8ed2594f989ce776a8f332f.jpg,tinggi,1.0,0.2465,0.0,0.0,0.7535
+A005,Objek bukan daun,,Ragu,Yakin,Tidak,1,1,,1.0,2229847111_jpg.rf.68a33efa56f9a64ba4e35888c5564b5d.jpg,tinggi,0.994068,0.6864,0.0,0.0,0.3136
+A006,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3140588188_jpg.rf.1be7ca59495859c5405dfaf3eae3d4d0.jpg,tinggi,0.989866,0.6344,0.2987,0.0,0.3656
+A007,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_375_jpg.rf.1cdbd8feaac52fc729302ba1b1c152d5.jpg,tinggi,1.0,0.2864,0.0,0.0,0.7136
+A008,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3770308231_jpg.rf.90e0c0824fca15353f0ec171d29c41e9.jpg,tinggi,1.0,0.606,0.0,0.0,0.394
+A009,Kotak bersarang/ganda,Kotak tidak presisi,Ragu,Yakin,Tidak,1,1,,1.0,591741499_jpg.rf.12d6a5819c0590a28eb1792a250e7735.jpg,tinggi,0.994645,0.8521,0.0,0.0,0.1479
+A010,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,2489749892_jpg.rf.084e3254b64d403af6278e9fcbebf5f3.jpg,tinggi,1.0,0.5109,0.0,0.0,0.4891
+A011,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,2016976059_jpg.rf.9a39b111fc76ed9ad0d868176160621b.jpg,tinggi,1.0,0.7014,0.0,0.0,0.2986
+A012,Daun tanpa kotak,,1-2,Yakin,Ya,1,1,1.0,0.0,2113897648_jpg.rf.d72245ae2d519a3a06badc5e2bcfb653.jpg,acak,0.296013,0.408,0.592,0.0,0.0
+A013,Daun tanpa kotak,,3-5,Yakin,Ya,1,1,1.0,0.0,image_3_jpg.rf.31a01315198c58b9b1b0552f7fe216f3.jpg,tinggi,1.0,0.3685,0.0,0.0,0.6315
+A014,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,4043869250_jpg.rf.0f0a9d7b5f75f4365b459ff9872fa338.jpg,tinggi,1.0,0.1215,0.0,0.0,0.8785
+A015,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,2604759921_jpg.rf.1ebf4e5a54a139da383ad3b0e94dfbcb.jpg,tinggi,1.0,0.3138,0.0,0.0,0.6862
+A016,Kotak bersarang/ganda,,0,Yakin,Sebagian,1,1,0.0,1.0,1727205281_jpg.rf.0d41d570f98353c083d2ccb744236e46.jpg,acak,0.379005,0.2575,0.0,0.7425,0.0
+A017,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,2953075261_jpg.rf.4f2b83214375ac11cf1049d78b3ba4be.jpg,tinggi,1.0,0.7107,0.0,0.0,0.2893
+A018,Daun tanpa kotak,,3-5,Kurang yakin,Sebagian,1,1,1.0,1.0,3837457616_jpg.rf.8add12fbca862b6be4c92c320eb370f1.jpg,acak,0.816039,1.0,0.0,0.0,0.0
+A019,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,1340939411_jpg.rf.a7d36f651f71e5beeef4d3cfa23a5f4d.jpg,tinggi,1.0,0.7535,0.0,0.0,0.2465
+A020,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,2156160232_jpg.rf.8119d98dc451121fa3f1768355222fe7.jpg,tinggi,1.0,0.5753,0.0,0.0,0.4247
+A021,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3455270966_jpg.rf.536a8386a5c7975daa9289ad3969bc43.jpg,tinggi,1.0,0.1692,0.0,0.0,0.8308
+A022,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_680_jpg.rf.bfd050e85764b05f037779b31e23d4fc.jpg,acak,0.291667,1.0,0.0,0.0,0.0
+A023,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3497871722_jpg.rf.04aaad8fc33140295a84c9f80683fa59.jpg,tinggi,1.0,0.579,0.0,0.0,0.421
+A024,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3257227990_jpg.rf.413b559306a05352138d5e779dc156f7.jpg,tinggi,1.0,0.421,0.0,0.0,0.579
+A025,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_860_jpg.rf.4ba08e0cbf01b0938ddaee675addfd07.jpg,acak,0.222009,1.0,0.0,0.0,0.0
+A026,Kotak tidak presisi,,Ragu,Kurang yakin,Tidak,1,1,,1.0,image_13_jpg.rf.d56f262673589db2f33889f025043e6d.jpg,tinggi,1.0,1.0,0.0,0.0,0.0
+A027,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3734403071_jpg.rf.536dbc11c49f77bef68b550160e134ec.jpg,acak,0.577137,1.0,0.0,0.0,0.0
+A028,Daun tanpa kotak,,1-2,Kurang yakin,Ya,1,1,1.0,0.0,2369441283_jpg.rf.b8564a350d6a94823b240dc68a4dac5e.jpg,acak,0.273657,0.649,0.351,0.0,0.0
+A029,Artefak citra,,0,Yakin,Ya,0,0,0.0,0.0,image_104_jpg.rf.41fae5a51e4579ca1dd84aca7b49352d.jpg,tinggi,1.0,0.7582,0.0,0.0,0.2418
+A030,Daun tanpa kotak,,1-2,Kurang yakin,Ya,1,1,1.0,0.0,image_78_jpg.rf.d39808f6b55d9863033d5e928f36c208.jpg,tinggi,1.0,0.4603,0.0,0.0,0.5397
+A031,Daun tanpa kotak,Kotak tidak presisi,>5,Kurang yakin,Sebagian,1,1,1.0,1.0,2260521441_jpg.rf.e2812da1a053ad0ac31845b3c5b08470.jpg,acak,0.50326,0.5855,0.3449,0.4145,0.0
+A032,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_318_jpg.rf.cec8506624f725f14dc3f29890b4f428.jpg,tinggi,1.0,0.2833,0.2953,0.0,0.7167
+A033,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_320_jpg.rf.af36d5172630b98cde907afe9bab9b26.jpg,acak,0.46319,1.0,0.0,0.0,0.0
+A034,Kotak tidak presisi,,Ragu,Yakin,Tidak,1,1,,1.0,image_737_jpg.rf.f45389fc362b1efa233b024cdf50ed46.jpg,tinggi,1.0,0.2099,0.7901,0.0,0.0
+A035,Daun tanpa kotak,Citra padat/sulit,>5,Kurang yakin,Sebagian,1,1,1.0,1.0,4229009634_jpg.rf.c179ed6727f5cee1e9f83b55c836eacb.jpg,acak,0.546996,0.6663,0.3337,0.0,0.0
+A036,Kotak tidak presisi,Artefak citra,Ragu,Kurang yakin,Tidak,1,1,,1.0,image_445_jpg.rf.90eda49d03e5422f3aafc0025a3c5f7a.jpg,acak,0.8875,0.6352,0.2715,0.0,0.3648
+A037,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,452420525_jpg.rf.fea3e177a8593f1fc653bae17a558996.jpg,tinggi,1.0,0.4729,0.0,0.0,0.5271
+A038,Kotak bersarang/ganda,,0,Yakin,Sebagian,1,1,0.0,1.0,image_25_jpg.rf.daff220191c50c5164627af042f9642f.jpg,tinggi,1.0,0.5611,0.0,0.0,0.4389
+A039,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_194_jpg.rf.7e72bda054e94f86e89d048f473ba4d8.jpg,tinggi,1.0,0.6681,0.0,0.0,0.3319
+A040,Artefak citra,,0,Yakin,Ya,0,0,0.0,0.0,image_794_jpg.rf.b637ee85f27bf095189e52ddadbf34ca.jpg,tinggi,1.0,0.8439,0.0,0.0,0.1561
+A041,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_696_jpg.rf.a57dc1766285da9fa029ac2604ec4287.jpg,tinggi,1.0,0.5471,0.0,0.0,0.4529
+A042,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,4265873256_jpg.rf.45aa14e72c7010f61ecf6d3dc433477d.jpg,tinggi,1.0,0.8319,0.0,0.0,0.1681
+A043,Artefak citra,,0,Kurang yakin,Ya,0,0,0.0,0.0,image_78_jpg.rf.7c75fcc0fc5193180fef0c0100336ae5.jpg,tinggi,1.0,0.6982,0.0,0.0,0.3018
+A044,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_449_jpg.rf.e4e90590ed61c248c9f2e1461b89b26b.jpg,tinggi,1.0,0.4552,0.0,0.0,0.5448
+A045,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,127157286_jpg.rf.111754845cba9591ec2e5bf859d1074f.jpg,acak,0.368512,0.6664,0.3336,0.0,0.0
+A046,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3684209409_jpg.rf.e14ac8c98da78289549e8009ea172bff.jpg,acak,0.266723,1.0,0.0,0.0,0.0
+A047,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_82_jpg.rf.f7c6797a0c4df1848ff415cf95946a0f.jpg,acak,0.4778,1.0,0.0,0.0,0.0
+A048,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_927_jpg.rf.991804f455ebd993982df695e2fbca9d.jpg,tinggi,1.0,0.3979,0.0,0.0,0.6021
+A049,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_403_jpg.rf.23c0f9b67e52c4410f7adb0d6d8952d0.jpg,tinggi,1.0,0.5751,0.0,0.0,0.4249
+A050,Daun tanpa kotak,Kotak tidak presisi,1-2,Yakin,Tidak,1,1,1.0,1.0,image_333_jpg.rf.1f9edc0fb7de7d54cce863be95f30aff.jpg,tinggi,1.0,0.6596,0.3404,0.0,0.0
+A051,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,720776367_jpg.rf.f7b5b041f78e577760c49afd8f4f4655.jpg,tinggi,1.0,0.2566,0.0,0.0,0.7434
+A052,Daun tanpa kotak,,1-2,Yakin,Ya,1,1,1.0,0.0,769737121_jpg.rf.d4457dfd37ea8dc0d807089109bfe144.jpg,acak,0.600644,0.3318,0.6682,0.5142,0.0
+A053,Daun tanpa kotak,Citra padat/sulit,>5,Kurang yakin,Ya,1,1,1.0,0.0,3615932083_jpg.rf.405e5f604285fee68c6923275d6b562a.jpg,acak,0.760272,0.519,0.0,0.481,0.0
+A054,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_498_jpg.rf.6f1858f3da1e186c7967c9feaf7ccd7f.jpg,acak,0.217692,1.0,0.0,0.0,0.0
+A055,Daun tanpa kotak,,1-2,Yakin,Ya,1,1,1.0,0.0,2839939276_jpg.rf.e39512c8fd000131583c69ab3de6bbf5.jpg,acak,0.366003,1.0,0.0,0.0,0.0
+A056,Daun tanpa kotak,Citra padat/sulit,>5,Kurang yakin,Sebagian,1,1,1.0,1.0,423248664_jpg.rf.a6f3dc6bc82c50a7b96a3fcf4db5c8bf.jpg,acak,0.650615,0.2075,0.7925,0.0,0.0
+A057,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,2203981379_jpg.rf.09ea69d3f7708873f9c58c8e9fff8603.jpg,tinggi,1.0,0.3361,0.0,0.0,0.6639
+A058,Daun tanpa kotak,Kotak tidak presisi,3-5,Kurang yakin,Sebagian,1,1,1.0,1.0,image_475_jpg.rf.fff9b3f28f8574075d5228ad704f1f59.jpg,acak,0.620827,1.0,0.0,0.0,0.0
+A059,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_403_jpg.rf.46909aa04d9c22c21dfa9937d3958fcc.jpg,tinggi,1.0,0.5593,0.0,0.0,0.4407
+A060,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3904457207_jpg.rf.a03a76e723a200e0e8c88b4508a701bd.jpg,tinggi,1.0,0.4235,0.0,0.0,0.5765
+A061,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_420_jpg.rf.b053437b5c5317d0f95e89f7f4659441.jpg,tinggi,1.0,0.8041,0.0,0.0,0.1959
+A062,Daun tanpa kotak,,1-2,Kurang yakin,Ya,1,1,1.0,0.0,image_54_jpg.rf.e5435d50d8da57c5ed4c8d2e2efa7202.jpg,acak,0.188159,0.6954,0.3046,0.0,0.0
+A063,Kotak tidak presisi,,Ragu,Yakin,Tidak,1,1,,1.0,1542749471_jpg.rf.f42e2764213a2fdfe1b7d516d85f4b90.jpg,tinggi,1.0,0.4181,0.5819,0.0,0.0
+A064,Kotak bersarang/ganda,,0,Yakin,Sebagian,1,1,0.0,1.0,1648797663_jpg.rf.741c7a7a979ab0932d71a9f29b40e053.jpg,acak,0.388638,1.0,0.0,0.0,0.0
+A065,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3483976821_jpg.rf.0056d20947d72de2eb1579baa9e59366.jpg,tinggi,0.995135,0.5808,0.4192,0.0,0.3633
+A066,Daun tanpa kotak,,1-2,Kurang yakin,Ya,1,1,1.0,0.0,1064213029_jpg.rf.1af05ec2233594fb01d7707a3298ea55.jpg,acak,0.403491,0.3336,0.4094,0.6664,0.0
+A067,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3474356023_jpg.rf.be11755e4f3106ace1d5b2fc4fc7cea4.jpg,tinggi,1.0,0.5687,0.4099,0.0,0.4313
+A068,Kotak tidak presisi,Daun tanpa kotak,1-2,Kurang yakin,Sebagian,1,1,1.0,1.0,image_88_jpg.rf.04adfe6243e6c52b86c83b28e0d5a813.jpg,tinggi,1.0,0.2394,0.0,0.0,0.7606
+A069,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_455_jpg.rf.3b67bc39af0559465decc5231e201978.jpg,acak,0.249005,1.0,0.0,0.0,0.0
+A070,Daun tanpa kotak,Citra padat/sulit,>5,Kurang yakin,Ya,1,1,1.0,0.0,401824702_jpg.rf.6389c61556239914074da0f80f16cb64.jpg,acak,0.85521,0.6829,0.3171,0.0,0.0
+A071,Kotak tidak presisi,,Ragu,Yakin,Tidak,1,1,,1.0,image_759_jpg.rf.cec32791ae2d5a4d9852885709a6210c.jpg,tinggi,1.0,0.7053,0.2947,0.0,0.0
+A072,Daun tanpa kotak,,1-2,Kurang yakin,Ya,1,1,1.0,0.0,image_298_jpg.rf.d9fb6498833d01e85892a9db0438033f.jpg,acak,0.308619,1.0,0.0,0.0,0.0
+A073,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,1888672105_jpg.rf.34a6ce55c9976620580b8a9075e058df.jpg,tinggi,1.0,0.6433,0.0,0.0,0.3567
+A074,Artefak citra,,Ragu,Yakin,Ya,0,0,,0.0,image_36_jpg.rf.7ba769e457ca003f353bb5dd62c4a506.jpg,tinggi,1.0,0.7403,0.0,0.0,0.2597
+A075,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,2084711314_jpg.rf.b390dcb1baf44d0a43131645a48ffade.jpg,tinggi,1.0,0.7296,0.0,0.0,0.2704
+A076,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,272170079_jpg.rf.6fa723f59fdaeea74f267f7ce8b41032.jpg,tinggi,1.0,0.4195,0.5805,0.0,0.2581
+A077,Daun tanpa kotak,,3-5,Kurang yakin,Sebagian,1,1,1.0,1.0,2423336396_jpg.rf.64e22437a4fb0d210be21063938d1a2f.jpg,acak,0.681367,1.0,0.0,0.0,0.0
+A078,Artefak citra,,Ragu,Kurang yakin,Ragu,0,0,,,1326064660_jpg.rf.8c319b1e551a8398a6b2af535d36c01e.jpg,acak,0.248248,1.0,0.0,0.0,0.0
+A079,Daun tanpa kotak,,1-2,Yakin,Ya,1,1,1.0,0.0,2602035083_jpg.rf.cc23fbbd35799ac847f15a051cef3be5.jpg,acak,0.456912,1.0,0.0,0.0,0.0
+A080,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3757075482_jpg.rf.6bf4777ed937c0a0601fb5c0efadea1a.jpg,tinggi,1.0,0.2805,0.0,0.0,0.7195
+A081,Daun tanpa kotak,Citra padat/sulit,>5,Kurang yakin,Sebagian,1,1,1.0,1.0,414229694_jpg.rf.17f01c5a5e2ec991e338bf1e352c5ce1.jpg,acak,0.782668,0.4971,0.2507,0.5029,0.0
+A082,Daun tanpa kotak,,1-2,Kurang yakin,Ya,1,1,1.0,0.0,3022761015_jpg.rf.22ef49641b769a8d85af56412e3788b0.jpg,acak,0.261115,0.5484,0.4516,0.0,0.0
+A083,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_334_jpg.rf.fac419956c1474cfed76a3f31302a515.jpg,tinggi,1.0,0.2307,0.6959,0.0,0.7693
+A084,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_332_jpg.rf.5bb12b3a51afbc1f9c8dd0d9a63c984c.jpg,acak,0.75954,1.0,0.0,0.0,0.0
+A085,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,1722126168_jpg.rf.aea59245400e502273eedc82f30cb780.jpg,tinggi,1.0,0.1704,0.2549,0.0,0.8296
+A086,Kotak tidak presisi,,0,Kurang yakin,Sebagian,1,1,0.0,1.0,732588563_jpg.rf.356f16e94ed6bc3ec65280e3a932936a.jpg,tinggi,1.0,0.6212,0.0,0.0,0.3788
+A087,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,945272909_jpg.rf.d14d91f52a98e8f5cb070c78171f72ae.jpg,tinggi,1.0,0.4786,0.0,0.0,0.5214
+A088,Kotak bersarang/ganda,Kotak tidak presisi,0,Yakin,Tidak,1,1,0.0,1.0,image_180_jpg.rf.4f83033739438867fcd1da3f153c01b3.jpg,tinggi,1.0,0.7599,0.0,0.0,0.2401
+A089,Daun tanpa kotak,,>5,Kurang yakin,Ya,1,1,1.0,0.0,1953482304_jpg.rf.ae12efc1ee739d2b2c69922691669eca.jpg,tinggi,1.0,1.0,0.0,0.0,0.0
+A090,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_571_jpg.rf.e9cc850ca444136f2fc59cd2a678c77e.jpg,tinggi,1.0,0.398,0.0,0.0,0.602
+A091,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,954778743_jpg.rf.4aa18cd5a6f68c65d7e5becc4461be22.jpg,tinggi,0.992814,0.4737,0.0,0.0,0.5263
+A092,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,1160835992_jpg.rf.c9661f7b3c8b19b1c1457a2199c0571f.jpg,tinggi,1.0,0.7104,0.0,0.0,0.2896
+A093,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3767498926_jpg.rf.4a7fad914161e84ce93e71fa793532a9.jpg,tinggi,1.0,0.6035,0.3965,0.0,0.3707
+A094,Daun tanpa kotak,,>5,Kurang yakin,Ya,1,1,1.0,0.0,image_410_jpg.rf.e70eb9ee3b374ea3b213d1748fc4ba78.jpg,tinggi,1.0,0.6612,0.0,0.0,0.3388
+A095,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_1036_jpg.rf.480281ca5528b620f2aa656013e74c5e.jpg,tinggi,1.0,0.543,0.457,0.0,0.2393
+A096,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3699866059_jpg.rf.21bbf48b1b0dce5312b0039be6a5bae2.jpg,tinggi,1.0,0.6665,0.0,0.0,0.3335
+A097,Kotak tidak presisi,Daun tanpa kotak,Ragu,Yakin,Tidak,1,1,,1.0,image_254_jpg.rf.0180651012c253f2abab1e6aa1d782a4.jpg,acak,0.774358,0.3378,0.6622,0.0,0.0
+A098,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,1955971780_jpg.rf.45960a54719df0e652263d83eb582f59.jpg,tinggi,1.0,0.2551,0.0,0.0,0.7449
+A099,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_517_jpg.rf.5cb6625c2a7df8aace927c59f51415da.jpg,tinggi,1.0,0.7454,0.0,0.0,0.2546
+A100,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,2872930552_jpg.rf.03f7f4d0ac5a1088e32e279d44ee2f50.jpg,tinggi,1.0,0.6007,0.2591,0.0,0.3993
+A101,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,1553995001_jpg.rf.09bbcf70c4ee2b339e33c216c7937fc7.jpg,tinggi,1.0,0.7285,0.0,0.0,0.2715
+A102,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3838283693_jpg.rf.ec05a4546170ff6ae7e6c78b2b3857ee.jpg,acak,0.594262,0.6562,0.0,0.3438,0.0
+A103,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_345_jpg.rf.5a5e17088228f5abd0d2d966ca060dc0.jpg,tinggi,1.0,0.8267,0.0,0.0,0.1733
+A104,Daun tanpa kotak,,1-2,Kurang yakin,Ya,1,1,1.0,0.0,3233899125_jpg.rf.f32a2965f6b32182d946198bc1e0d585.jpg,tinggi,1.0,0.5287,0.3117,0.0,0.4713
+A105,Daun tanpa kotak,Kotak tidak presisi,>5,Kurang yakin,Sebagian,1,1,1.0,1.0,image_126_jpg.rf.93b14c939b779d06c4ba98d97c4bf949.jpg,acak,0.248512,0.5997,0.3512,0.4003,0.0
+A106,Kotak bersarang/ganda,,0,Yakin,Sebagian,1,1,0.0,1.0,image_107_jpg.rf.916e3cb2a159adc8d77258cbcc937d8b.jpg,tinggi,0.99546,0.7438,0.0,0.0,0.2562
+A107,Daun tanpa kotak,,1-2,Kurang yakin,Ya,1,1,1.0,0.0,image_387_jpg.rf.da70c3e9ca8029805d4a875614db5dce.jpg,tinggi,1.0,0.6383,0.3617,0.0,0.297
+A108,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,2156480283_jpg.rf.0b6ff820b261f1c59c7734abced71d3e.jpg,tinggi,1.0,0.5768,0.2552,0.0,0.4232
+A109,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_410_jpg.rf.a05361c47adf08f3ad72c070ab89e49c.jpg,tinggi,1.0,0.6216,0.0,0.0,0.3784
+A110,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,2569083558_jpg.rf.5acb30cdfc5ccc6d297eb177d712e0f5.jpg,tinggi,1.0,0.6629,0.0,0.0,0.3371
+A111,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3279881598_jpg.rf.c63bcb5290ffb5f7865403f392607537.jpg,tinggi,1.0,0.6553,0.0,0.0,0.3447
+A112,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3570937947_jpg.rf.ebbc427ef1f467caa8171d951356e272.jpg,tinggi,1.0,0.3985,0.4252,0.0,0.6015
+A113,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,1332005593_jpg.rf.6e67036e2756e41494dee01786b0a160.jpg,tinggi,1.0,0.623,0.2922,0.0,0.377
+A114,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3755967139_jpg.rf.f3ad1d1cf26feff76a0b20931031b592.jpg,tinggi,1.0,0.7988,0.0,0.0,0.2012
+A115,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3935356318_jpg.rf.9eac4f9833fcddc72941d789126010f1.jpg,tinggi,1.0,0.5772,0.0,0.0,0.4228
+A116,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_792_jpg.rf.34a1e6b65115dc98764e988f2755d8c2.jpg,tinggi,1.0,0.6968,0.0,0.0,0.3032
+A117,Daun tanpa kotak,,1-2,Kurang yakin,Ya,1,1,1.0,0.0,2713739675_jpg.rf.74f55d7b8c01af3afd23a5a5cebedb5f.jpg,tinggi,0.995217,0.3948,0.0,0.0,0.6052
+A118,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3294260404_jpg.rf.d487c880f151c45b27c7788fad362a11.jpg,tinggi,1.0,0.4553,0.5447,0.0,0.2746
+A119,Daun tanpa kotak,Citra padat/sulit,>5,Kurang yakin,Ya,1,1,1.0,0.0,1039292236_jpg.rf.81520c80dcea63aec240836edcf3187f.jpg,acak,0.743219,0.7484,0.2516,0.0,0.0
+A120,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,235479847_jpg.rf.f63e96089624b1b2cb57f20d539501f4.jpg,tinggi,1.0,0.4558,0.5442,0.0,0.3286
+A121,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_121_jpg.rf.bbcb646f1016882f2dd5942968aa09bc.jpg,tinggi,0.994275,0.5768,0.4232,0.0,0.2235
+A122,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_219_jpg.rf.689f705e60fea2c2679408ff69f8bfce.jpg,tinggi,1.0,0.5014,0.0,0.0,0.4986
+A123,Daun tanpa kotak,Kotak bersarang/ganda,>5,Kurang yakin,Sebagian,1,1,1.0,1.0,1074399386_jpg.rf.6a8176a6d870a268111cd73911bc0d7e.jpg,acak,0.549106,0.2085,0.0,0.7915,0.0
+A124,Daun tanpa kotak,Citra padat/sulit,>5,Kurang yakin,Ya,1,1,1.0,0.0,3992168079_jpg.rf.65435cbb0bbc5674d78195e5c6ec132d.jpg,tinggi,1.0,0.297,0.0,0.0,0.703
+A125,Daun tanpa kotak,Citra padat/sulit,>5,Kurang yakin,Sebagian,1,1,1.0,1.0,566159695_jpg.rf.2cb868ae224e0b6de4c7524b330afb8e.jpg,acak,0.502245,0.4655,0.5345,0.5004,0.0
+A126,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_516_jpg.rf.a721df20dd825d3c44ecf397f26aa394.jpg,tinggi,1.0,0.6734,0.3266,0.0,0.2708
+A127,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_474_jpg.rf.6c9256c51616bb92559ca0ee927d9846.jpg,tinggi,1.0,0.7327,0.0,0.0,0.2673
+A128,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_364_jpg.rf.feb4ba5f0f6cf7f858bacfd78be07335.jpg,acak,0.253039,0.5983,0.4017,0.0,0.0
+A129,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,2853557444_jpg.rf.1f964a9fe2b90df03d9e48be9310ba3a.jpg,tinggi,1.0,0.3301,0.0,0.0,0.6699
+A130,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_69_jpg.rf.2addf928e8a890b56e4b1bbb85a7a775.jpg,tinggi,1.0,0.6465,0.0,0.0,0.3535
+A131,Daun tanpa kotak,Citra padat/sulit,>5,Kurang yakin,Ya,1,1,1.0,0.0,2761327617_jpg.rf.3cdc491b343a2f19dc4124146052b1c9.jpg,acak,0.399097,1.0,0.0,0.0,0.0
+A132,Artefak citra,,Ragu,Yakin,Ya,0,0,,0.0,image_103_jpg.rf.ebfaffa7928ede59869d5f85da678dc4.jpg,tinggi,1.0,0.4388,0.0,0.0,0.5612
+A133,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,2139679147_jpg.rf.69821797c5e51c63484173a9aa0af11b.jpg,acak,0.38785,0.5652,0.4348,0.0,0.0
+A134,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,1434172630_jpg.rf.fccfaaa407ab297e2b51f5d9f2690cd6.jpg,tinggi,1.0,0.6102,0.0,0.0,0.3898
+A135,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_621_jpg.rf.ee5a37f4f1a7baad15448d74654d74a3.jpg,tinggi,1.0,0.472,0.0,0.0,0.528
+A136,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,1765374655_jpg.rf.008eae02bb20388b684b43d303280630.jpg,tinggi,1.0,0.694,0.0,0.0,0.306
+A137,Kotak tidak presisi,,0,Yakin,Tidak,1,1,0.0,1.0,image_89_jpg.rf.e3492b1c040bca7d5b132fde8d87cfce.jpg,tinggi,1.0,0.4402,0.2887,0.0,0.5598
+A138,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_124_jpg.rf.e5215af21cc1b1acf6f05292ac940cbe.jpg,tinggi,1.0,0.4483,0.0,0.0,0.5517
+A139,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,456647345_jpg.rf.6930027f5c93915e6a1bb183c3081c7e.jpg,tinggi,1.0,0.3877,0.0,0.0,0.6123
+A140,Daun tanpa kotak,Citra padat/sulit,>5,Kurang yakin,Sebagian,1,1,1.0,1.0,3703003342_jpg.rf.3711501303a96d2b326e78969b2a8ba4.jpg,acak,0.811481,0.4299,0.5701,0.0,0.0
+A141,Daun tanpa kotak,,>5,Kurang yakin,Sebagian,1,1,1.0,1.0,image_241_jpg.rf.6e78c75c9911d2fb6a653548ec774239.jpg,acak,0.330836,0.3568,0.3766,0.6432,0.0
+A142,Kotak tidak presisi,Daun tanpa kotak,3-5,Kurang yakin,Tidak,1,1,1.0,1.0,3603508570_jpg.rf.85f0fb1c93c5f71585960b9e43733325.jpg,acak,0.375825,0.43,0.0,0.57,0.0
+A143,Kotak tidak presisi,,Ragu,Yakin,Tidak,1,1,,1.0,3921597155_jpg.rf.7bec5ebfedabe643abafe1f49c9f1e0c.jpg,acak,0.500902,0.5502,0.0,0.4498,0.0
+A144,Kotak bersarang/ganda,Kotak tidak presisi,Ragu,Yakin,Tidak,1,1,,1.0,1352927108_jpg.rf.37ef8cb5db873f6bf99f30ac5b813bb6.jpg,acak,0.782427,0.4258,0.0,0.5742,0.0
+A145,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,image_834_jpg.rf.7f15b3673e5354143a9a06188442b576.jpg,tinggi,1.0,0.1481,0.0,0.0,0.8519
+A146,Artefak citra,,Ragu,Yakin,Ya,0,0,,0.0,image_186_jpg.rf.00212a3d1afb40f9b388d315c2d50336.jpg,tinggi,1.0,0.3651,0.0,0.0,0.6349
+A147,Daun tanpa kotak,,3-5,Kurang yakin,Sebagian,1,1,1.0,1.0,2052500079_jpg.rf.ad9c52bc5b6b87a89b598bca1c5d123e.jpg,acak,0.452094,1.0,0.0,0.0,0.0
+A148,Daun tanpa kotak,,1-2,Kurang yakin,Sebagian,1,1,1.0,1.0,1969270538_jpg.rf.8bf7a29b8d1f94124b7c3c8f56077271.jpg,acak,0.573463,0.4569,0.3804,0.5431,0.0
+A149,Daun tanpa kotak,,1-2,Kurang yakin,Sebagian,1,1,1.0,1.0,image_169_jpg.rf.f9bb51ee421d3c4fdb829ccc24bc9e2d.jpg,tinggi,1.0,0.4649,0.0,0.0,0.5351
+A150,Tidak ada masalah terlihat,,0,Yakin,Ya,0,0,0.0,0.0,3615856215_jpg.rf.a27b20952d1a5896af76ffa75556ddd2.jpg,tinggi,1.0,0.5833,0.0,0.0,0.4167

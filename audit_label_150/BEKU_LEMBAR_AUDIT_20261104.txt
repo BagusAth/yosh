@@ -1,0 +1,12 @@
+Pembekuan lembar audit sebelum kunci strata dibuka
+Waktu (WIB): 2026-11-04 16:36:55
+Kunci _kunci/audit_key.csv belum dibaca saat file ini ditulis; analyze_audit_label.py dijalankan sesudahnya.
+
+SHA-256:
+49760a3b0f41d648a48be5c1fb3d92447f3b3735134797ee3365fd0eaea257d8  LEMBAR_AUDIT_LABEL.xlsx
+7fa3c53d78fab8fcf780bb333953554acfc0815adb6dbed30ea7014ce5897647  LEMBAR_AUDIT_RATER2.xlsx
+../analyze_audit_label.py: 04f2c61646dd98b47a362fd091b4fafdf3f0b7f92daa6ede97704e9551fa4db0
+
+Rater 1 identik dengan commit 3d4ae7ca (2026-11-02 21:03:53 +0700), blob 57a95fc0.
+Rater 2 diisi s.d. 2026-11-04 16:34:43 WIB (docProps), belum di-commit saat pembekuan.
+Cek pra-analisis: rater 1 150/150, rater 2 30/30, 0 isian tidak dikenal, 0 kontradiksi antarkolom.
