@@ -108,3 +108,5 @@ stage_v2_fase6/per_image*/*.csv
 stage_v2_fase6/per_image*/*.tmp
 stage_v2_fase6/val_runs/
 stage_v2_fase6/analysis/**/cache/
+# Analisis pasca-hoc TIDE + AP per IoU (5 Nov 2026): cache dapat dibuat ulang dengan analyze_tide_iou.py prep
+stage_v2_ablation/analysis/tide_iou/cache/
